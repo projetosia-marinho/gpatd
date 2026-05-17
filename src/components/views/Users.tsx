@@ -280,7 +280,7 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
     }
 
     try {
-      const dbPayload = {
+      const dbPayload: any = {
         name: formData.name,
         posto: formData.posto,
         saram: formData.saram,
@@ -291,6 +291,10 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
         telefone: formData.telefone,
         ramal: formData.ramal,
       };
+
+      if (formData.senha && formData.senha.trim() !== '') {
+        dbPayload.senha = formData.senha;
+      }
 
       if (currentUser) {
         // Update
