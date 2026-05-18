@@ -276,7 +276,7 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                           <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Militar/SARAM</th>
                           <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Resumo do Fato</th>
                           <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Responsáveis</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Início/Térm</th>
+                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Data Início/Térm</th>
                           <th className="py-1.5 px-0.5 text-center font-black uppercase whitespace-nowrap">Status</th>
                           <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Punição</th>
                           <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Data/Bol</th>
@@ -318,7 +318,7 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                               {p.dataTermino ? new Date(p.dataTermino).toLocaleDateString('pt-BR') : '—'}
                             </td>
                             <td className="py-2 px-0.5 text-center">
-                              <span className="font-black text-[6px] uppercase px-1 border border-slate-200 rounded-sm inline-block">
+                              <span className="font-bold text-[7px] uppercase px-1.5 py-0.5 border border-slate-200 rounded-sm inline-block">
                                 {p.status}
                               </span>
                             </td>
@@ -486,8 +486,8 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                 <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Militar</th>
                 <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Resumo do Fato</th>
                 <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Responsáveis</th>
-                <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Início</th>
-                <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Término</th>
+                <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Data de Início</th>
+                <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Data de Término</th>
                 <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Status</th>
                 <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Punição</th>
                 <th className="py-4 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Data Punição</th>
@@ -544,7 +544,7 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                     {p.dataTermino ? new Date(p.dataTermino).toLocaleDateString('pt-BR') : '—'}
                   </td>
                   <td className="py-4 px-4">
-                    <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border whitespace-nowrap ${getStatusStyle(p.status)}`}>
+                    <span className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide border whitespace-nowrap ${getStatusStyle(p.status)}`}>
                       {p.status}
                     </span>
                   </td>
