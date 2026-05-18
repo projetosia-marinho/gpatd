@@ -19,7 +19,8 @@ import {
   AlertCircle,
   X,
   History,
-  Building2
+  Building2,
+  User
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Division } from './Divisions';
@@ -418,8 +419,8 @@ export default function Processes({
                   { key: 'militar', label: 'Militar Arrolado' },
                   { key: 'posto', label: 'Posto' },
                   { key: 'divisao', label: 'Divisão' },
-                  { key: 'dataInicio', label: 'Início' },
-                  { key: 'dataTermino', label: 'Término' },
+                  { key: 'dataInicio', label: 'Data de Início' },
+                  { key: 'dataTermino', label: 'Data de Término' },
                   { key: 'boletim', label: 'Boletim' },
                   { key: 'status', label: 'Status' },
                   { key: 'punicao', label: 'Punição' },
@@ -729,7 +730,7 @@ export default function Processes({
                     <section>
                       <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                        Punição Applicada
+                        Punição Aplicada
                       </h4>
                       <div className="flex items-center gap-6 p-6 rounded-3xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800">
                         <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-center justify-center text-rose-500 shadow-sm">

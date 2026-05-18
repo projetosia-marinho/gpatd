@@ -10,41 +10,14 @@ import Users from './components/views/Users';
 import Reports from './components/views/Reports';
 import Documents from './components/views/Documents';
 import { User as UserType } from './components/views/Users';
-import { Settings as SettingsIcon, Shield, Bell, User, Files } from 'lucide-react';
+import { Shield, Bell, User, Files } from 'lucide-react';
+import Settings from './components/views/Settings';
 import { ThemeProvider } from './context/ThemeContext';
 import { useAuth } from './context/AuthContext';
 import Login from './components/auth/Login';
 import { supabase } from './lib/supabase';
 
-function Settings() {
-  return (
-    <div id="settings-view" className="max-w-4xl mx-auto space-y-8">
-      <header>
-        <h2 className="text-3xl font-display font-bold text-slate-800 dark:text-white">Configurações</h2>
-        <p className="text-slate-500 dark:text-slate-400 mt-1">Configure as preferências do seu espaço de trabalho.</p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {[
-          { icon: User, title: 'Perfil', desc: 'Gerencie suas informações públicas.' },
-          { icon: Bell, title: 'Notificações', desc: 'Configure alertas e atualizações.' },
-          { icon: Shield, title: 'Privacidade e Segurança', desc: 'Proteja os dados da sua conta.' },
-          { icon: SettingsIcon, title: 'Espaço de Trabalho', desc: 'Preferências globais do app.' },
-        ].map((item) => (
-          <div key={item.title} className="flex gap-4 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-500 transition-all shadow-sm">
-            <div className="h-12 w-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-              <item.icon size={24} />
-            </div>
-            <div>
-              <h4 className="font-bold text-slate-800 dark:text-white">{item.title}</h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{item.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+// Settings component imported from ./components/views/Settings
 
 import { HistoryItem, Process } from './components/views/Processes';
 
@@ -382,7 +355,7 @@ export default function App() {
       case 'novo-patd':
         return <NewPATD initialData={editingProcess} onSave={handleSaveProcess} divisions={divisions} currentUser={currentUser} processes={processes} />;
       case 'settings':
-        return <Settings />;
+        return <Settings currentUser={currentUser} onProfileUpdate={(updated) => setUsers(prev => prev.map(u => u.id === updated.id ? updated : u))} />;
       case 'documentos':
         return <Documents currentUser={currentUser} />;
       default:
