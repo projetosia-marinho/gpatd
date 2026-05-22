@@ -1154,27 +1154,45 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   <div className="space-y-1.5">
                     {formData.documents.map((doc: any, docIdx: number) => (
                       <div key={docIdx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80 group/doc">
-                        <a 
-                          href={doc.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline truncate pr-4"
-                        >
+                        <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 truncate pr-4">
                           <FileText size={14} className="shrink-0" />
                           <span className="truncate">{doc.name}</span>
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFormData((prev: any) => ({
-                              ...prev,
-                              documents: prev.documents.filter((_: any, idx: number) => idx !== docIdx)
-                            }));
-                          }}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all"
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => window.open(doc.url, '_blank')}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-500/10 dark:hover:bg-indigo-500/20 transition-all"
+                            title="Visualizar Documento"
+                          >
+                            <FileText size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const url = new URL(doc.url);
+                              url.searchParams.append('download', '');
+                              window.open(url.toString(), '_blank');
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-sky-500 hover:bg-sky-500/10 dark:hover:bg-sky-500/20 transition-all"
+                            title="Baixar Documento"
+                          >
+                            <Download size={14} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev: any) => ({
+                                ...prev,
+                                documents: prev.documents.filter((_: any, idx: number) => idx !== docIdx)
+                              }));
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all"
+                            title="Excluir Documento"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

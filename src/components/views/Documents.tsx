@@ -15,7 +15,8 @@ import {
   Upload,
   X,
   ChevronRight,
-  Edit2
+  Edit2,
+  Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../../lib/supabase';
@@ -196,9 +197,20 @@ export default function Documents({ currentUser }: { currentUser: any }) {
     }
   };
 
-  const handleDownloadDocument = (doc: Document) => {
+  const handleViewDocument = (doc: Document) => {
     if (doc.drive_link) {
       window.open(doc.drive_link, '_blank');
+      return;
+    }
+    alert('Link do documento não encontrado no banco de dados.');
+  };
+
+  const handleDownloadDocument = (doc: Document) => {
+    if (doc.drive_link) {
+      // Adding ?download= to force browser download instead of preview
+      const url = new URL(doc.drive_link);
+      url.searchParams.append('download', '');
+      window.open(url.toString(), '_blank');
       return;
     }
     alert('Link do documento não encontrado no banco de dados.');
@@ -379,7 +391,15 @@ export default function Documents({ currentUser }: { currentUser: any }) {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <button 
+                        onClick={() => handleViewDocument(doc)}
+                        title="Visualizar Documento"
+                        className="h-10 w-10 flex items-center justify-center rounded-xl bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 hover:bg-sky-600 hover:text-white transition-all shadow-sm border border-sky-100 dark:border-sky-800"
+                      >
+                        <Eye size={18} />
+                      </button>
+                      <button 
                         onClick={() => handleDownloadDocument(doc)}
+                        title="Baixar Documento"
                         className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100 dark:border-indigo-800"
                       >
                         <Download size={18} />
