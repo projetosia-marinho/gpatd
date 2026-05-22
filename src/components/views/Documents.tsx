@@ -124,31 +124,38 @@ export default function Documents({ currentUser }: { currentUser: any }) {
       const file = fileInput.files?.[0];
       if (!file) return;
 
-      const apiFormData = new FormData();
-      apiFormData.append('file', file);
+      // 1. Upload to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const filePath = `${selectedFolder.id}/${fileName}`;
 
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: apiFormData
-      });
-      const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      const { error: uploadError, data: uploadData } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
 
+      if (uploadError) throw uploadError;
+
+      // 2. Get Public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+
+      // 3. Save to Database
       const newDoc = {
         folder_id: selectedFolder.id,
         name: file.name,
-        type: file.name.split('.').pop() || 'pdf',
+        type: fileExt || 'pdf',
         size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
         uploadedby: currentUser.name,
         uploadedat: new Date().toISOString(),
         description: formData.get('description') as string,
-        drive_link: data.link
+        drive_link: publicUrl // Repurposing drive_link to store the Supabase URL
       };
 
-      const { data: savedDoc, error } = await supabase.from('documents').insert([newDoc]).select().single();
-      if (error) throw error;
+      const { data: savedDoc, error: dbError } = await supabase.from('documents').insert([newDoc]).select().single();
+      if (dbError) throw dbError;
 
+      // 4. Update UI
       setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [savedDoc, ...f.documents] } : f));
       setSelectedFolder(prev => {
         if (!prev) return null;
@@ -157,7 +164,7 @@ export default function Documents({ currentUser }: { currentUser: any }) {
       setIsUploadModalOpen(false);
     } catch (err) {
       console.error(err);
-      alert('Erro ao enviar documento. Verifique as credenciais do Google Drive.');
+      alert('Erro ao enviar documento. Verifique as configurações de armazenamento.');
     } finally {
       setUploading(false);
     }
@@ -173,9 +180,11 @@ export default function Documents({ currentUser }: { currentUser: any }) {
     }
   };
 
-  const handleDeleteDocument = async (docId: string) => {
+  const handleDeleteDocument = async (docId: string, filePath?: string) => {
     if (!selectedFolder) return;
     if (window.confirm('Excluir este documento?')) {
+      // Find document to optionally delete from storage if we had the path saved 
+      // (Since we didn't save the path explicitly, we'll just delete the DB record. The bucket file will be orphaned unless we parse the URL).
       const { error } = await supabase.from('documents').delete().eq('id', docId);
       if (!error) {
         setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: f.documents.filter(d => d.id !== docId) } : f));
