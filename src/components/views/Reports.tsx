@@ -220,146 +220,134 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
 
               <div className="flex-1 overflow-y-auto p-12 bg-slate-200 dark:bg-slate-950 custom-scrollbar">
                 {/* Visual A4 Page Landscape */}
-                <style>{`@media print { @page { size: landscape; margin: 0; } }`}</style>
-                <div className="mx-auto bg-white text-slate-900 w-[297mm] min-h-[210mm] shadow-[0_0_50px_rgba(0,0,0,0.1)] p-[20mm] flex flex-col print:shadow-none print:m-0" id="report-content">
+                <style>{`@media print { @page { size: landscape; margin: 0; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }`}</style>
+                <div className="mx-auto bg-white text-slate-900 w-[297mm] min-h-[210mm] shadow-[0_0_50px_rgba(0,0,0,0.1)] flex flex-col print:shadow-none print:m-0" id="report-content">
                   {/* Document Header */}
-                  <div className="flex flex-col items-center text-center space-y-4 mb-8 border-b-2 border-slate-900 pb-6">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-slate-900 p-1">
-                      <img 
-                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=Projetos" 
-                        alt="User" 
-                        className="w-full h-full object-cover rounded-full"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <h1 className="text-xl font-black uppercase tracking-[0.2em]" style={{ fontFamily: 'Arial' }}>Academia da Força Aérea</h1>
-                      <h2 className="text-lg uppercase tracking-widest text-slate-700 font-normal" style={{ fontFamily: 'Arial' }}>
-                        {filterDivisao || "Relatório Geral de Processos"}
-                      </h2>
-                    </div>
-                    <div className="w-full flex justify-between text-[8px] font-bold text-slate-500 uppercase mt-2">
-                      <span>Data de Emissão: {new Date().toLocaleDateString('pt-BR')}</span>
-                      <span>Total de Registros: {filteredProcesses.length}</span>
-                    </div>
-                  </div>
-
-                  {/* PDF Stats Cards */}
-                  <div className="grid grid-cols-4 gap-3 mb-8">
-                    {stats.map((stat, idx) => {
-                      const bgColors = ['#d7e5ff', '#fff1bf', '#caffd6', '#ffc4c4'];
-                      return (
-                        <div 
-                          key={stat.label} 
-                          className="p-3 border border-slate-200 rounded-xl flex flex-col items-center text-center"
-                          style={{ backgroundColor: bgColors[idx] }}
-                        >
-                          <p 
-                            className={`text-[7px] uppercase tracking-widest mb-1 ${idx === 3 ? 'font-bold' : 'font-black'}`}
-                            style={{ color: '#000000' }}
-                          >
-                            {stat.label}
-                          </p>
-                          <h3 className="text-sm font-bold text-slate-900">{stat.value}</h3>
+                  <div className="bg-[#283655] text-white pt-8 pb-4 px-10 flex flex-col relative w-full h-[140px] shrink-0">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-4">
+                        <img src="/logo.png" alt="AFA Logo" className="w-12 h-14 object-contain" />
+                        <div className="flex flex-col mt-1">
+                          <h1 className="text-xl font-black uppercase tracking-wide leading-tight" style={{ fontFamily: 'Arial' }}>ACADEMIA DA FORÇA AÉREA</h1>
+                          <h2 className="text-[11px] uppercase tracking-[0.15em] text-slate-300 leading-tight" style={{ fontFamily: 'Arial' }}>COMANDO DA AFA</h2>
                         </div>
-                      );
-                    })}
+                      </div>
+                      <div className="text-right flex flex-col gap-3 mt-1">
+                        <div className="leading-tight">
+                          <p className="text-[11px] font-bold">Data do Relatório</p>
+                          <p className="text-[9px] text-slate-300 font-medium">{new Date().toLocaleString('pt-BR')}</p>
+                        </div>
+                        <div className="leading-tight">
+                          <p className="text-[11px] font-bold">Perfil</p>
+                          <p className="text-[9px] text-slate-300 uppercase font-medium">{currentUser.posto} {currentUser.name}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="absolute bottom-4 w-full left-0 text-center">
+                      <h2 className="text-2xl font-black uppercase tracking-wider" style={{ fontFamily: 'Arial' }}>RELATÓRIO DE PATD</h2>
+                    </div>
                   </div>
 
                   {/* Document Content Table */}
-                  <div className="flex-1">
-                    <table className="w-full text-[7px] border-collapse">
+                  <div className="flex-1 w-full flex flex-col">
+                    <table className="w-full text-[8px] border-collapse" style={{ fontFamily: 'Inter, Arial, sans-serif' }}>
                       <thead>
-                        <tr className="border-y border-slate-900 bg-slate-50">
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">PATD</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Divisão/Setor</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Posto/Esp</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Militar/SARAM</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Resumo do Fato</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Responsáveis</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Data Início/Térm</th>
-                          <th className="py-1.5 px-0.5 text-center font-black uppercase whitespace-nowrap">Status</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Punição</th>
-                          <th className="py-1.5 px-0.5 text-left font-black uppercase whitespace-nowrap">Data/Bol</th>
+                        <tr className="bg-slate-200 text-slate-800 border-b border-slate-300">
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap w-24">NO. PATD</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Divisão</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Posto</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Militar Arrolado</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Resumo do Fato</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Autoridades</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Status</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Datas</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Punição</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Boletim</th>
+                          <th className="py-3 px-3 text-left font-black uppercase whitespace-nowrap">Observações</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200 border-b border-slate-900">
-                        {filteredProcesses.map(p => (
-                          <tr key={p.id} className="border-b border-slate-100">
-                            <td className="py-2 px-0.5 font-bold whitespace-nowrap">{p.patdNumber}</td>
-                            <td className="py-2 px-0.5">
-                              <div className="flex flex-col leading-tight">
-                                <span className="font-bold">{p.divisao}</span>
-                                <span className="text-[6px] text-slate-500">{p.setor}</span>
-                              </div>
-                            </td>
-                            <td className="py-2 px-0.5">
-                              <div className="flex flex-col leading-tight">
-                                <span className="font-bold">{p.posto} - {p.quadro}</span>
-                                <span className="text-[6px] text-indigo-600 font-bold">{p.especialidade}</span>
-                              </div>
-                            </td>
-                            <td className="py-2 px-0.5">
-                              <div className="flex flex-col leading-tight">
-                                <span className="font-bold">{p.militar}</span>
-                                <span className="text-[6px] text-slate-500">{p.saram}</span>
-                              </div>
-                            </td>
-                            <td className="py-2 px-0.5 max-w-[150px]">
-                              <p className="italic opacity-80 leading-tight break-words whitespace-normal">{p.resumoFato}</p>
-                              {p.observacoes && (
-                                <p className="text-[5px] text-slate-500 mt-1 border-t pt-1 break-words whitespace-normal leading-tight font-medium">Obs: {p.observacoes}</p>
-                              )}
-                            </td>
-                            <td className="py-2 px-0.5">
-                              <div className="flex flex-col gap-0.5 leading-none">
-                                <p><span className="font-black text-[5px] uppercase">Ap:</span> {p.apurador}</p>
-                                <p><span className="font-black text-[5px] uppercase">Al:</span> {p.aplicador}</p>
-                              </div>
-                            </td>
-                            <td className="py-2 px-0.5 italic whitespace-nowrap">
-                              {new Date(p.dataInicio).toLocaleDateString('pt-BR')}<br/>
-                              {p.dataTermino ? new Date(p.dataTermino).toLocaleDateString('pt-BR') : '—'}
-                            </td>
-                            <td className="py-2 px-0.5 text-center">
-                              <span className="font-bold text-[7px] uppercase px-1.5 py-0.5 border border-slate-200 rounded-sm inline-block">
+                      <tbody>
+                        {filteredProcesses.map((p, index) => {
+                          const setorAbbr = p.setor && p.setor.startsWith('Seção') 
+                            ? p.setor.replace('Seção', 'Sec') 
+                            : p.setor;
+                            
+                          return (
+                            <tr key={p.id} className={index % 2 === 0 ? "bg-white" : "bg-slate-100/60"}>
+                              <td className="py-4 px-3 font-bold whitespace-nowrap align-top">{p.patdNumber}</td>
+                              <td className="py-4 px-3 align-top">
+                                <div className="flex flex-col leading-tight gap-1">
+                                  <span className="font-bold uppercase text-[9px]">{p.divisao}</span>
+                                  <span className="text-[7px] text-slate-500">{setorAbbr}</span>
+                                </div>
+                              </td>
+                              <td className="py-4 px-3 align-top">
+                                <div className="flex flex-col leading-tight gap-0.5">
+                                  <span className="font-bold text-[9px]">{p.posto}</span>
+                                  <span className="text-[7px] text-slate-600">{p.quadro}</span>
+                                  <span className="text-[7px] text-slate-600">{p.especialidade}</span>
+                                </div>
+                              </td>
+                              <td className="py-4 px-3 align-top min-w-[120px]">
+                                <div className="flex flex-col leading-tight gap-1">
+                                  <span className="font-bold uppercase text-[9px]">{p.militar}</span>
+                                  <span className="text-[7px] text-slate-500 uppercase tracking-wider">SARAM: {p.saram}</span>
+                                </div>
+                              </td>
+                              <td className="py-4 px-3 align-top min-w-[180px]">
+                                <p className="leading-snug text-slate-800 font-medium">{p.resumoFato}</p>
+                              </td>
+                              <td className="py-4 px-3 align-top min-w-[100px]">
+                                <div className="flex flex-col gap-2">
+                                  <div>
+                                    <p className="text-[6px] text-slate-500 uppercase tracking-widest font-bold">Apurador</p>
+                                    <p className="font-bold uppercase text-[8px]">{p.apurador}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-[6px] text-slate-500 uppercase tracking-widest font-bold">Aplicador</p>
+                                    <p className="font-bold uppercase text-[8px]">{p.aplicador}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-3 align-top font-black uppercase text-[8px]">
                                 {p.status}
-                              </span>
-                            </td>
-                            <td className="py-2 px-0.5">
-                              <div className="flex flex-col leading-tight">
-                                <span className="font-bold text-rose-600 uppercase">{p.punicao || '—'}</span>
-                                {p.diasPunicao > 0 && <span className="text-[6px] text-slate-400">{p.diasPunicao} DIAS</span>}
-                                {p.resumoPunicao && (
-                                  <p className="text-[5px] text-slate-500 mt-0.5 italic break-words whitespace-normal leading-tight font-medium">Resumo: {p.resumoPunicao}</p>
-                                )}
-                              </div>
-                            </td>
-                            <td className="py-2 px-0.5 italic whitespace-nowrap">
-                              {p.dataPunicao ? new Date(p.dataPunicao).toLocaleDateString('pt-BR') : '—'}<br/>
-                              <span className="font-bold text-slate-900">{p.boletim || '—'}</span>
-                              {p.nGrade && (
-                                <div className="text-[5px] text-slate-500 font-bold uppercase mt-0.5">Grade: {p.nGrade}</div>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
+                              </td>
+                              <td className="py-4 px-3 align-top min-w-[80px]">
+                                <div className="flex flex-col gap-1.5 text-[7px]">
+                                  <div className="flex flex-col leading-tight">
+                                    <span className="text-slate-500 uppercase">Início</span>
+                                    <span className="font-bold">{new Date(p.dataInicio).toLocaleDateString('pt-BR')}</span>
+                                  </div>
+                                  <div className="flex flex-col leading-tight">
+                                    <span className="text-slate-500 uppercase">Término</span>
+                                    <span className="font-bold">{p.dataTermino ? new Date(p.dataTermino).toLocaleDateString('pt-BR') : '--'}</span>
+                                  </div>
+                                  <div className="flex flex-col leading-tight">
+                                    <span className="text-slate-500 uppercase">Punição</span>
+                                    <span className="font-bold">{p.dataPunicao ? new Date(p.dataPunicao).toLocaleDateString('pt-BR') : '--'}</span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-4 px-3 align-top min-w-[70px]">
+                                <div className="flex flex-col">
+                                  <span className="font-bold uppercase text-[8px] mb-1">{p.punicao || '--'}</span>
+                                  {p.diasPunicao > 0 && <span className="text-[7px] font-bold text-slate-600">{p.diasPunicao} DIAS</span>}
+                                </div>
+                              </td>
+                              <td className="py-4 px-3 align-top min-w-[70px]">
+                                <div className="flex flex-col leading-tight gap-1">
+                                  <span className="font-bold uppercase text-[8px]">{p.boletim || '--'}</span>
+                                  <span className="text-[7px] text-slate-500 uppercase">Grade: {p.nGrade || '--'}</span>
+                                </div>
+                              </td>
+                              <td className="py-4 px-3 align-top min-w-[120px]">
+                                <p className="leading-snug text-slate-800 font-medium">{p.observacoes || '--'}</p>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
-                  </div>
-
-                  {/* Document Footer */}
-                  <div className="mt-auto pt-8 border-t border-slate-200">
-                    <div className="flex justify-between items-end text-[8px] text-slate-500 uppercase font-bold">
-                      <div className="flex flex-col gap-1">
-                        <span>Impresso por: {currentUser.name}</span>
-                        <span>Posto/Cargo: {currentUser.role}</span>
-                      </div>
-                      <div className="text-right">
-                        <p>Documento para uso interno - Academia da Força Aérea</p>
-                        <p className="mt-1">Página 1 de 1</p>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
