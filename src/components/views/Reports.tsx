@@ -162,9 +162,9 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
   };
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-10 pb-20 print:pb-0 print:space-y-0">
       {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden">
         <div>
           <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white">Relatórios e Listagem</h2>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Gere relatórios detalhados com filtros avançados de processos.</p>
@@ -187,15 +187,15 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 md:p-8"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 md:p-8 print:static print:inset-auto print:bg-transparent print:backdrop-blur-none print:p-0"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white dark:bg-slate-900 w-full max-w-5xl h-full overflow-hidden rounded-3xl shadow-2xl flex flex-col"
+              className="bg-white dark:bg-slate-900 w-full max-w-5xl h-full overflow-hidden rounded-3xl shadow-2xl flex flex-col print:shadow-none print:overflow-visible print:h-auto print:w-auto print:max-w-none print:block print:rounded-none"
             >
-              <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
+              <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 print:hidden">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
                     <FileText size={18} />
@@ -218,9 +218,19 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-12 bg-slate-200 dark:bg-slate-950 custom-scrollbar">
+              <div className="flex-1 overflow-y-auto p-12 bg-slate-200 dark:bg-slate-950 custom-scrollbar print:p-0 print:overflow-visible print:bg-transparent print:block">
                 {/* Visual A4 Page Landscape */}
-                <style>{`@media print { @page { size: landscape; margin: 0; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }`}</style>
+                <style>{`
+                  @media print { 
+                    @page { size: landscape; margin: 0; } 
+                    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin: 0; padding: 0; background: white; }
+                    /* Hide sidebar and other app elements */
+                    #settings-view, nav, aside, .print\\:hidden { display: none !important; }
+                    body * { visibility: hidden; }
+                    #report-content, #report-content * { visibility: visible; }
+                    #report-content { position: absolute; left: 0; top: 0; width: 100vw; margin: 0 !important; }
+                  }
+                `}</style>
                 <div className="mx-auto bg-white text-slate-900 w-[297mm] min-h-[210mm] shadow-[0_0_50px_rgba(0,0,0,0.1)] flex flex-col print:shadow-none print:m-0" id="report-content">
                   {/* Document Header */}
                   <div className="bg-[#283655] text-white pt-8 pb-4 px-10 flex flex-col relative w-full h-[140px] shrink-0">
