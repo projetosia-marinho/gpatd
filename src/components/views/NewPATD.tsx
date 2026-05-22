@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { 
   User, 
@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Building2,
   X,
-  History as HistoryIcon
+  History as HistoryIcon,
+  Download
 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { Division } from './Divisions';
@@ -59,6 +60,113 @@ const InputField = ({ label, icon: Icon, value, onChange, placeholder, disabled 
     )}
   </div>
 );
+
+const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error, fieldName }: any) => {
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Load options from localStorage
+  useEffect(() => {
+    const key = `patd_field_memory_${fieldName}`;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        setSuggestions(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error('Error parsing autocomplete options:', e);
+    }
+  }, [fieldName, showDropdown]);
+
+  // Filter options when value changes
+  useEffect(() => {
+    if (!value) {
+      setFilteredSuggestions(suggestions);
+    } else {
+      const lowVal = value.toLowerCase();
+      setFilteredSuggestions(
+        suggestions.filter((opt) => opt.toLowerCase().includes(lowVal) && opt.toLowerCase() !== lowVal)
+      );
+    }
+  }, [value, suggestions]);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelect = (val: string) => {
+    onChange({ target: { value: val } });
+    setShowDropdown(false);
+  };
+
+  return (
+    <div ref={containerRef} className="space-y-1.5 flex-1 relative">
+      <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+      <div className="relative group">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/80 transition-all group-focus-within:text-indigo-500 group-focus-within:scale-110 z-10">
+          <Icon size={16} />
+        </div>
+        <input
+          type={type}
+          value={value}
+          onChange={onChange}
+          onFocus={() => setShowDropdown(true)}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={`w-full h-11 pl-10 pr-4 rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-800/80'} focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 ${error ? 'focus:ring-rose-100/30 dark:focus:ring-rose-900/20' : 'focus:ring-indigo-500/10'} focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium tracking-tight relative z-0`}
+        />
+        {/* Futuristic Background Glow */}
+        <div className="absolute inset-0 rounded-xl bg-linear-to-r from-indigo-500/0 via-indigo-500/0 to-purple-500/0 group-focus-within:from-indigo-500/10 group-focus-within:via-purple-500/10 group-focus-within:to-indigo-500/10 transition-all duration-700 -z-10 shadow-inner group-focus-within:shadow-indigo-500/5" />
+        
+        {/* Corner Brackets (Futuristic UI vibe) */}
+        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 group-focus-within:border-indigo-500 transition-colors rounded-tl-sm" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-slate-200 dark:border-slate-800 group-focus-within:border-indigo-500 transition-colors rounded-br-sm" />
+      </div>
+
+      <AnimatePresence>
+        {showDropdown && filteredSuggestions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-0 right-0 top-full mt-2 p-1.5 z-50 bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-800 max-h-48 overflow-y-auto custom-scrollbar"
+          >
+            {filteredSuggestions.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() => handleSelect(suggestion)}
+                className="w-full px-3 py-2 text-left text-xs font-semibold rounded-lg hover:bg-indigo-500 hover:text-white text-slate-700 dark:text-slate-300 dark:hover:bg-indigo-650 transition-all block"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {error && (
+        <motion.p 
+          initial={{ opacity: 0, x: -10 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          className="text-[10px] font-bold text-rose-500 ml-1 mt-1 animate-pulse tracking-wide uppercase"
+        >
+          {error}
+        </motion.p>
+      )}
+    </div>
+  );
+};
 
 const DatePickerField = ({ label, value, onChange, error }: any) => {
   return (
@@ -214,6 +322,34 @@ const SectionHeader = ({ title, subtitle }: { title: string, subtitle: string })
 );
 
 const HistoryModal = ({ isOpen, onClose, historyData }: { isOpen: boolean, onClose: () => void, historyData: any[] }) => {
+  const downloadHistory = () => {
+    if (!historyData || historyData.length === 0) {
+      alert('Não há histórico para exportar.');
+      return;
+    }
+    const header = "HISTÓRICO DE ALTERAÇÕES - GPATD\n" +
+                   `Exportado em: ${new Date().toLocaleString('pt-BR')}\n` +
+                   "==================================================\n\n";
+    const content = historyData.map((item, idx) => {
+      return `[${idx + 1}] Campo: ${item.field}\n` +
+             `Data: ${item.date}\n` +
+             `Valor Anterior: ${item.oldValue || '—'}\n` +
+             `Novo Valor: ${item.newValue || '—'}\n` +
+             `Usuário: ${item.user}\n` +
+             "--------------------------------------------------";
+    }).join('\n\n');
+    
+    const blob = new Blob([header + content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `historico_alteracoes_${new Date().getTime()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -276,7 +412,13 @@ const HistoryModal = ({ isOpen, onClose, historyData }: { isOpen: boolean, onClo
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+              <button 
+                onClick={downloadHistory}
+                className="px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2"
+              >
+                <Download size={16} /> Exportar
+              </button>
               <button 
                 onClick={onClose}
                 className="px-6 py-2 rounded-xl bg-slate-900 dark:bg-slate-700 text-white text-sm font-bold hover:bg-slate-800 transition-colors"
@@ -324,6 +466,59 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     observacoes: '',
     documents: []
   });
+
+  const getAllowedQuadros = (posto: string) => {
+    if (['BR', 'CL', 'TC', 'MJ', 'CP', '1T', '2T', 'AP'].includes(posto)) {
+      return ['QOAV', 'QOINF', 'QOINT', 'QOAP', 'QOMED', 'QOCON'];
+    }
+    if (['CD'].includes(posto)) {
+      return ['QOAV', 'QOINF', 'QOINT'];
+    }
+    if (['SO', '1S', '2S', '3S', 'AL'].includes(posto)) {
+      return ['QSS', 'QSCON', 'QESA'];
+    }
+    if (['CB'].includes(posto)) {
+      return ['QCB', 'QCBCON'];
+    }
+    if (['TM', 'T1', 'T2'].includes(posto)) {
+      return ['QTA'];
+    }
+    if (['S1', 'S2'].includes(posto)) {
+      return ['QSD'];
+    }
+    return [];
+  };
+
+  const allowedQuadros = useMemo(() => {
+    const allowed = getAllowedQuadros(formData.posto);
+    const baseQuadros = [
+      { value: 'QOAV', label: 'QOAV' },
+      { value: 'QOINT', label: 'QOINT' },
+      { value: 'QOINF', label: 'QOINF' },
+      { value: 'QOAP', label: 'QOAP' },
+      { value: 'QOMED', label: 'QOMED' },
+      { value: 'QOCON', label: 'QOCON' },
+      { value: 'QSS', label: 'QSS' },
+      { value: 'QSCON', label: 'QSCON' },
+      { value: 'QESA', label: 'QESA' },
+      { value: 'QCB', label: 'QCB' },
+      { value: 'QCBCON', label: 'QCBCON' },
+      { value: 'QTA', label: 'QTA' },
+      { value: 'QSD', label: 'QSD' },
+    ];
+    if (allowed.length === 0) return baseQuadros;
+    return baseQuadros.filter(q => allowed.includes(q.value));
+  }, [formData.posto]);
+
+  useEffect(() => {
+    const allowed = getAllowedQuadros(formData.posto);
+    if (allowed.length > 0 && !allowed.includes(formData.quadro)) {
+      setFormData(prev => ({
+        ...prev,
+        quadro: allowed[0]
+      }));
+    }
+  }, [formData.posto]);
 
   // Form memory persistence
   useEffect(() => {
@@ -668,6 +863,26 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       return;
     }
 
+    // Save field memory for autocomplete
+    const fieldsToRemember = ['nomeCompleto', 'saram', 'especialidade', 'apurador', 'aplicador'];
+    fieldsToRemember.forEach(field => {
+      const val = formData[field]?.trim();
+      if (val) {
+        const key = `patd_field_memory_${field}`;
+        try {
+          const saved = localStorage.getItem(key);
+          let list: string[] = saved ? JSON.parse(saved) : [];
+          if (!list.includes(val)) {
+            list.unshift(val);
+            list = list.slice(0, 10);
+            localStorage.setItem(key, JSON.stringify(list));
+          }
+        } catch (e) {
+          console.error(`Error saving field memory for ${field}:`, e);
+        }
+      }
+    });
+
     setIsSaving(true);
     // Simulate API delay
     setTimeout(() => {
@@ -830,16 +1045,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <InputField label="Nº do PATD" icon={FileText} value={formData.patdNumber} onChange={handleChange('patdNumber')} />
                 <SelectField label="Posto" icon={Shield} value={formData.posto} onChange={handleChange('posto')} options={optionsPosto} />
-                <SelectField label="Quadro" icon={Briefcase} value={formData.quadro} onChange={handleChange('quadro')} options={optionsQuadro} />
+                <SelectField label="Quadro" icon={Briefcase} value={formData.quadro} onChange={handleChange('quadro')} options={allowedQuadros} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} placeholder="0000000" error={errors.saram} />
-                <InputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} />
+                <AutocompleteInputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} placeholder="0000000" error={errors.saram} fieldName="saram" />
+                <AutocompleteInputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} fieldName="nomeCompleto" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="Especialidade" icon={Briefcase} value={formData.especialidade} onChange={handleChange('especialidade')} />
+                <AutocompleteInputField label="Especialidade" icon={Briefcase} value={formData.especialidade} onChange={handleChange('especialidade')} fieldName="especialidade" />
                 <div className="hidden md:block" />
               </div>
 
@@ -869,8 +1084,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             
             <div className="relative z-10 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="Apurador" icon={User} value={formData.apurador} onChange={handleChange('apurador')} />
-                <InputField label="Aplicador" icon={User} value={formData.aplicador} onChange={handleChange('aplicador')} />
+                <AutocompleteInputField label="Apurador" icon={User} value={formData.apurador} onChange={handleChange('apurador')} fieldName="apurador" />
+                <AutocompleteInputField label="Aplicador" icon={User} value={formData.aplicador} onChange={handleChange('aplicador')} fieldName="aplicador" />
               </div>
 
               <TextAreaField label="Resumo do Fato" value={formData.resumoFato} onChange={handleChange('resumoFato')} placeholder="Descreva os fatos ocorridos..." />

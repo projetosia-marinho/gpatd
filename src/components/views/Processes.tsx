@@ -106,6 +106,9 @@ export interface Process {
   apurador: string;
   aplicador: string;
   history: HistoryItem[];
+  nGrade?: string;
+  observacoes?: string;
+  resumoPunicao?: string;
 }
 
 export default function Processes({ 
@@ -170,6 +173,7 @@ export default function Processes({
   // Filter States
   const [filterDivisao, setFilterDivisao] = useState(canFilterAllDivisions ? '' : currentUser.divisao);
   const [filterStatus, setFilterStatus] = useState(initialFilter);
+  const [filterPosto, setFilterPosto] = useState('');
   const [filterPunicao, setFilterPunicao] = useState('');
   const [filterAno, setFilterAno] = useState('');
 
@@ -179,6 +183,7 @@ export default function Processes({
       setFilterStatus(initialFilter);
       // Reset other filters to ensure the specific one is visible
       setFilterDivisao('');
+      setFilterPosto('');
       setFilterPunicao('');
       setFilterAno('');
       setSearchTerm('');
@@ -187,6 +192,7 @@ export default function Processes({
 
   const optionsDivisao = useMemo(() => Array.from(new Set(processes.map(p => p.divisao))), [processes]);
   const optionsStatus = useMemo(() => Array.from(new Set(processes.map(p => p.status))), [processes]);
+  const optionsPosto = useMemo(() => Array.from(new Set(processes.map(p => p.posto))).filter(Boolean), [processes]);
   const optionsPunicao = useMemo(() => Array.from(new Set(processes.map(p => p.punicao))), [processes]);
   const optionsAno = useMemo(() => Array.from(new Set(processes.map(p => p.patdNumber.split('/').pop() || ''))), [processes]);
 
@@ -254,6 +260,7 @@ export default function Processes({
     // Dropdown Filters
     if (filterDivisao) result = result.filter(p => p.divisao === filterDivisao);
     if (filterStatus) result = result.filter(p => p.status === filterStatus);
+    if (filterPosto) result = result.filter(p => p.posto === filterPosto);
     if (filterPunicao) result = result.filter(p => p.punicao === filterPunicao);
     if (filterAno) result = result.filter(p => p.patdNumber.endsWith(filterAno));
 
@@ -276,7 +283,7 @@ export default function Processes({
   // Reset visible items when filters change
   React.useEffect(() => {
     setVisibleItems(20);
-  }, [searchTerm, globalSearchTerm, filterDivisao, filterStatus, filterPunicao, filterAno]);
+  }, [searchTerm, globalSearchTerm, filterDivisao, filterStatus, filterPosto, filterPunicao, filterAno]);
 
   // Infinite Scroll Logic
   React.useEffect(() => {
@@ -351,10 +358,6 @@ export default function Processes({
               className="h-11 w-64 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 pl-10 pr-4 text-sm focus:outline-hidden focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-800 dark:text-white pointer-events-auto shadow-sm"
             />
           </div>
-          
-          <button className="flex items-center justify-center w-11 h-11 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 hover:text-indigo-500 transition-all">
-            <Download size={20} />
-          </button>
 
           {currentUser.role === 'Administrador' && (
             <button 
@@ -387,13 +390,15 @@ export default function Processes({
         )}
         <FilterDropdown label="Ano" value={filterAno} options={optionsAno} onChange={setFilterAno} />
         <FilterDropdown label="Status" value={filterStatus} options={optionsStatus} onChange={setFilterStatus} />
+        <FilterDropdown label="Posto" value={filterPosto} options={optionsPosto} onChange={setFilterPosto} />
         <FilterDropdown label="Punição" value={filterPunicao} options={optionsPunicao} onChange={setFilterPunicao} />
         
-        {(filterDivisao !== (canFilterAllDivisions ? '' : currentUser.divisao) || filterStatus || filterPunicao || filterAno) && (
+        {(filterDivisao !== (canFilterAllDivisions ? '' : currentUser.divisao) || filterStatus || filterPosto || filterPunicao || filterAno) && (
           <button 
             onClick={() => { 
               setFilterDivisao(canFilterAllDivisions ? '' : currentUser.divisao); 
               setFilterStatus(''); 
+              setFilterPosto(''); 
               setFilterPunicao(''); 
               setFilterAno(''); 
               onClearFilter?.();
@@ -910,7 +915,25 @@ export default function Processes({
                 </div>
 
                 {/* Footer Section */}
-                <div className="p-8 border-t border-slate-100 dark:border-slate-800 flex justify-end bg-slate-50/30 dark:bg-slate-800/20">
+                <div className="p-8 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50/30 dark:bg-slate-800/20">
+                  <button 
+                    onClick={() => {
+                      const csvContent = "data:text/csv;charset=utf-8," 
+                        + "Nº PATD,Militar,Divisão,Excluído por,Data de Exclusão\n"
+                        + deletedProcesses.map(p => `${p.process_data?.patdNumber || p.process_id},${p.process_data?.militar || 'Desconhecido'},${p.process_data?.divisao || 'Desconhecido'},${p.deleted_by_name},${new Date(p.deleted_at).toLocaleString('pt-BR')}`).join("\n");
+                      const encodedUri = encodeURI(csvContent);
+                      const link = document.createElement("a");
+                      link.setAttribute("href", encodedUri);
+                      link.setAttribute("download", "auditoria_processos_excluidos.csv");
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                    className="flex items-center gap-2 h-11 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-500/20 transition-all"
+                  >
+                    <Download size={16} />
+                    Download CSV
+                  </button>
                   <button 
                     onClick={() => setIsAuditOpen(false)}
                     className="h-11 px-6 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"

@@ -174,7 +174,10 @@ export default function App() {
             dataTermino: p.data_termino,
             dataPunicao: p.data_punicao,
             diasPunicao: p.dias_punicao,
-            resumoFato: p.resumo_fato
+            resumoFato: p.resumo_fato,
+            nGrade: p.n_grade,
+            observacoes: p.observacoes,
+            resumoPunicao: p.resumo_punicao
           })));
         }
       } catch (err) {
@@ -272,7 +275,10 @@ export default function App() {
         apurador: newProcessData.apurador,
         aplicador: newProcessData.aplicador,
         documents: newProcessData.documents || [],
-        history: newProcessData.history || []
+        history: newProcessData.history || [],
+        n_grade: newProcessData.nGrade || '',
+        observacoes: newProcessData.observacoes || '',
+        resumo_punicao: newProcessData.resumoPunicao || ''
       };
 
       if (editingProcess) {

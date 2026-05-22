@@ -219,8 +219,9 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
               </div>
 
               <div className="flex-1 overflow-y-auto p-12 bg-slate-200 dark:bg-slate-950 custom-scrollbar">
-                {/* Visual A4 Page */}
-                <div className="mx-auto bg-white text-slate-900 w-[210mm] min-h-[297mm] shadow-[0_0_50px_rgba(0,0,0,0.1)] p-[20mm] flex flex-col print:shadow-none print:m-0" id="report-content">
+                {/* Visual A4 Page Landscape */}
+                <style>{`@media print { @page { size: landscape; margin: 0; } }`}</style>
+                <div className="mx-auto bg-white text-slate-900 w-[297mm] min-h-[210mm] shadow-[0_0_50px_rgba(0,0,0,0.1)] p-[20mm] flex flex-col print:shadow-none print:m-0" id="report-content">
                   {/* Document Header */}
                   <div className="flex flex-col items-center text-center space-y-4 mb-8 border-b-2 border-slate-900 pb-6">
                     <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-slate-900 p-1">
@@ -294,7 +295,7 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                             </td>
                             <td className="py-2 px-0.5">
                               <div className="flex flex-col leading-tight">
-                                <span className="font-bold">{p.posto}</span>
+                                <span className="font-bold">{p.posto} - {p.quadro}</span>
                                 <span className="text-[6px] text-indigo-600 font-bold">{p.especialidade}</span>
                               </div>
                             </td>
@@ -306,6 +307,9 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                             </td>
                             <td className="py-2 px-0.5 max-w-[150px]">
                               <p className="italic opacity-80 leading-tight break-words whitespace-normal">{p.resumoFato}</p>
+                              {p.observacoes && (
+                                <p className="text-[5px] text-slate-500 mt-1 border-t pt-1 break-words whitespace-normal leading-tight font-medium">Obs: {p.observacoes}</p>
+                              )}
                             </td>
                             <td className="py-2 px-0.5">
                               <div className="flex flex-col gap-0.5 leading-none">
@@ -326,11 +330,17 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
                               <div className="flex flex-col leading-tight">
                                 <span className="font-bold text-rose-600 uppercase">{p.punicao || '—'}</span>
                                 {p.diasPunicao > 0 && <span className="text-[6px] text-slate-400">{p.diasPunicao} DIAS</span>}
+                                {p.resumoPunicao && (
+                                  <p className="text-[5px] text-slate-500 mt-0.5 italic break-words whitespace-normal leading-tight font-medium">Resumo: {p.resumoPunicao}</p>
+                                )}
                               </div>
                             </td>
                             <td className="py-2 px-0.5 italic whitespace-nowrap">
                               {p.dataPunicao ? new Date(p.dataPunicao).toLocaleDateString('pt-BR') : '—'}<br/>
                               <span className="font-bold text-slate-900">{p.boletim || '—'}</span>
+                              {p.nGrade && (
+                                <div className="text-[5px] text-slate-500 font-bold uppercase mt-0.5">Grade: {p.nGrade}</div>
+                              )}
                             </td>
                           </tr>
                         ))}

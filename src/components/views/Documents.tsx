@@ -154,6 +154,18 @@ export default function Documents({ currentUser }: { currentUser: any }) {
     }
   };
 
+  const handleDownloadDocument = (doc: Document) => {
+    const blob = new Blob(['Conteúdo simulado do documento: ' + doc.name], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = doc.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const getFileIcon = (type: string) => {
     switch (type) {
       case 'pdf': return <FileText className="text-rose-500" />;
@@ -328,7 +340,10 @@ export default function Documents({ currentUser }: { currentUser: any }) {
                       {getFileIcon(doc.type)}
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100 dark:border-indigo-800">
+                      <button 
+                        onClick={() => handleDownloadDocument(doc)}
+                        className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100 dark:border-indigo-800"
+                      >
                         <Download size={18} />
                       </button>
                       {isAdmin && (
