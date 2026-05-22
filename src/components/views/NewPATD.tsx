@@ -580,6 +580,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       return;
     }
 
+    if (file.size > 20 * 1024 * 1024) {
+      alert('O arquivo não pode exceder o limite máximo de 20MB.');
+      return;
+    }
+
+    if (formData.documents && formData.documents.length > 0) {
+      alert('Já existe um documento anexado a este processo. Remova-o antes de enviar um novo arquivo.');
+      return;
+    }
+
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
@@ -1003,14 +1013,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             onClick={handleFileClick}
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0"
+            className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0 ${formData.documents && formData.documents.length > 0 ? 'ring-2 ring-emerald-500' : ''}`}
           >
-            <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-all">
-              <FilePlus size={18} />
+            <div className={`p-2 rounded-lg transition-all ${formData.documents && formData.documents.length > 0 ? 'bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white'}`}>
+              {formData.documents && formData.documents.length > 0 ? <FileText size={18} /> : <FilePlus size={18} />}
             </div>
             <div className="text-left">
-              <p className="leading-none">Inserir Documentos</p>
-              <p className="text-[9px] opacity-50 lowercase font-medium mt-1">anexos e arquivos pdf</p>
+              <p className="leading-none">{formData.documents && formData.documents.length > 0 ? 'PDF Anexado' : 'Inserir Documentos'}</p>
+              <p className="text-[9px] opacity-50 lowercase font-medium mt-1">
+                {formData.documents && formData.documents.length > 0 ? '1 documento' : 'anexos e arquivos pdf'}
+              </p>
             </div>
           </motion.button>
           <input 
@@ -1159,7 +1171,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               documents: prev.documents.filter((_: any, idx: number) => idx !== docIdx)
                             }));
                           }}
-                          className="p-1 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all opacity-0 group-hover/doc:opacity-100"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
