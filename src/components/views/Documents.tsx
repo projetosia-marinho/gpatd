@@ -156,15 +156,15 @@ export default function Documents({ currentUser }: { currentUser: any }) {
       if (dbError) throw dbError;
 
       // 4. Update UI
-      setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [savedDoc, ...f.documents] } : f));
+      setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [savedDoc, ...(f.documents || [])] } : f));
       setSelectedFolder(prev => {
         if (!prev) return null;
-        return { ...prev, documents: [savedDoc, ...prev.documents] };
+        return { ...prev, documents: [savedDoc, ...(prev.documents || [])] };
       });
       setIsUploadModalOpen(false);
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao enviar documento. Verifique as configurações de armazenamento.');
+    } catch (err: any) {
+      console.error('Upload Error:', err);
+      alert('Erro ao enviar documento. Detalhe: ' + (err.message || JSON.stringify(err)));
     } finally {
       setUploading(false);
     }
