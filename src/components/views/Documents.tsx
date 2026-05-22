@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Files, 
   Search, 
@@ -18,56 +18,37 @@ import {
   Edit2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from '../../lib/supabase';
 
 interface Document {
   id: string;
+  folder_id?: string;
   name: string;
-  type: 'pdf' | 'doc' | 'xls' | 'img';
+  type: string;
   size: string;
-  uploadedBy: string;
-  uploadedAt: string;
+  uploadedby: string;
+  uploadedat: string;
   description: string;
+  drive_link?: string;
 }
 
 interface Folder {
   id: string;
   name: string;
-  category: 'Modelos' | 'Legislação' | 'Manuais' | 'Outros';
+  category: 'Modelos' | 'Legislação' | 'Manuais' | 'Outros' | string;
   description: string;
   documents: Document[];
-  updatedAt: string;
+  updatedat?: string;
 }
-
-const initialFolders: Folder[] = [
-  { 
-    id: 'f1', 
-    name: 'Modelos de Portaria', 
-    category: 'Modelos', 
-    description: 'Modelos padrão para abertura de PATDs e outros processos.',
-    updatedAt: '2024-01-10',
-    documents: [
-      { id: 'd1', name: 'Formulário de Abertura.pdf', type: 'pdf', size: '1.2 MB', uploadedBy: 'Administrador', uploadedAt: '2024-01-10', description: 'Modelo padrão' },
-      { id: 'd2', name: 'Checklist de Instrução.docx', type: 'doc', size: '450 KB', uploadedBy: 'Administrador', uploadedAt: '2024-01-12', description: 'Verificação' }
-    ]
-  },
-  { 
-    id: 'f2', 
-    name: 'Legislação Aeronáutica', 
-    category: 'Legislação', 
-    description: 'Regulamentos disciplinares e normas vigentes.',
-    updatedAt: '2024-01-05',
-    documents: [
-      { id: 'd3', name: 'RCA35-1.pdf', type: 'pdf', size: '4.5 MB', uploadedBy: 'Administrador', uploadedAt: '2024-01-05', description: 'RCA atualizado' }
-    ]
-  }
-];
 
 export default function Documents({ currentUser }: { currentUser: any }) {
   const isAdmin = currentUser.role === 'Administrador';
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todas');
-  const [folders, setFolders] = useState<Folder[]>(initialFolders);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   
   // Modals
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
@@ -76,94 +57,142 @@ export default function Documents({ currentUser }: { currentUser: any }) {
 
   const categories = ['Todas', 'Modelos', 'Legislação', 'Manuais', 'Outros'];
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: dbFolders, error: fError } = await supabase.from('folders').select('*');
+        const { data: dbDocs, error: dError } = await supabase.from('documents').select('*');
+        if (fError) throw fError;
+        if (dError) throw dError;
+
+        const formattedFolders = (dbFolders || []).map(f => ({
+          ...f,
+          documents: (dbDocs || []).filter(d => d.folder_id === f.id)
+        }));
+        setFolders(formattedFolders);
+      } catch (err) {
+        console.error('Error fetching documents:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const filteredFolders = useMemo(() => {
     return folders.filter(folder => {
-      const matchesSearch = folder.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           folder.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = folder.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                           folder.description?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = filterCategory === 'Todas' || folder.category === filterCategory;
       return matchesSearch && matchesCategory;
     });
   }, [folders, searchTerm, filterCategory]);
 
-  const handleSaveFolder = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveFolder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const folderData = {
       name: formData.get('name') as string,
-      category: formData.get('category') as Folder['category'],
+      category: formData.get('category') as string,
       description: formData.get('description') as string,
+      updatedat: new Date().toISOString()
     };
 
     if (editingFolder) {
-      setFolders(prev => prev.map(f => f.id === editingFolder.id ? { ...f, ...folderData, updatedAt: new Date().toISOString().split('T')[0] } : f));
+      const { error } = await supabase.from('folders').update(folderData).eq('id', editingFolder.id);
+      if (!error) {
+        setFolders(prev => prev.map(f => f.id === editingFolder.id ? { ...f, ...folderData } : f));
+      }
     } else {
-      const newFolder: Folder = {
-        id: String(Date.now()),
-        ...folderData,
-        documents: [],
-        updatedAt: new Date().toISOString().split('T')[0]
-      };
-      setFolders(prev => [newFolder, ...prev]);
+      const { data, error } = await supabase.from('folders').insert([folderData]).select().single();
+      if (!error && data) {
+        setFolders(prev => [{...data, documents: []}, ...prev]);
+      }
     }
     setIsFolderModalOpen(false);
     setEditingFolder(null);
   };
 
-  const handleUploadDocument = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUploadDocument = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedFolder) return;
 
-    const formData = new FormData(e.currentTarget);
-    const fileInput = e.currentTarget.querySelector('input[type="file"]') as HTMLInputElement;
-    const file = fileInput.files?.[0];
-    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const fileInput = e.currentTarget.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = fileInput.files?.[0];
+      if (!file) return;
 
-    const newDoc: Document = {
-      id: String(Date.now()),
-      name: file.name,
-      type: file.name.split('.').pop() as any || 'pdf',
-      size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
-      uploadedBy: currentUser.name,
-      uploadedAt: new Date().toISOString().split('T')[0],
-      description: formData.get('description') as string
-    };
+      const apiFormData = new FormData();
+      apiFormData.append('file', file);
 
-    setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [newDoc, ...f.documents], updatedAt: new Date().toISOString().split('T')[0] } : f));
-    setSelectedFolder(prev => {
-      if (!prev) return null;
-      return { ...prev, documents: [newDoc, ...prev.documents] };
-    });
-    setIsUploadModalOpen(false);
-  };
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: apiFormData
+      });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
 
-  const handleDeleteFolder = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm('Excluir esta pasta e todos os seus documentos?')) {
-      setFolders(prev => prev.filter(f => f.id !== id));
+      const newDoc = {
+        folder_id: selectedFolder.id,
+        name: file.name,
+        type: file.name.split('.').pop() || 'pdf',
+        size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
+        uploadedby: currentUser.name,
+        uploadedat: new Date().toISOString(),
+        description: formData.get('description') as string,
+        drive_link: data.link
+      };
+
+      const { data: savedDoc, error } = await supabase.from('documents').insert([newDoc]).select().single();
+      if (error) throw error;
+
+      setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [savedDoc, ...f.documents] } : f));
+      setSelectedFolder(prev => {
+        if (!prev) return null;
+        return { ...prev, documents: [savedDoc, ...prev.documents] };
+      });
+      setIsUploadModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao enviar documento. Verifique as credenciais do Google Drive.');
+    } finally {
+      setUploading(false);
     }
   };
 
-  const handleDeleteDocument = (docId: string) => {
+  const handleDeleteFolder = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm('Excluir esta pasta e todos os seus documentos?')) {
+      const { error } = await supabase.from('folders').delete().eq('id', id);
+      if (!error) {
+        setFolders(prev => prev.filter(f => f.id !== id));
+      }
+    }
+  };
+
+  const handleDeleteDocument = async (docId: string) => {
     if (!selectedFolder) return;
     if (window.confirm('Excluir este documento?')) {
-      setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: f.documents.filter(d => d.id !== docId) } : f));
-      setSelectedFolder(prev => {
-        if (!prev) return null;
-        return { ...prev, documents: prev.documents.filter(d => d.id !== docId) };
-      });
+      const { error } = await supabase.from('documents').delete().eq('id', docId);
+      if (!error) {
+        setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: f.documents.filter(d => d.id !== docId) } : f));
+        setSelectedFolder(prev => {
+          if (!prev) return null;
+          return { ...prev, documents: prev.documents.filter(d => d.id !== docId) };
+        });
+      }
     }
   };
 
   const handleDownloadDocument = (doc: Document) => {
-    const blob = new Blob(['Conteúdo simulado do documento: ' + doc.name], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = doc.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    if (doc.drive_link) {
+      window.open(doc.drive_link, '_blank');
+      return;
+    }
+    alert('Link do documento não encontrado no banco de dados.');
   };
 
   const getFileIcon = (type: string) => {
