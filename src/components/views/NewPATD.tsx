@@ -639,17 +639,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           .from('processes')
           .select('patd_number');
 
-        // Query deleted processes from database
-        const { data: deletedData, error: deletedErr } = await supabase
-          .from('deleted_processes')
-          .select('patd_number');
-
         if (activeErr) console.error('Active query error:', activeErr);
-        if (deletedErr) console.error('Deleted query error:', deletedErr);
 
         const allNumbers = [
           ...(activeData || []).map((p: any) => p.patd_number),
-          ...(deletedData || []).map((p: any) => p.patd_number),
           ...processes.map((p: any) => p.patdNumber)
         ];
 
