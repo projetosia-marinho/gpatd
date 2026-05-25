@@ -91,8 +91,10 @@ export default function Shell({
 
   const primaryNavigation = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
-    { id: 'processos', name: 'Processos', icon: FileText },
-    { id: 'novo-patd', name: 'Novo PATD', icon: PlusCircle },
+    ...(currentUser?.role !== 'Visualizador' ? [
+      { id: 'processos', name: 'Processos', icon: FileText },
+      { id: 'novo-patd', name: 'Novo PATD', icon: PlusCircle },
+    ] : []),
     { id: 'relatorio', name: 'Relatório', icon: BarChart },
     { id: 'usuarios', name: 'Usuários', icon: UsersIcon },
     { id: 'documentos', name: 'Documentos', icon: Files },

@@ -238,11 +238,13 @@ export default function App() {
   }
 
   const handleEditProcess = (process: any) => {
+    if (currentUser.role === 'Visualizador') return;
     setEditingProcess(process);
     setActiveTab('novo-patd');
   };
 
   const handleNewPATD = () => {
+    if (currentUser.role === 'Visualizador') return;
     setEditingProcess(null);
     setActiveTab('novo-patd');
   };
@@ -332,6 +334,9 @@ export default function App() {
   };
 
   const handleTabChange = (tab: string, filter?: string) => {
+    if (currentUser.role === 'Visualizador' && (tab === 'processos' || tab === 'novo-patd')) {
+      return;
+    }
     if (tab === 'novo-patd') {
       setEditingProcess(null);
     }
