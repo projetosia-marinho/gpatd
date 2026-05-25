@@ -611,6 +611,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         uploadedAt: new Date().toLocaleDateString('pt-BR')
       };
 
+      const newHistoryItem = {
+        field: 'Documento PDF',
+        oldValue: '—',
+        newValue: `Adicionado: ${file.name}`,
+        user: currentUser?.name || 'Sistema',
+        date: new Date().toLocaleString('pt-BR')
+      };
+
+      setHistory((prev: any) => [newHistoryItem, ...prev]);
+
       setFormData((prev: any) => ({
         ...prev,
         documents: [...(prev.documents || []), newDoc]
@@ -1006,7 +1016,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             onClick={handleFileClick}
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0 ${formData.documents && formData.documents.length > 0 ? 'ring-2 ring-emerald-500' : ''}`}
+            className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0 ${formData.documents && formData.documents.length > 0 ? 'ring-2 ring-inset ring-emerald-500' : ''}`}
           >
             <div className={`p-2 rounded-lg transition-all ${formData.documents && formData.documents.length > 0 ? 'bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white'}`}>
               {formData.documents && formData.documents.length > 0 ? <FileText size={18} /> : <FilePlus size={18} />}
@@ -1175,6 +1185,15 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                           <button
                             type="button"
                             onClick={() => {
+                              const newHistoryItem = {
+                                field: 'Documento PDF',
+                                oldValue: `Removido: ${doc.name}`,
+                                newValue: '—',
+                                user: currentUser?.name || 'Sistema',
+                                date: new Date().toLocaleString('pt-BR')
+                              };
+                              setHistory((prev: any) => [newHistoryItem, ...prev]);
+
                               setFormData((prev: any) => ({
                                 ...prev,
                                 documents: prev.documents.filter((_: any, idx: number) => idx !== docIdx)
