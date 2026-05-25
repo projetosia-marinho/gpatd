@@ -161,6 +161,52 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
     setEndDate('');
   };
 
+  const exportToCSV = () => {
+    const headers = [
+      'Nº PATD', 'Militar Arrolado', 'SARAM', 'Posto', 'Quadro', 'Especialidade', 'Divisão', 'Setor',
+      'Data de Início', 'Data de Término', 'Status', 'Punição', 'Dias Punição', 'Data Punição', 
+      'Boletim', 'Grade', 'Apurador', 'Aplicador', 'Resumo Fato', 'Observações'
+    ];
+
+    const rows = filteredProcesses.map(p => [
+      p.patdNumber, 
+      `"${(p.militar || '').replace(/"/g, '""')}"`, 
+      p.saram, 
+      p.posto, 
+      p.quadro, 
+      p.especialidade, 
+      `"${(p.divisao || '').replace(/"/g, '""')}"`, 
+      `"${(p.setor || '').replace(/"/g, '""')}"`,
+      p.dataInicio ? new Date(p.dataInicio).toLocaleDateString('pt-BR') : '',
+      p.dataTermino ? new Date(p.dataTermino).toLocaleDateString('pt-BR') : '',
+      p.status,
+      p.punicao,
+      p.diasPunicao || 0,
+      p.dataPunicao ? new Date(p.dataPunicao).toLocaleDateString('pt-BR') : '',
+      `"${(p.boletim || '').replace(/"/g, '""')}"`,
+      `"${(p.nGrade || '').replace(/"/g, '""')}"`,
+      `"${(p.apurador || '').replace(/"/g, '""')}"`,
+      `"${(p.aplicador || '').replace(/"/g, '""')}"`,
+      `"${(p.resumoFato || '').replace(/"/g, '""')}"`,
+      `"${(p.observacoes || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+
+    // Add BOM for Excel UTF-8 support
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `relatorio_patd_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-10 pb-20 print:pb-0 print:space-y-0">
       {/* Header */}
@@ -170,6 +216,13 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
           <p className="text-slate-500 dark:text-slate-400 mt-1">Gere relatórios detalhados com filtros avançados de processos.</p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+          <button 
+            onClick={exportToCSV}
+            className="h-11 px-5 rounded-xl bg-emerald-600 text-white font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg active:scale-95 shrink-0 whitespace-nowrap w-full sm:w-auto justify-center"
+          >
+            <FileText size={18} />
+            Exportar CSV
+          </button>
           <button 
             onClick={() => setShowPreview(true)}
             className="h-11 px-5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-all shadow-lg active:scale-95 shrink-0 whitespace-nowrap w-full sm:w-auto justify-center"
