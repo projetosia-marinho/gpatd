@@ -227,7 +227,7 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
         ...user,
         email: user.email || '',
         login: user.login || '',
-        senha: user.senha || '',
+        senha: '', // Oculta a senha atual do administrador
         telefone: user.telefone || '',
         ramal: user.ramal || ''
       });

@@ -186,6 +186,16 @@ export default function App() {
     };
     
     fetchData();
+
+    const processChannel = supabase.channel('public:processes')
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'processes' }, (payload) => {
+        setProcesses(prev => prev.filter(p => p.id !== payload.old.id));
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(processChannel);
+    };
   }, [session]);
   const [editingProcess, setEditingProcess] = useState<any>(null);
   const [processFilter, setProcessFilter] = useState<string>('');
