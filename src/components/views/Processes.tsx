@@ -228,7 +228,6 @@ export default function Processes({
         setProcesses(prev => prev.filter(p => p.id !== processToDelete.id));
         if (selectedProcess?.id === processToDelete.id) setSelectedProcess(null);
         setProcessToDelete(null);
-        alert('Processo excluído e registrado na auditoria com sucesso!');
       } catch (err: any) {
         console.error('Error deleting process:', err);
         alert(`Erro ao excluir processo: ${err.message || err}`);

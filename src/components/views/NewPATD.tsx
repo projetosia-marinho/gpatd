@@ -625,8 +625,6 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         ...prev,
         documents: [...(prev.documents || []), newDoc]
       }));
-
-      alert('Documento PDF inserido com sucesso!');
     } catch (err: any) {
       console.error('Error uploading file:', err);
       alert(`Erro ao fazer upload do documento: ${err.message || err}`);
