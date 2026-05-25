@@ -278,7 +278,7 @@ export default function Processes({
     }
 
     return result;
-  }, [searchTerm, sortConfig, filterDivisao, filterStatus, filterPunicao, filterAno]);
+  }, [processes, searchTerm, globalSearchTerm, sortConfig, filterDivisao, filterStatus, filterPunicao, filterAno]);
 
   // Reset visible items when filters change
   React.useEffect(() => {
