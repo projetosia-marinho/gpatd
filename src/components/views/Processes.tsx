@@ -140,6 +140,8 @@ export default function Processes({
   const [visibleItems, setVisibleItems] = useState(20);
   const [selectedProcess, setSelectedProcess] = useState<Process | null>(null);
   const [processToDelete, setProcessToDelete] = useState<Process | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
   const loadingRef = React.useRef<HTMLDivElement>(null);
 
   // Audit States
@@ -231,6 +233,36 @@ export default function Processes({
       } catch (err: any) {
         console.error('Error deleting process:', err);
         alert(`Erro ao excluir processo: ${err.message || err}`);
+      }
+    }
+  };
+
+  const confirmBulkDelete = async () => {
+    if (selectedIds.length > 0) {
+      try {
+        const processesToDelete = processes.filter(p => selectedIds.includes(p.id));
+
+        const auditRecords = processesToDelete.map(p => ({
+          process_id: p.id,
+          patd_number: p.patdNumber,
+          militar: p.militar,
+          saram: p.saram,
+          divisao: p.divisao,
+          history: p.history || [],
+          deleted_by: currentUser?.name || 'Sistema'
+        }));
+
+        const { error: auditError } = await supabase.from('deleted_processes').insert(auditRecords);
+        if (auditError) throw auditError;
+
+        const { error } = await supabase.from('processes').delete().in('id', selectedIds);
+        if (error) throw error;
+
+        setProcesses(prev => prev.filter(p => !selectedIds.includes(p.id)));
+        setSelectedIds([]);
+        setShowBulkDeleteConfirm(false);
+      } catch (err: any) {
+        console.error('Error deleting processes:', err);
       }
     }
   };
@@ -368,6 +400,15 @@ export default function Processes({
             </button>
           )}
           
+          {selectedIds.length > 0 && (
+            <button 
+              onClick={() => setShowBulkDeleteConfirm(true)}
+              className="flex items-center gap-2 h-11 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-lg shadow-rose-500/20"
+            >
+              <Trash2 size={16} />
+              Excluir ({selectedIds.length})
+            </button>
+          )}
           <button 
             onClick={() => onNew ? onNew() : setActiveTab?.('novo-patd')}
             className="flex items-center gap-2 h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-500/20"
@@ -418,6 +459,22 @@ export default function Processes({
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/30 text-left">
+                <th className="px-6 py-5 w-12 first:pl-8">
+                  <div className="flex items-center justify-center">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      checked={displayedData.length > 0 && selectedIds.length === displayedData.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedIds(displayedData.map(p => p.id));
+                        } else {
+                          setSelectedIds([]);
+                        }
+                      }}
+                    />
+                  </div>
+                </th>
                 {[
                   { key: 'patdNumber', label: 'Nº PATD' },
                   { key: 'militar', label: 'Militar Arrolado' },
@@ -432,7 +489,7 @@ export default function Processes({
                   <th 
                     key={col.key}
                     onClick={() => handleSort(col.key as keyof Process)}
-                    className="px-6 py-5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest cursor-pointer group hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors first:pl-8 last:pr-8"
+                    className="px-6 py-5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest cursor-pointer group hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors last:pr-8"
                   >
                     <div className="flex items-center gap-2">
                       {col.label}
@@ -459,7 +516,23 @@ export default function Processes({
                     }}
                     className="hover:bg-slate-50/80 dark:hover:bg-indigo-500/5 transition-all group/row cursor-pointer"
                   >
-                    <td className="px-6 py-5 pl-8">
+                    <td className="px-6 py-5 pl-8 w-12" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center justify-center">
+                        <input 
+                          type="checkbox" 
+                          className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                          checked={selectedIds.includes(process.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedIds(prev => [...prev, process.id]);
+                            } else {
+                              setSelectedIds(prev => prev.filter(id => id !== process.id));
+                            }
+                          }}
+                        />
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
                       <span className="text-sm font-bold text-slate-900 dark:text-white font-mono">{process.patdNumber}</span>
                     </td>
                     <td className="px-6 py-5">
@@ -813,6 +886,54 @@ export default function Processes({
                     </button>
                     <button 
                       onClick={confirmDelete}
+                      className="h-12 rounded-xl bg-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-rose-500/20 hover:bg-rose-700 transition-all font-display"
+                    >
+                      Sim, Excluir
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* BULK DELETE CONFIRMATION MODAL */}
+      <AnimatePresence>
+        {showBulkDeleteConfirm && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowBulkDeleteConfirm(false)}
+              className="fixed inset-0 z-[100] bg-slate-950/40 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-[110] p-4 pointer-events-none"
+            >
+              <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden pointer-events-auto">
+                <div className="p-8 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 mx-auto mb-6">
+                    <Trash2 size={32} />
+                  </div>
+                  <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white mb-2">Confirmar Exclusão em Massa</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-8">
+                    Tem certeza que deseja excluir os <span className="font-bold text-slate-900 dark:text-white">{selectedIds.length}</span> processos selecionados? 
+                    <br />Esta ação não poderá ser desfeita.
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => setShowBulkDeleteConfirm(false)}
+                      className="h-12 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-display"
+                    >
+                      Não, Cancelar
+                    </button>
+                    <button 
+                      onClick={confirmBulkDelete}
                       className="h-12 rounded-xl bg-rose-600 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-rose-500/20 hover:bg-rose-700 transition-all font-display"
                     >
                       Sim, Excluir
