@@ -192,8 +192,8 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
     ]);
 
     const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.join(','))
+      headers.join(';'),
+      ...rows.map(row => row.join(';'))
     ].join('\n');
 
     // Add BOM for Excel UTF-8 support
