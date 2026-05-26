@@ -55,6 +55,7 @@ export default function Documents({ currentUser }: { currentUser: any }) {
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const categories = ['Todas', 'Modelos', 'Legislação', 'Manuais', 'Outros'];
 
@@ -163,6 +164,7 @@ export default function Documents({ currentUser }: { currentUser: any }) {
         return { ...prev, documents: [savedDoc, ...(prev.documents || [])] };
       });
       setIsUploadModalOpen(false);
+      setSelectedFile(null);
     } catch (err: any) {
       console.error('Upload Error:', err);
       alert('Erro ao enviar documento. Detalhe: ' + (err.message || JSON.stringify(err)));
@@ -529,7 +531,13 @@ export default function Documents({ currentUser }: { currentUser: any }) {
                     <p className="text-xs text-slate-500">Adicione arquivos a esta pasta específica.</p>
                   </div>
                 </div>
-                <button onClick={() => setIsUploadModalOpen(false)} className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-400">
+                <button 
+                  onClick={() => { 
+                    setIsUploadModalOpen(false); 
+                    setSelectedFile(null); 
+                  }} 
+                  className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-400"
+                >
                   <X size={20} />
                 </button>
               </div>
@@ -538,12 +546,25 @@ export default function Documents({ currentUser }: { currentUser: any }) {
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Arquivo</label>
                   <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-10 flex flex-col items-center justify-center gap-4 hover:border-indigo-400 transition-colors cursor-pointer group bg-slate-50/50 dark:bg-slate-800/30">
-                    <input type="file" required className="absolute inset-0 opacity-0 cursor-pointer" />
+                    <input 
+                      type="file" 
+                      required 
+                      className="absolute inset-0 opacity-0 cursor-pointer" 
+                      onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                    />
                     <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform shadow-sm">
-                      <Download size={24} />
+                      <Download size={24} className={selectedFile ? "text-indigo-500" : ""} />
                     </div>
-                    <p className="text-sm font-bold text-slate-500">Clique para selecionar</p>
-                    <p className="text-[9px] text-slate-400 uppercase font-black">Máximo 20MB</p>
+                    <p className="text-sm font-bold text-slate-500 text-center px-4">
+                      {selectedFile ? (
+                        <span className="text-indigo-600 dark:text-indigo-400 break-all">{selectedFile.name}</span>
+                      ) : (
+                        "Clique para selecionar"
+                      )}
+                    </p>
+                    <p className="text-[9px] text-slate-400 uppercase font-black">
+                      {selectedFile ? `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB` : 'Máximo 20MB'}
+                    </p>
                   </div>
                 </div>
 
@@ -554,9 +575,10 @@ export default function Documents({ currentUser }: { currentUser: any }) {
 
                 <button 
                   type="submit"
-                  className="w-full h-14 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-[0.2em] shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all"
+                  disabled={uploading}
+                  className="w-full h-14 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-[0.2em] shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Confirmar Upload
+                  {uploading ? 'Enviando...' : 'Confirmar Upload'}
                 </button>
               </form>
             </motion.div>
