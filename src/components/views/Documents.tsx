@@ -118,16 +118,22 @@ export default function Documents({ currentUser }: { currentUser: any }) {
   const handleUploadDocument = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedFolder) return;
+    if (!selectedFile) {
+      alert('Por favor, selecione um arquivo para upload.');
+      return;
+    }
+    if (selectedFile.size > 20 * 1024 * 1024) {
+      alert('O arquivo excede o limite máximo de 20MB.');
+      return;
+    }
 
     setUploading(true);
     try {
       const formData = new FormData(e.currentTarget);
-      const fileInput = e.currentTarget.querySelector('input[type="file"]') as HTMLInputElement;
-      const file = fileInput.files?.[0];
-      if (!file) return;
+      const file = selectedFile;
 
       // 1. Upload to Supabase Storage
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split('.').pop() || 'pdf';
       const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
       const filePath = `${selectedFolder.id}/${fileName}`;
 
@@ -135,7 +141,10 @@ export default function Documents({ currentUser }: { currentUser: any }) {
         .from('documents')
         .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Supabase Storage Error:', uploadError);
+        throw new Error('Falha no upload para o storage: ' + uploadError.message);
+      }
 
       // 2. Get Public URL
       const { data: { publicUrl } } = supabase.storage
@@ -146,16 +155,19 @@ export default function Documents({ currentUser }: { currentUser: any }) {
       const newDoc = {
         folder_id: selectedFolder.id,
         name: file.name,
-        type: fileExt || 'pdf',
+        type: fileExt,
         size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
-        uploadedby: currentUser.name,
+        uploadedby: currentUser.name || 'Usuário',
         uploadedat: new Date().toISOString(),
         description: formData.get('description') as string,
         drive_link: publicUrl // Repurposing drive_link to store the Supabase URL
       };
 
       const { data: savedDoc, error: dbError } = await supabase.from('documents').insert([newDoc]).select().single();
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error('Supabase Database Error:', dbError);
+        throw new Error('Falha ao salvar no banco de dados: ' + dbError.message);
+      }
 
       // 4. Update UI
       setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [savedDoc, ...(f.documents || [])] } : f));
@@ -423,13 +435,13 @@ export default function Documents({ currentUser }: { currentUser: any }) {
                     <div className="pt-4 border-t border-slate-50 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                          <Calendar size={12} /> {doc.uploadedAt}
+                          <Calendar size={12} /> {new Date(doc.uploadedat).toLocaleDateString('pt-BR')}
                         </span>
                         <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-tighter border-l pl-3 dark:border-slate-800">
                           {doc.size}
                         </span>
                       </div>
-                      <span className="text-[9px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">{doc.uploadedBy}</span>
+                      <span className="text-[9px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">{doc.uploadedby}</span>
                     </div>
                   </div>
                 </motion.div>
