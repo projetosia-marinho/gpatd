@@ -557,27 +557,27 @@ export default function Documents({ currentUser }: { currentUser: any }) {
               <form className="space-y-6" onSubmit={handleUploadDocument}>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Arquivo</label>
-                  <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-10 flex flex-col items-center justify-center gap-4 hover:border-indigo-400 transition-colors cursor-pointer group bg-slate-50/50 dark:bg-slate-800/30">
+                  <label className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-10 flex flex-col items-center justify-center gap-4 hover:border-indigo-400 transition-colors cursor-pointer group bg-slate-50/50 dark:bg-slate-800/30 overflow-hidden block w-full">
                     <input 
                       type="file" 
                       required 
-                      className="absolute inset-0 opacity-0 cursor-pointer" 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
                       onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                     />
-                    <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform shadow-sm">
+                    <div className="relative z-0 h-14 w-14 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform shadow-sm pointer-events-none">
                       <Download size={24} className={selectedFile ? "text-indigo-500" : ""} />
                     </div>
-                    <p className="text-sm font-bold text-slate-500 text-center px-4">
+                    <p className="relative z-0 text-sm font-bold text-slate-500 text-center px-4 pointer-events-none">
                       {selectedFile ? (
                         <span className="text-indigo-600 dark:text-indigo-400 break-all">{selectedFile.name}</span>
                       ) : (
                         "Clique para selecionar"
                       )}
                     </p>
-                    <p className="text-[9px] text-slate-400 uppercase font-black">
+                    <p className="relative z-0 text-[9px] text-slate-400 uppercase font-black pointer-events-none">
                       {selectedFile ? `${(selectedFile.size / 1024 / 1024).toFixed(2)} MB` : 'Máximo 20MB'}
                     </p>
-                  </div>
+                  </label>
                 </div>
 
                 <div className="space-y-2">
