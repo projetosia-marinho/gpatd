@@ -18,10 +18,11 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Building2,
-  X,
-  History as HistoryIcon,
-  Download
+  Building2, 
+  X, 
+  History as HistoryIcon, 
+  Download,
+  Printer
 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { Division } from './Divisions';
@@ -436,6 +437,8 @@ const HistoryModal = ({ isOpen, onClose, historyData }: { isOpen: boolean, onClo
 export default function NewPATD({ initialData, onSave, divisions = [], currentUser, processes = [] }: { initialData?: any, onSave?: (data: any) => void, divisions?: Division[], currentUser?: any, processes?: any[] }) {
   const currentYear = new Date().getFullYear();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isDocModalOpen, setIsDocModalOpen] = useState(false);
+  const [activeDocTab, setActiveDocTab] = useState<'capa' | 'despacho' | 'fatd'>('capa');
   const [isSaving, setIsSaving] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [errors, setErrors] = useState<any>({});
@@ -466,6 +469,540 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     observacoes: '',
     documents: []
   });
+
+  const printDocument = (type: string) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    const formatDateStr = (dateStr: string) => {
+      if (!dateStr) return '___/___/_____';
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    };
+
+    const getDocHTML = () => {
+      switch(type) {
+        case 'capa':
+          return `
+            <div class="sheet capa font-serif">
+              <div class="header text-center font-bold">
+                <p class="uppercase font-black text-sm">Ministério da Defesa</p>
+                <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
+                <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+              </div>
+              
+              <div class="divider"></div>
+              
+              <div class="title text-center font-bold uppercase mt-16">
+                <h2>PROCESSO ADMINISTRATIVO DE TRANSGRESSÃO DISCIPLINAR</h2>
+                <h1 class="patd-num text-xl mt-4 font-black">PATD Nº ${formData.patdNumber || '___/___/_____'}</h1>
+              </div>
+              
+              <div class="meta-box font-medium mt-24">
+                <p><strong>ARROLADO:</strong> ${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</p>
+                <p><strong>SARAM:</strong> ${formData.saram || '_______'}</p>
+                <p><strong>ESPECIALIDADE:</strong> ${formData.especialidade || '_________'}</p>
+                <p><strong>DIVISÃO/SETOR:</strong> ${formData.divisao} / ${formData.setor || '_______'}</p>
+              </div>
+              
+              <div class="meta-box font-medium mt-8 border-top pt-4">
+                <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apurador || '___________________________'}</p>
+                <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicador || '___________________________'}</p>
+              </div>
+
+              <div class="meta-box font-medium mt-8 border-top pt-4">
+                <p><strong>DATA DE INSTAURAÇÃO:</strong> ${formatDateStr(formData.dataInicio)}</p>
+                <p><strong>DATA DE CONCLUSÃO:</strong> ${formatDateStr(formData.dataTermino)}</p>
+                <p><strong>STATUS ATUAL:</strong> ${formData.status}</p>
+              </div>
+              
+              <div class="footer-note text-center mt-32 text-xs font-bold uppercase tracking-widest text-slate-500">
+                <p>GPATD - SISTEMA DE CONTROLE DE PROCESSOS</p>
+              </div>
+            </div>
+          `;
+        case 'despacho':
+          return `
+            <div class="sheet despacho font-serif">
+              <div class="header text-center font-bold">
+                <p class="uppercase font-black text-sm">Ministério da Defesa</p>
+                <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
+                <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+              </div>
+              
+              <div class="divider"></div>
+              
+              <div class="title text-center font-bold uppercase mt-8">
+                <h2 class="text-sm font-black">DESPACHO DE INSTAURAÇÃO E ABERTURA</h2>
+                <h3 class="patd-num text-sm mt-1">PATD Nº ${formData.patdNumber || '___/___/_____'}</h3>
+              </div>
+              
+              <div class="body-text mt-12 text-justify">
+                <p class="indent-12 leading-relaxed">
+                  1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
+                  <strong>${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</strong>, 
+                  SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro, 
+                  <strong>RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
+                  <strong>${formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
+                </p>
+                <p class="indent-12 leading-relaxed mt-4">
+                  2. Designo o <strong>${formData.apurador || '___________________________'}</strong> para atuar como Encarregado da presente apuração, 
+                  competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
+                </p>
+                <p class="indent-12 leading-relaxed mt-4">
+                  3. Conceda-se ao arrolado o prazo regulamentar para apresentação de Defesa Prévia e razões de justificativa, nos termos das normas vigentes.
+                </p>
+                <p class="indent-12 leading-relaxed mt-4">
+                  4. Publique-se. Registre-se e cumpra-se.
+                </p>
+              </div>
+              
+              <div class="date text-right mt-16 font-medium">
+                <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+              </div>
+              
+              <div class="signature-box text-center mt-24">
+                <div class="line mx-auto w-64 border-bottom mb-2"></div>
+                <p class="font-bold uppercase">${formData.aplicador || '___________________________'}</p>
+                <p class="text-xs uppercase text-slate-500">Autoridade Aplicadora / Competente</p>
+              </div>
+            </div>
+          `;
+        case 'fatd':
+          return `
+            <div class="sheet fatd font-serif">
+              <div class="header text-center font-bold">
+                <p class="uppercase font-black text-sm">Ministério da Defesa</p>
+                <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
+                <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+              </div>
+              
+              <div class="divider"></div>
+              
+              <div class="title text-center font-bold uppercase mt-6">
+                <h2 class="text-md font-black">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR (FATD)</h2>
+                <h3 class="patd-num text-sm mt-1">PATD Nº ${formData.patdNumber || '___/___/_____'}</h3>
+              </div>
+              
+              <div class="section-title mt-8 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">1. IDENTIFICAÇÃO DO MILITAR ACUSADO</div>
+              <table class="w-full text-xs mt-2 border-collapse">
+                <tr>
+                  <td class="p-2 border" colspan="2"><strong>NOME COMPLETO:</strong> ${formData.nomeCompleto || '___________________________'}</td>
+                  <td class="p-2 border"><strong>SARAM:</strong> ${formData.saram || '_______'}</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border"><strong>POSTO/GRAD:</strong> ${formData.posto}</td>
+                  <td class="p-2 border"><strong>QUADRO:</strong> ${formData.quadro}</td>
+                  <td class="p-2 border"><strong>ESPECIALIDADE:</strong> ${formData.especialidade || '________'}</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border" colspan="2"><strong>DIVISÃO:</strong> ${formData.divisao}</td>
+                  <td class="p-2 border"><strong>SETOR:</strong> ${formData.setor || '_______'}</td>
+                </tr>
+              </table>
+
+              <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">2. DESCRIÇÃO DO FATO DISCIPLINAR (SÍNTESE)</div>
+              <div class="p-3 border text-xs text-justify leading-relaxed min-h-24 bg-slate-50 italic">
+                ${formData.resumoFato || 'Sem fatos cadastrados até o momento.'}
+              </div>
+
+              <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">3. CIENTIFICAÇÃO E PRAZO PARA DEFESA</div>
+              <div class="p-3 border text-xs text-justify leading-relaxed">
+                Fica o militar arrolado cientificado do fato que lhe é imputado, bem como de que dispõe do prazo regulamentar de <strong>03 (três) dias úteis</strong>, a contar do recebimento deste formulário, para apresentar por escrito sua justificativa de defesa (Defesa Prévia), caso queira, perante o encarregado da apuração.
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 mt-8 text-xs">
+                <div class="p-3 border rounded-lg">
+                  <p class="font-bold">NOTIFICAÇÃO DO ACUSADO:</p>
+                  <p class="mt-4">Ciente em: ____/____/________</p>
+                  <div class="line mt-8 border-bottom w-full"></div>
+                  <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Acusado</p>
+                </div>
+                
+                <div class="p-3 border rounded-lg">
+                  <p class="font-bold">ENTREGA PELO ENCARREGADO:</p>
+                  <p class="mt-4">Entregue em: ____/____/________</p>
+                  <div class="line mt-8 border-bottom w-full"></div>
+                  <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Encarregado (${formData.apurador || 'Apurador'})</p>
+                </div>
+              </div>
+            </div>
+          `;
+        default:
+          return '';
+      }
+    };
+
+    const css = `
+      body {
+        background-color: #f1f5f9;
+        margin: 0;
+        padding: 40px 20px;
+        font-family: 'Times New Roman', Times, serif;
+        display: flex;
+        justify-content: center;
+      }
+      .sheet {
+        background-color: #ffffff;
+        width: 210mm;
+        min-height: 297mm;
+        padding: 30mm 20mm 20mm 20mm;
+        box-sizing: border-box;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        position: relative;
+      }
+      .text-center { text-align: center; }
+      .text-right { text-align: right; }
+      .text-justify { text-align: justify; }
+      .font-bold { font-weight: bold; }
+      .uppercase { text-transform: uppercase; }
+      .mt-4 { margin-top: 1rem; }
+      .mt-8 { margin-top: 2rem; }
+      .mt-12 { margin-top: 3rem; }
+      .mt-16 { margin-top: 4rem; }
+      .mt-24 { margin-top: 6rem; }
+      .mt-32 { margin-top: 8rem; }
+      .text-sm { font-size: 0.875rem; }
+      .text-xs { font-size: 0.75rem; }
+      .text-md { font-size: 1.125rem; }
+      .text-xl { font-size: 1.25rem; }
+      .w-full { width: 100%; }
+      .w-64 { width: 16rem; }
+      .mx-auto { margin-left: auto; margin-right: auto; }
+      .grid { display: grid; }
+      .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .gap-4 { gap: 1rem; }
+      .border { border: 1px solid #cbd5e1; }
+      .border-collapse { border-collapse: collapse; }
+      .p-2 { padding: 0.5rem; }
+      .p-3 { padding: 0.75rem; }
+      .divider {
+        margin: 20px 0;
+        border-bottom: 2px double #000;
+      }
+      .border-bottom {
+        border-bottom: 1px solid #000;
+      }
+      .border-top {
+        border-top: 1px solid #e2e8f0;
+      }
+      .pt-4 { padding-top: 1rem; }
+      .indent-12 { text-indent: 3rem; }
+      .leading-relaxed { line-height: 1.625; }
+      .section-title {
+        font-family: sans-serif;
+        border-left: 4px solid #4f46e5;
+        padding-left: 8px;
+      }
+      .bg-slate-100 { background-color: #f1f5f9; }
+      .bg-slate-50 { background-color: #f8fafc; }
+      .min-h-24 { min-height: 6rem; }
+      .italic { font-style: italic; }
+      .rounded-lg { border-radius: 0.5rem; }
+      @media print {
+        body {
+          background-color: transparent;
+          padding: 0;
+        }
+        .sheet {
+          box-shadow: none;
+          width: auto;
+          min-height: auto;
+          padding: 10mm 10mm 10mm 10mm;
+        }
+      }
+    `;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${type.toUpperCase()} - ${formData.patdNumber || 'PATD'}</title>
+          <style>${css}</style>
+        </head>
+        <body>
+          ${getDocHTML()}
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() {
+                window.close();
+              }, 1000);
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  const printAllDocuments = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    
+    const formatDateStr = (dateStr: string) => {
+      if (!dateStr) return '___/___/_____';
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    };
+
+    const css = `
+      body {
+        background-color: #f1f5f9;
+        margin: 0;
+        padding: 40px 20px;
+        font-family: 'Times New Roman', Times, serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+      }
+      .sheet {
+        background-color: #ffffff;
+        width: 210mm;
+        min-height: 297mm;
+        padding: 30mm 20mm 20mm 20mm;
+        box-sizing: border-box;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        position: relative;
+        page-break-after: always;
+      }
+      .sheet:last-child {
+        page-break-after: avoid;
+      }
+      .text-center { text-align: center; }
+      .text-right { text-align: right; }
+      .text-justify { text-align: justify; }
+      .font-bold { font-weight: bold; }
+      .uppercase { text-transform: uppercase; }
+      .mt-4 { margin-top: 1rem; }
+      .mt-6 { margin-top: 1.5rem; }
+      .mt-8 { margin-top: 2rem; }
+      .mt-12 { margin-top: 3rem; }
+      .mt-16 { margin-top: 4rem; }
+      .mt-24 { margin-top: 6rem; }
+      .mt-32 { margin-top: 8rem; }
+      .text-sm { font-size: 0.875rem; }
+      .text-xs { font-size: 0.75rem; }
+      .text-md { font-size: 1.125rem; }
+      .text-xl { font-size: 1.25rem; }
+      .w-full { width: 100%; }
+      .w-64 { width: 16rem; }
+      .mx-auto { margin-left: auto; margin-right: auto; }
+      .grid { display: grid; }
+      .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .gap-4 { gap: 1rem; }
+      .border { border: 1px solid #cbd5e1; }
+      .border-collapse { border-collapse: collapse; }
+      .p-1 { padding: 0.25rem; }
+      .p-2 { padding: 0.5rem; }
+      .p-3 { padding: 0.75rem; }
+      .divider {
+        margin: 20px 0;
+        border-bottom: 2px double #000;
+      }
+      .border-bottom {
+        border-bottom: 1px solid #000;
+      }
+      .border-top {
+        border-top: 1px solid #e2e8f0;
+      }
+      .pt-4 { padding-top: 1rem; }
+      .indent-12 { text-indent: 3rem; }
+      .leading-relaxed { line-height: 1.625; }
+      .section-title {
+        font-family: sans-serif;
+        border-left: 4px solid #4f46e5;
+        padding-left: 8px;
+      }
+      .bg-slate-100 { background-color: #f1f5f9; }
+      .bg-slate-50 { background-color: #f8fafc; }
+      .min-h-24 { min-height: 6rem; }
+      .italic { font-style: italic; }
+      .rounded-lg { border-radius: 0.5rem; }
+      @media print {
+        body {
+          background-color: transparent;
+          padding: 0;
+          gap: 0;
+        }
+        .sheet {
+          box-shadow: none;
+          width: auto;
+          min-height: auto;
+          padding: 10mm 10mm 10mm 10mm;
+        }
+      }
+    `;
+
+    const capaHTML = `
+      <div class="sheet capa font-serif">
+        <div class="header text-center font-bold">
+          <p class="uppercase font-black text-sm">Ministério da Defesa</p>
+          <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
+          <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="title text-center font-bold uppercase mt-16">
+          <h2>PROCESSO ADMINISTRATIVO DE TRANSGRESSÃO DISCIPLINAR</h2>
+          <h1 class="patd-num text-xl mt-4 font-black">PATD Nº ${formData.patdNumber || '___/___/_____'}</h1>
+        </div>
+        
+        <div class="meta-box font-medium mt-24">
+          <p><strong>ARROLADO:</strong> ${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</p>
+          <p><strong>SARAM:</strong> ${formData.saram || '_______'}</p>
+          <p><strong>ESPECIALIDADE:</strong> ${formData.especialidade || '_________'}</p>
+          <p><strong>DIVISÃO/SETOR:</strong> ${formData.divisao} / ${formData.setor || '_______'}</p>
+        </div>
+        
+        <div class="meta-box font-medium mt-8 border-top pt-4">
+          <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apurador || '___________________________'}</p>
+          <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicador || '___________________________'}</p>
+        </div>
+
+        <div class="meta-box font-medium mt-8 border-top pt-4">
+          <p><strong>DATA DE INSTAURAÇÃO:</strong> ${formatDateStr(formData.dataInicio)}</p>
+          <p><strong>DATA DE CONCLUSÃO:</strong> ${formatDateStr(formData.dataTermino)}</p>
+          <p><strong>STATUS ATUAL:</strong> ${formData.status}</p>
+        </div>
+        
+        <div class="footer-note text-center mt-32 text-xs font-bold uppercase tracking-widest text-slate-500">
+          <p>GPATD - SISTEMA DE CONTROLE DE PROCESSOS</p>
+        </div>
+      </div>
+    `;
+
+    const despachoHTML = `
+      <div class="sheet despacho font-serif">
+        <div class="header text-center font-bold">
+          <p class="uppercase font-black text-sm">Ministério da Defesa</p>
+          <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
+          <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="title text-center font-bold uppercase mt-8">
+          <h2 class="text-sm font-black">DESPACHO DE INSTAURAÇÃO E ABERTURA</h2>
+          <h3 class="patd-num text-sm mt-1">PATD Nº ${formData.patdNumber || '___/___/_____'}</h3>
+        </div>
+        
+        <div class="body-text mt-12 text-justify">
+          <p class="indent-12 leading-relaxed">
+            1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
+            <strong>${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</strong>, 
+            SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro, 
+            <strong>RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
+            <strong>${formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
+          </p>
+          <p class="indent-12 leading-relaxed mt-4">
+            2. Designo o <strong>${formData.apurador || '___________________________'}</strong> para atuar as encarregado da presente apuração, 
+            competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
+          </p>
+          <p class="indent-12 leading-relaxed mt-4">
+            3. Conceda-se ao arrolado o prazo regulamentar para apresentação de Defesa Prévia e razões de justificativa, nos termos das normas vigentes.
+          </p>
+          <p class="indent-12 leading-relaxed mt-4">
+            4. Publique-se. Registre-se e cumpra-se.
+          </p>
+        </div>
+        
+        <div class="date text-right mt-16 font-medium">
+          <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+        </div>
+        
+        <div class="signature-box text-center mt-24">
+          <div class="line mx-auto w-64 border-bottom mb-2"></div>
+          <p class="font-bold uppercase">${formData.aplicador || '___________________________'}</p>
+          <p class="text-xs uppercase text-slate-500">Autoridade Aplicadora / Competente</p>
+        </div>
+      </div>
+    `;
+
+    const fatdHTML = `
+      <div class="sheet fatd font-serif">
+        <div class="header text-center font-bold">
+          <p class="uppercase font-black text-sm">Ministério da Defesa</p>
+          <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
+          <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="title text-center font-bold uppercase mt-6">
+          <h2 class="text-md font-black">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR (FATD)</h2>
+          <h3 class="patd-num text-sm mt-1">PATD Nº ${formData.patdNumber || '___/___/_____'}</h3>
+        </div>
+        
+        <div class="section-title mt-8 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">1. IDENTIFICAÇÃO DO MILITAR ACUSADO</div>
+        <table class="w-full text-xs mt-2 border-collapse">
+          <tr>
+            <td class="p-2 border" colspan="2"><strong>NOME COMPLETO:</strong> ${formData.nomeCompleto || '___________________________'}</td>
+            <td class="p-2 border"><strong>SARAM:</strong> ${formData.saram || '_______'}</td>
+          </tr>
+          <tr>
+            <td class="p-2 border"><strong>POSTO/GRAD:</strong> ${formData.posto}</td>
+            <td class="p-2 border"><strong>QUADRO:</strong> ${formData.quadro}</td>
+            <td class="p-2 border"><strong>ESPECIALIDADE:</strong> ${formData.especialidade || '________'}</td>
+          </tr>
+          <tr>
+            <td class="p-2 border" colspan="2"><strong>DIVISÃO:</strong> ${formData.divisao}</td>
+            <td class="p-2 border"><strong>SETOR:</strong> ${formData.setor || '_______'}</td>
+          </tr>
+        </table>
+
+        <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">2. DESCRIÇÃO DO FATO DISCIPLINAR (SÍNTESE)</div>
+        <div class="p-3 border text-xs text-justify leading-relaxed min-h-24 bg-slate-50 italic">
+          ${formData.resumoFato || 'Sem fatos cadastrados até o momento.'}
+        </div>
+
+        <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">3. CIENTIFICAÇÃO E PRAZO PARA DEFESA</div>
+        <div class="p-3 border text-xs text-justify leading-relaxed">
+          Fica o militar arrolado cientificado do fato que lhe é imputado, bem como de que dispõe do prazo regulamentar de <strong>03 (três) dias úteis</strong>, a contar do recebimento deste formulário, para apresentar por escrito sua justificativa de defesa (Defesa Prévia), caso queira, perante o encarregado da apuração.
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-8 text-xs">
+          <div class="p-3 border rounded-lg">
+            <p class="font-bold">NOTIFICAÇÃO DO ACUSADO:</p>
+            <p class="mt-4">Ciente em: ____/____/________</p>
+            <div class="line mt-8 border-bottom w-full"></div>
+            <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Acusado</p>
+          </div>
+          
+          <div class="p-3 border rounded-lg">
+            <p class="font-bold">ENTREGA PELO ENCARREGADO:</p>
+            <p class="mt-4">Entregue em: ____/____/________</p>
+            <div class="line mt-8 border-bottom w-full"></div>
+            <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Encarregado (${formData.apurador || 'Apurador'})</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>PROCESSO COMPLETO - ${formData.patdNumber || 'PATD'}</title>
+          <style>${css}</style>
+        </head>
+        <body>
+          ${capaHTML}
+          ${despachoHTML}
+          ${fatdHTML}
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() {
+                window.close();
+              }, 1000);
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   const getAllowedQuadros = (posto: string) => {
     if (['BR', 'CL', 'TC', 'MJ', 'CP', '1T', '2T', 'AP'].includes(posto)) {
@@ -1026,6 +1563,22 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </p>
             </div>
           </motion.button>
+          
+          <motion.button 
+            type="button"
+            onClick={() => setIsDocModalOpen(true)}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20 group shrink-0"
+          >
+            <div className="p-2 rounded-lg bg-white/10 text-white group-hover:scale-110 transition-transform">
+              <Printer size={18} />
+            </div>
+            <div className="text-left">
+              <p className="leading-none">Gerar Documentos</p>
+              <p className="text-[9px] text-indigo-200 lowercase font-medium mt-1">Capa, Despacho e FATD</p>
+            </div>
+          </motion.button>
           <input 
             type="file" 
             ref={fileInputRef} 
@@ -1262,6 +1815,294 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         onClose={() => setIsHistoryOpen(false)} 
         historyData={history} 
       />
+      <AnimatePresence>
+        {isDocModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDocModalOpen(false)}
+              className="absolute inset-0"
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-5xl h-[85vh] bg-slate-50 dark:bg-slate-900 rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col animate-in fade-in zoom-in-95 duration-200"
+            >
+              {/* Modal Header */}
+              <div className="p-6 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-850 flex items-center justify-between shrink-0">
+                <div>
+                  <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Printer className="text-indigo-600 dark:text-indigo-400" size={20} />
+                    Gerador de Documentos Oficiais
+                  </h3>
+                  <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">
+                    Preenchimento automático do PATD e geração de PDF/Impressão
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setIsDocModalOpen(false)}
+                  className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-850 text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="flex-1 flex flex-col md:flex-row min-h-0">
+                {/* Tabs Sidebar */}
+                <div className="w-full md:w-64 bg-white dark:bg-slate-950/50 p-4 border-r border-slate-200 dark:border-slate-850 flex flex-col justify-between shrink-0">
+                  <div className="space-y-2">
+                    <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider pl-2 mb-2">Selecione o Documento</p>
+                    <button
+                      onClick={() => setActiveDocTab('capa')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all ${
+                        activeDocTab === 'capa'
+                          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 font-black scale-102'
+                          : 'text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'
+                      }`}
+                    >
+                      <FileText size={16} />
+                      Capa do Processo
+                    </button>
+                    <button
+                      onClick={() => setActiveDocTab('despacho')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all ${
+                        activeDocTab === 'despacho'
+                          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 font-black scale-102'
+                          : 'text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'
+                      }`}
+                    >
+                      <FileText size={16} />
+                      Despacho de Abertura
+                    </button>
+                    <button
+                      onClick={() => setActiveDocTab('fatd')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all ${
+                        activeDocTab === 'fatd'
+                          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 font-black scale-102'
+                          : 'text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'
+                      }`}
+                    >
+                      <FileText size={16} />
+                      Formulário FATD
+                    </button>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-850/50 hidden md:block">
+                    <p className="text-[9px] text-slate-400 dark:text-slate-500 leading-normal italic">
+                      As informações inseridas no formulário ao lado são injetadas em tempo real nos modelos acima configurados conforme os padrões do Comando da Aeronáutica.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Preview Container */}
+                <div className="flex-1 bg-slate-100 dark:bg-slate-900/40 p-6 overflow-y-auto custom-scrollbar flex items-center justify-center min-h-0">
+                  {(() => {
+                    const formatDateStr = (dateStr: string) => {
+                      if (!dateStr) return '___/___/_____';
+                      const [year, month, day] = dateStr.split('-');
+                      return `${day}/${month}/${year}`;
+                    };
+
+                    switch(activeDocTab) {
+                      case 'capa':
+                        return (
+                          <div className="bg-white dark:bg-slate-950 p-12 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 font-serif border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4">
+                            <div>
+                              <div className="text-center font-bold">
+                                <p className="uppercase text-xs leading-tight tracking-widest text-slate-400 dark:text-slate-500">Ministério da Defesa</p>
+                                <p className="uppercase text-sm leading-snug">Comando da Aeronáutica</p>
+                                <p className="uppercase text-sm leading-snug text-indigo-600 dark:text-indigo-400 font-black">{formData.divisao || 'Divisão Cadastrada'}</p>
+                              </div>
+                              
+                              <div className="border-b-2 border-double border-slate-350 dark:border-slate-800 my-6" />
+                              
+                              <div className="text-center font-bold uppercase mt-12">
+                                <h3 className="text-xs tracking-wider text-slate-400 dark:text-slate-500">PROCESSO ADMINISTRATIVO DE TRANSGRESSÃO DISCIPLINAR</h3>
+                                <h2 className="text-xl mt-4 text-slate-900 dark:text-white font-black">PATD Nº {formData.patdNumber || '___/___/_____'}</h2>
+                              </div>
+                              
+                              <div className="mt-16 space-y-3.5 text-sm">
+                                <p><strong>ARROLADO:</strong> <span className="text-slate-900 dark:text-slate-100 font-bold">{formData.posto} {formData.quadro} {formData.nomeCompleto || '___________________________'}</span></p>
+                                <p><strong>SARAM:</strong> <span className="font-mono">{formData.saram || '_______'}</span></p>
+                                <p><strong>ESPECIALIDADE:</strong> {formData.especialidade || '_________'}</p>
+                                <p><strong>DIVISÃO/SETOR:</strong> {formData.divisao} / {formData.setor || '_______'}</p>
+                              </div>
+                              
+                              <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
+                                <p><strong>APURADOR (ENCARREGADO):</strong> {formData.apurador || '___________________________'}</p>
+                                <p><strong>AUTORIDADE APLICADORA:</strong> {formData.aplicador || '___________________________'}</p>
+                              </div>
+
+                              <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
+                                <p><strong>DATA DE INSTAURAÇÃO:</strong> {formatDateStr(formData.dataInicio)}</p>
+                                <p><strong>DATA DE CONCLUSÃO:</strong> {formatDateStr(formData.dataTermino)}</p>
+                                <p><strong>STATUS ATUAL:</strong> <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-500 text-[10px] font-bold uppercase tracking-wider">{formData.status}</span></p>
+                              </div>
+                            </div>
+                            
+                            <div className="text-center mt-16 text-[9px] font-black text-slate-400 uppercase tracking-widest border-t border-slate-100 dark:border-slate-900 pt-3">
+                              GPATD - SISTEMA DE CONTROLE DE PROCESSOS
+                            </div>
+                          </div>
+                        );
+                      case 'despacho':
+                        return (
+                          <div className="bg-white dark:bg-slate-950 p-12 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 font-serif border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4">
+                            <div>
+                              <div className="text-center font-bold">
+                                <p className="uppercase text-xs leading-tight tracking-widest text-slate-400 dark:text-slate-500">Ministério da Defesa</p>
+                                <p className="uppercase text-sm leading-snug">Comando da Aeronáutica</p>
+                                <p className="uppercase text-sm leading-snug text-indigo-600 dark:text-indigo-400 font-black">{formData.divisao || 'Divisão Cadastrada'}</p>
+                              </div>
+                              
+                              <div className="border-b-2 border-double border-slate-350 dark:border-slate-800 my-6" />
+                              
+                              <div className="text-center font-bold uppercase mt-8">
+                                <h3 className="text-xs text-slate-900 dark:text-white font-black">DESPACHO DE INSTAURAÇÃO E ABERTURA</h3>
+                                <h4 className="text-xs mt-1 text-slate-400 dark:text-slate-500">PATD Nº {formData.patdNumber || '___/___/_____'}</h4>
+                              </div>
+                              
+                              <div className="mt-12 text-xs text-justify space-y-4 leading-relaxed">
+                                <p className="indent-12">
+                                  1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
+                                  <strong> {formData.posto} {formData.quadro} {formData.nomeCompleto || '___________________________'}</strong>, 
+                                  SARAM <strong>{formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro, 
+                                  <strong> RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
+                                  <strong> {formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
+                                </p>
+                                <p className="indent-12">
+                                  2. Designo o <strong>{formData.apurador || '___________________________'}</strong> para atuar como Encarregado da presente apuração, 
+                                  competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
+                                </p>
+                                <p className="indent-12">
+                                  3. Conceda-se ao arrolado o prazo regulamentar para apresentação de Defesa Prévia e razões de justificativa, nos termos das normas vigentes.
+                                </p>
+                                <p className="indent-12">
+                                  4. Publique-se. Registre-se e cumpra-se.
+                                </p>
+                              </div>
+                              
+                              <div className="text-right mt-12 text-xs">
+                                <p>Pirassununga, {new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="text-center mt-16">
+                              <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" />
+                              <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.aplicador || '___________________________'}</p>
+                              <p className="text-[9px] uppercase text-slate-400">Autoridade Aplicadora / Competente</p>
+                            </div>
+                          </div>
+                        );
+                      case 'fatd':
+                        return (
+                          <div className="bg-white dark:bg-slate-950 p-12 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 font-serif border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4">
+                            <div>
+                              <div className="text-center font-bold">
+                                <p className="uppercase text-xs leading-tight tracking-widest text-slate-400 dark:text-slate-500">Ministério da Defesa</p>
+                                <p className="uppercase text-sm leading-snug">Comando da Aeronáutica</p>
+                                <p className="uppercase text-sm leading-snug text-indigo-600 dark:text-indigo-400 font-black">{formData.divisao || 'Divisão Cadastrada'}</p>
+                              </div>
+                              
+                              <div className="border-b-2 border-double border-slate-350 dark:border-slate-800 my-4" />
+                              
+                              <div className="text-center font-bold uppercase mt-4">
+                                <h3 className="text-xs text-slate-900 dark:text-white font-black">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR (FATD)</h3>
+                                <h4 className="text-xs mt-1 text-slate-400 dark:text-slate-500">PATD Nº {formData.patdNumber || '___/___/_____'}</h4>
+                              </div>
+                              
+                              <div className="mt-6 font-bold text-[9px] uppercase tracking-wider bg-slate-100 dark:bg-slate-900 p-1.5 border border-slate-200 dark:border-slate-850">1. IDENTIFICAÇÃO DO MILITAR ACUSADO</div>
+                              <table className="w-full text-xs mt-1 border-collapse border border-slate-200 dark:border-slate-850">
+                                <tbody>
+                                  <tr className="border-b border-slate-200 dark:border-slate-850">
+                                    <td className="p-2 border-r border-slate-200 dark:border-slate-850 font-medium" colSpan={2}><strong>NOME COMPLETO:</strong> {formData.nomeCompleto || '___________________________'}</td>
+                                    <td className="p-2 font-medium"><strong>SARAM:</strong> {formData.saram || '_______'}</td>
+                                  </tr>
+                                  <tr className="border-b border-slate-200 dark:border-slate-850">
+                                    <td className="p-2 border-r border-slate-200 dark:border-slate-850 font-medium"><strong>POSTO:</strong> {formData.posto}</td>
+                                    <td className="p-2 border-r border-slate-200 dark:border-slate-850 font-medium"><strong>QUADRO:</strong> {formData.quadro}</td>
+                                    <td className="p-2 font-medium"><strong>ESPECIALIDADE:</strong> {formData.especialidade || '________'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="p-2 border-r border-slate-200 dark:border-slate-850 font-medium" colSpan={2}><strong>DIVISÃO:</strong> {formData.divisao}</td>
+                                    <td className="p-2 font-medium"><strong>SETOR:</strong> {formData.setor || '_______'}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+
+                              <div className="mt-6 font-bold text-[9px] uppercase tracking-wider bg-slate-100 dark:bg-slate-900 p-1.5 border border-slate-200 dark:border-slate-850">2. DESCRIÇÃO DO FATO DISCIPLINAR (SÍNTESE)</div>
+                              <div className="p-3 border border-slate-200 dark:border-slate-850 text-xs text-justify leading-relaxed bg-slate-50 dark:bg-slate-900/50 italic min-h-16 mt-1">
+                                {formData.resumoFato || 'Sem fatos cadastrados até o momento.'}
+                              </div>
+
+                              <div className="mt-6 font-bold text-[9px] uppercase tracking-wider bg-slate-100 dark:bg-slate-900 p-1.5 border border-slate-200 dark:border-slate-850">3. CIENTIFICAÇÃO E PRAZO PARA DEFESA</div>
+                              <div className="p-3 border border-slate-200 dark:border-slate-850 text-xs text-justify leading-relaxed mt-1">
+                                Fica o militar arrolado cientificado do fato que lhe é imputado, bem como de que dispõe do prazo regulamentar de <strong>03 (três) dias úteis</strong>, a contar do recebimento deste formulário, para apresentar por escrito sua justificativa de defesa (Defesa Prévia), caso queira, perante o encarregado da apuração.
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6 mt-8 text-xs">
+                              <div className="p-3 border border-slate-200 dark:border-slate-850 rounded-xl">
+                                <p className="font-bold">NOTIFICAÇÃO DO ACUSADO:</p>
+                                <p className="mt-3">Ciente em: ____/____/________</p>
+                                <div className="border-b border-slate-350 dark:border-slate-700 mt-8 w-full" />
+                                <p className="text-center mt-1.5 text-[9px] text-slate-400 uppercase tracking-wider">Assinatura do Acusado</p>
+                              </div>
+                              
+                              <div className="p-3 border border-slate-200 dark:border-slate-850 rounded-xl">
+                                <p className="font-bold">ENTREGA PELO ENCARREGADO:</p>
+                                <p className="mt-3">Entregue em: ____/____/________</p>
+                                <div className="border-b border-slate-350 dark:border-slate-700 mt-8 w-full" />
+                                <p className="text-center mt-1.5 text-[9px] text-slate-400 uppercase tracking-wider">Assinatura do Encarregado ({formData.apurador || 'Apurador'})</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      default:
+                        return null;
+                    }
+                  })()}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-6 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-850 flex flex-col sm:flex-row justify-between gap-4 shrink-0">
+                <button
+                  type="button"
+                  onClick={printAllDocuments}
+                  className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2"
+                >
+                  <Printer size={16} />
+                  Imprimir Todo o Processo (3 Páginas)
+                </button>
+                
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => printDocument(activeDocTab)}
+                    className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-widest transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2"
+                  >
+                    <Printer size={16} />
+                    Imprimir Documento Atual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsDocModalOpen(false)}
+                    className="px-6 py-3 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-widest transition-colors flex items-center justify-center"
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
