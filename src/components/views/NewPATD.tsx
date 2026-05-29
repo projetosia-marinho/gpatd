@@ -493,47 +493,58 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       switch(type) {
         case 'capa':
           return `
-            <div class="sheet capa font-serif">
-              <div class="header text-center font-bold">
-                <p class="uppercase font-black text-sm">Ministério da Defesa</p>
-                <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
-                <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
-              </div>
-              
-              <div class="divider"></div>
-              
-              <div class="title text-center font-bold uppercase mt-16">
-                <h2>PROCESSO ADMINISTRATIVO DE TRANSGRESSÃO DISCIPLINAR</h2>
-                <h1 class="patd-num text-xl mt-4 font-black">PATD Nº ${formData.patdNumber || '___/___/_____'}</h1>
-              </div>
-              
-              <div class="meta-box font-medium mt-24">
-                <p><strong>ARROLADO:</strong> ${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</p>
-                <p><strong>SARAM:</strong> ${formData.saram || '_______'}</p>
-                <p><strong>ESPECIALIDADE:</strong> ${formData.especialidade || '_________'}</p>
-                <p><strong>DIVISÃO/SETOR:</strong> ${formData.divisao} / ${formData.setor || '_______'}</p>
-              </div>
-              
-              <div class="meta-box font-medium mt-8 border-top pt-4">
-                <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'} (SARAM: ${formData.apuradorSaram || '_______'})</p>
-                <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
+            <div class="sheet capa font-serif" style="padding: 15mm 20mm 15mm 20mm !important;">
+              <!-- Outside the bordered frame -->
+              <div class="capa-header text-center" style="margin-bottom: 8mm !important;">
+                <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo C - Capa</p>
+                <p class="text-red" style="font-size: 16px; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.5px;">INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
+                <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
+                <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 31 da Lei nº 12.527, de 2011</p>
+                <p class="text-red" style="font-size: 12px; margin: 0; font-weight: 500;">Arts. 55 a 62 do Decreto nº 7.724, de 2012</p>
               </div>
 
-              <div class="meta-box font-medium mt-8 border-top pt-4">
-                <p><strong>OFÍCIO Nº:</strong> ${formData.oficioNumero || '_______'}</p>
-                <p><strong>PROT. COMAER Nº:</strong> ${formData.protComaer || '_______'}</p>
-                <p><strong>DATA DO OFÍCIO:</strong> ${formatDateStr(formData.dataOficio)}</p>
-                <p><strong>ENQUADRAMENTO RDAER:</strong> ${formData.enquadramentoRdaer || '_______'}</p>
-              </div>
+              <!-- Bordered Frame -->
+              <div class="capa-frame">
+                <!-- Top Emblem and Headers -->
+                <div class="w-full text-center flex flex-col items-center">
+                  <svg width="75" height="75" viewBox="0 0 100 100" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#009c3b" stroke-width="2.5"/>
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ffdf00" stroke-width="1.5"/>
+                    <polygon points="50,15 60,40 85,40 65,55 75,80 50,65 25,80 35,55 15,40 40,40" fill="#009c3b" stroke="#ffdf00" stroke-width="1.5"/>
+                    <circle cx="50" cy="52" r="15" fill="#002244" stroke="#ffdf00" stroke-width="1"/>
+                    <circle cx="50" cy="46" r="1.5" fill="white"/>
+                    <circle cx="50" cy="58" r="1.5" fill="white"/>
+                    <circle cx="44" cy="52" r="1.5" fill="white"/>
+                    <circle cx="56" cy="52" r="1.5" fill="white"/>
+                    <circle cx="53" cy="55" r="1" fill="white"/>
+                  </svg>
+                  <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Ministério da Defesa</p>
+                  <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
+                  <p class="text-red underline" style="font-size: 16px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
+                </div>
 
-              <div class="meta-box font-medium mt-8 border-top pt-4">
-                <p><strong>DATA DE INSTAURAÇÃO:</strong> ${formatDateStr(formData.dataInicio)}</p>
-                <p><strong>DATA DE CONCLUSÃO:</strong> ${formatDateStr(formData.dataTermino)}</p>
-                <p><strong>STATUS ATUAL:</strong> ${formData.status}</p>
-              </div>
-              
-              <div class="footer-note text-center mt-32 text-xs font-bold uppercase tracking-widest text-slate-500">
-                <p>GPATD - SISTEMA DE CONTROLE DE PROCESSOS</p>
+                <!-- Process Title -->
+                <div class="w-full text-center" style="margin-top: 25mm; margin-bottom: 25mm;">
+                  <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4;">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+                  <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0;">Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span></p>
+                </div>
+
+                <!-- Footer/Sections inside Frame -->
+                <div class="w-full" style="margin-bottom: 5mm;">
+                  <!-- Militar Arrolado -->
+                  <div class="text-center" style="margin-bottom: 15mm;">
+                    <p style="font-size: 15px; font-weight: bold; color: #000000; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Militar Arrolado</p>
+                    <div class="line-accent"></div>
+                    <p class="text-red" style="font-size: 15px; font-weight: bold; margin: 0; text-transform: uppercase;">${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro}</p>
+                  </div>
+
+                  <!-- Oficial Apurador -->
+                  <div class="text-center">
+                    <p style="font-size: 15px; font-weight: bold; color: #000000; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Oficial Apurador</p>
+                    <div class="line-accent"></div>
+                    <p class="text-red" style="font-size: 15px; font-weight: bold; margin: 0; text-transform: uppercase;">${formData.apurador || '___________________________'} - ${formData.apuradorPosto} ${formData.apuradorQuadro}</p>
+                  </div>
+                </div>
               </div>
             </div>
           `;
@@ -735,6 +746,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       .italic { font-style: italic; }
       .rounded-lg { border-radius: 0.5rem; }
       @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
         body {
           background-color: transparent;
           padding: 0;
@@ -745,6 +760,34 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           min-height: auto;
           padding: 10mm 10mm 10mm 10mm;
         }
+      }
+      .text-red {
+        color: #ff0000 !important;
+      }
+      .text-black {
+        color: #000000 !important;
+      }
+      .capa-header {
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .capa-frame {
+        border: 2px solid #000000 !important;
+        padding: 15mm 15mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 235mm;
+        box-sizing: border-box;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .line-accent {
+        width: 100%;
+        border-bottom: 2px solid #000000 !important;
+        margin-top: 15px;
+        margin-bottom: 5px;
       }
     `;
 
@@ -855,6 +898,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       .italic { font-style: italic; }
       .rounded-lg { border-radius: 0.5rem; }
       @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
         body {
           background-color: transparent;
           padding: 0;
@@ -867,50 +914,89 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           padding: 10mm 10mm 10mm 10mm;
         }
       }
+      .text-red {
+        color: #ff0000 !important;
+      }
+      .text-black {
+        color: #000000 !important;
+      }
+      .capa-header {
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .capa-frame {
+        border: 2px solid #000000 !important;
+        padding: 15mm 15mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 235mm;
+        box-sizing: border-box;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .line-accent {
+        width: 100%;
+        border-bottom: 2px solid #000000 !important;
+        margin-top: 15px;
+        margin-bottom: 5px;
+      }
     `;
 
     const capaHTML = `
-      <div class="sheet capa font-serif">
-        <div class="header text-center font-bold">
-          <p class="uppercase font-black text-sm">Ministério da Defesa</p>
-          <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
-          <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
-        </div>
-        
-        <div class="divider"></div>
-        
-        <div class="title text-center font-bold uppercase mt-16">
-          <h2>PROCESSO ADMINISTRATIVO DE TRANSGRESSÃO DISCIPLINAR</h2>
-          <h1 class="patd-num text-xl mt-4 font-black">PATD Nº ${formData.patdNumber || '___/___/_____'}</h1>
-        </div>
-        
-        <div class="meta-box font-medium mt-24">
-          <p><strong>ARROLADO:</strong> ${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</p>
-          <p><strong>SARAM:</strong> ${formData.saram || '_______'}</p>
-          <p><strong>ESPECIALIDADE:</strong> ${formData.especialidade || '_________'}</p>
-          <p><strong>DIVISÃO/SETOR:</strong> ${formData.divisao} / ${formData.setor || '_______'}</p>
-        </div>
-        
-        <div class="meta-box font-medium mt-8 border-top pt-4">
-          <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'} (SARAM: ${formData.apuradorSaram || '_______'})</p>
-          <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
+      <div class="sheet capa font-serif" style="padding: 15mm 20mm 15mm 20mm !important;">
+        <!-- Outside the bordered frame -->
+        <div class="capa-header text-center" style="margin-bottom: 8mm !important;">
+          <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo C - Capa</p>
+          <p class="text-red" style="font-size: 16px; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.5px;">INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
+          <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
+          <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 31 da Lei nº 12.527, de 2011</p>
+          <p class="text-red" style="font-size: 12px; margin: 0; font-weight: 500;">Arts. 55 a 62 do Decreto nº 7.724, de 2012</p>
         </div>
 
-        <div class="meta-box font-medium mt-8 border-top pt-4">
-          <p><strong>OFÍCIO Nº:</strong> ${formData.oficioNumero || '_______'}</p>
-          <p><strong>PROT. COMAER Nº:</strong> ${formData.protComaer || '_______'}</p>
-          <p><strong>DATA DO OFÍCIO:</strong> ${formatDateStr(formData.dataOficio)}</p>
-          <p><strong>ENQUADRAMENTO RDAER:</strong> ${formData.enquadramentoRdaer || '_______'}</p>
-        </div>
+        <!-- Bordered Frame -->
+        <div class="capa-frame">
+          <!-- Top Emblem and Headers -->
+          <div class="w-full text-center flex flex-col items-center">
+            <svg width="75" height="75" viewBox="0 0 100 100" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#009c3b" stroke-width="2.5"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#ffdf00" stroke-width="1.5"/>
+              <polygon points="50,15 60,40 85,40 65,55 75,80 50,65 25,80 35,55 15,40 40,40" fill="#009c3b" stroke="#ffdf00" stroke-width="1.5"/>
+              <circle cx="50" cy="52" r="15" fill="#002244" stroke="#ffdf00" stroke-width="1"/>
+              <circle cx="50" cy="46" r="1.5" fill="white"/>
+              <circle cx="50" cy="58" r="1.5" fill="white"/>
+              <circle cx="44" cy="52" r="1.5" fill="white"/>
+              <circle cx="56" cy="52" r="1.5" fill="white"/>
+              <circle cx="53" cy="55" r="1" fill="white"/>
+            </svg>
+            <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Ministério da Defesa</p>
+            <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
+            <p class="text-red underline" style="font-size: 16px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
+          </div>
 
-        <div class="meta-box font-medium mt-8 border-top pt-4">
-          <p><strong>DATA DE INSTAURAÇÃO:</strong> ${formatDateStr(formData.dataInicio)}</p>
-          <p><strong>DATA DE CONCLUSÃO:</strong> ${formatDateStr(formData.dataTermino)}</p>
-          <p><strong>STATUS ATUAL:</strong> ${formData.status}</p>
-        </div>
-        
-        <div class="footer-note text-center mt-32 text-xs font-bold uppercase tracking-widest text-slate-500">
-          <p>GPATD - SISTEMA DE CONTROLE DE PROCESSOS</p>
+          <!-- Process Title -->
+          <div class="w-full text-center" style="margin-top: 25mm; margin-bottom: 25mm;">
+            <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4;">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+            <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0;">Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span></p>
+          </div>
+
+          <!-- Footer/Sections inside Frame -->
+          <div class="w-full" style="margin-bottom: 5mm;">
+            <!-- Militar Arrolado -->
+            <div class="text-center" style="margin-bottom: 15mm;">
+              <p style="font-size: 15px; font-weight: bold; color: #000000; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Militar Arrolado</p>
+              <div class="line-accent"></div>
+              <p class="text-red" style="font-size: 15px; font-weight: bold; margin: 0; text-transform: uppercase;">${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro}</p>
+            </div>
+
+            <!-- Oficial Apurador -->
+            <div class="text-center">
+              <p style="font-size: 15px; font-weight: bold; color: #000000; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Oficial Apurador</p>
+              <div class="line-accent"></div>
+              <p class="text-red" style="font-size: 15px; font-weight: bold; margin: 0; text-transform: uppercase;">${formData.apurador || '___________________________'} - ${formData.apuradorPosto} ${formData.apuradorQuadro}</p>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -2036,49 +2122,58 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                     switch(activeDocTab) {
                       case 'capa':
                         return (
-                          <div className="bg-white dark:bg-slate-950 p-12 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 font-serif border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4">
-                            <div>
-                              <div className="text-center font-bold">
-                                <p className="uppercase text-xs leading-tight tracking-widest text-slate-400 dark:text-slate-500">Ministério da Defesa</p>
-                                <p className="uppercase text-sm leading-snug">Comando da Aeronáutica</p>
-                                <p className="uppercase text-sm leading-snug text-indigo-600 dark:text-indigo-400 font-black">{formData.divisao || 'Divisão Cadastrada'}</p>
-                              </div>
-                              
-                              <div className="border-b-2 border-double border-slate-350 dark:border-slate-800 my-6" />
-                              
-                              <div className="text-center font-bold uppercase mt-12">
-                                <h3 className="text-xs tracking-wider text-slate-400 dark:text-slate-500">PROCESSO ADMINISTRATIVO DE TRANSGRESSÃO DISCIPLINAR</h3>
-                                <h2 className="text-xl mt-4 text-slate-900 dark:text-white font-black">PATD Nº {formData.patdNumber || '___/___/_____'}</h2>
-                              </div>
-                              
-                              <div className="mt-16 space-y-3.5 text-sm">
-                                <p><strong>ARROLADO:</strong> <span className="text-slate-900 dark:text-slate-100 font-bold">{formData.posto} {formData.quadro} {formData.nomeCompleto || '___________________________'}</span></p>
-                                <p><strong>SARAM:</strong> <span className="font-mono">{formData.saram || '_______'}</span></p>
-                                <p><strong>ESPECIALIDADE:</strong> {formData.especialidade || '_________'}</p>
-                                <p><strong>DIVISÃO/SETOR:</strong> {formData.divisao} / {formData.setor || '_______'}</p>
-                              </div>
-                              
-                              <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
-                                <p><strong>APURADOR (ENCARREGADO):</strong> {formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || '___________________________'} (SARAM: {formData.apuradorSaram || '_______'})</p>
-                                <p><strong>AUTORIDADE APLICADORA:</strong> {formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
-                              </div>
-
-                              <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
-                                <p><strong>OFÍCIO Nº:</strong> {formData.oficioNumero || '_______'}</p>
-                                <p><strong>PROT. COMAER Nº:</strong> {formData.protComaer || '_______'}</p>
-                                <p><strong>DATA DO OFÍCIO:</strong> {formatDateStr(formData.dataOficio)}</p>
-                                <p><strong>ENQUADRAMENTO RDAER:</strong> {formData.enquadramentoRdaer || '_______'}</p>
-                              </div>
-
-                              <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
-                                <p><strong>DATA DE INSTAURAÇÃO:</strong> {formatDateStr(formData.dataInicio)}</p>
-                                <p><strong>DATA DE CONCLUSÃO:</strong> {formatDateStr(formData.dataTermino)}</p>
-                                <p><strong>STATUS ATUAL:</strong> <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-500 text-[10px] font-bold uppercase tracking-wider">{formData.status}</span></p>
-                              </div>
+                          <div className="bg-white dark:bg-slate-950 p-8 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 font-serif border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] flex flex-col justify-between overflow-y-auto my-4" style={{ padding: '10mm 15mm' }}>
+                            {/* Outside the bordered frame */}
+                            <div className="text-center" style={{ marginBottom: '6mm' }}>
+                              <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo C - Capa</p>
+                              <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#ff0000', margin: '0 0 3px 0', letterSpacing: '0.5px' }}>INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
+                              <p style={{ fontSize: '11px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
+                              <p style={{ fontSize: '11px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 31 da Lei nº 12.527, de 2011</p>
+                              <p style={{ fontSize: '11px', color: '#ff0000', margin: 0, fontWeight: 500 }}>Arts. 55 a 62 do Decreto nº 7.724, de 2012</p>
                             </div>
-                            
-                            <div className="text-center mt-16 text-[9px] font-black text-slate-400 uppercase tracking-widest border-t border-slate-100 dark:border-slate-900 pt-3">
-                              GPATD - SISTEMA DE CONTROLE DE PROCESSOS
+
+                            {/* Bordered Frame */}
+                            <div className="border-2 border-black dark:border-slate-800 p-8 flex flex-col justify-between items-center w-full flex-1" style={{ boxSizing: 'border-box' }}>
+                              {/* Top Emblem and Headers */}
+                              <div className="w-full text-center flex flex-col items-center">
+                                <svg width="60" height="60" viewBox="0 0 100 100" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
+                                  <circle cx="50" cy="50" r="45" fill="none" stroke="#009c3b" strokeWidth="2.5"/>
+                                  <circle cx="50" cy="50" r="40" fill="none" stroke="#ffdf00" strokeWidth="1.5"/>
+                                  <polygon points="50,15 60,40 85,40 65,55 75,80 50,65 25,80 35,55 15,40 40,40" fill="#009c3b" stroke="#ffdf00" strokeWidth="1.5"/>
+                                  <circle cx="50" cy="52" r="15" fill="#002244" stroke="#ffdf00" strokeWidth="1"/>
+                                  <circle cx="50" cy="46" r="1.5" fill="white"/>
+                                  <circle cx="50" cy="58" r="1.5" fill="white"/>
+                                  <circle cx="44" cy="52" r="1.5" fill="white"/>
+                                  <circle cx="56" cy="52" r="1.5" fill="white"/>
+                                  <circle cx="53" cy="55" r="1" fill="white"/>
+                                </svg>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }}>Academia da Força Aérea</p>
+                              </div>
+
+                              {/* Process Title */}
+                              <div className="w-full text-center" style={{ marginTop: '10mm', marginBottom: '10mm' }}>
+                                <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px', lineHeight: 1.4 }} className="dark:text-white">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+                                <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#000000', margin: 0 }} className="dark:text-white">Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span></p>
+                              </div>
+
+                              {/* Footer/Sections inside Frame */}
+                              <div className="w-full" style={{ marginBottom: '2mm' }}>
+                                {/* Militar Arrolado */}
+                                <div className="text-center" style={{ marginBottom: '8mm' }}>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="dark:text-white">Militar Arrolado</p>
+                                  <div className="border-b border-black dark:border-slate-800 mt-2 mb-1 w-full"></div>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase' }}>{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
+                                </div>
+
+                                {/* Oficial Apurador */}
+                                <div className="text-center">
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="dark:text-white">Oficial Apurador</p>
+                                  <div className="border-b border-black dark:border-slate-800 mt-2 mb-1 w-full"></div>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase' }}>{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         );
