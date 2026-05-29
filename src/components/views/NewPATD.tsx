@@ -514,9 +514,9 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 </div>
 
                 <!-- Process Title -->
-                <div class="w-full text-center" style="margin-top: 25mm; margin-bottom: 25mm;">
-                  <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4;">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
-                  <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0;">Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></p>
+                <div class="w-full text-center" style="margin-top: 12mm; margin-bottom: 12mm;">
+                  <p style="font-size: 13px; font-weight: bold; color: #000000; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+                  <p style="font-size: 15px; font-weight: bold; color: #000000; margin: 0;">Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></p>
                 </div>
 
                 <!-- Footer/Sections inside Frame -->
@@ -763,13 +763,13 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       }
       .capa-frame {
         border: 2px solid #000000 !important;
-        padding: 15mm 15mm;
+        padding: 10mm 15mm;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        height: 235mm;
+        height: 212mm;
         box-sizing: border-box;
         font-family: 'Times New Roman', Times, serif;
       }
@@ -916,13 +916,13 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       }
       .capa-frame {
         border: 2px solid #000000 !important;
-        padding: 15mm 15mm;
+        padding: 10mm 15mm;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        height: 235mm;
+        height: 212mm;
         box-sizing: border-box;
         font-family: 'Times New Roman', Times, serif;
       }
@@ -956,9 +956,9 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           </div>
 
           <!-- Process Title -->
-          <div class="w-full text-center" style="margin-top: 25mm; margin-bottom: 25mm;">
-            <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.4;">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
-            <p style="font-size: 18px; font-weight: bold; color: #000000; margin: 0;">Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></p>
+          <div class="w-full text-center" style="margin-top: 12mm; margin-bottom: 12mm;">
+            <p style="font-size: 13px; font-weight: bold; color: #000000; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+            <p style="font-size: 15px; font-weight: bold; color: #000000; margin: 0;">Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></p>
           </div>
 
           <!-- Footer/Sections inside Frame -->
@@ -2123,9 +2123,9 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               </div>
 
                               {/* Process Title */}
-                              <div className="w-full text-center" style={{ marginTop: '10mm', marginBottom: '10mm' }}>
-                                <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px', lineHeight: 1.4 }} className="dark:text-white">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
-                                <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#000000', margin: 0 }} className="dark:text-white">Nº <span style={{ color: '#000000' }} className="dark:text-white">{formData.patdNumber || '___/___/_____'}</span></p>
+                              <div className="w-full text-center" style={{ marginTop: '5mm', marginBottom: '5mm' }}>
+                                <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }} className="dark:text-white">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: 0 }} className="dark:text-white">Nº <span style={{ color: '#000000' }} className="dark:text-white">{formData.patdNumber || '___/___/_____'}</span></p>
                               </div>
 
                               {/* Footer/Sections inside Frame */}
