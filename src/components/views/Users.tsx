@@ -464,10 +464,10 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
                       {(() => {
                         const div = divisions.find(d => d.name === user.divisao);
                         if (div && div.image) {
-                          return <img src={div.image} alt={div.name} className="w-full h-full object-cover" />;
+                          return <img src={div.image} alt={div.name} className="w-full h-full object-cover object-center" />;
                         }
                         return (
-                          <svg className="w-14 h-14 text-slate-350 dark:text-slate-700 mt-2" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-14 h-14 text-slate-350 dark:text-slate-700" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
                           </svg>
                         );

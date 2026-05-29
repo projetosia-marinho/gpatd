@@ -368,7 +368,7 @@ export default function Shell({
                     {(() => {
                       const div = divisions.find(d => d.name === currentUser.divisao);
                       if (div && div.image) {
-                        return <img src={div.image} alt={div.name} className="w-full h-full object-cover" />;
+                        return <img src={div.image} alt={div.name} className="w-full h-full object-cover object-center" />;
                       }
                       return <span className="text-slate-700 dark:text-slate-300 drop-shadow-sm">{currentUser.name.charAt(0).toUpperCase()}</span>;
                     })()}

@@ -559,7 +559,7 @@ export default function Processes({
                           {(() => {
                             const div = divisions.find(d => d.name === process.divisao);
                             if (div && div.image) {
-                              return <img src={div.image} alt={div.name} className="w-full h-full object-cover" />;
+                              return <img src={div.image} alt={div.name} className="w-full h-full object-cover object-center" />;
                             }
                             return <Building2 size={16} />;
                           })()}

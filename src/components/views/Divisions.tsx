@@ -293,7 +293,7 @@ export default function Divisions({ divisions, setDivisions, isAdmin = true, glo
                 <div className="relative">
                   <div className="w-18 h-18 rounded-full border-[3px] border-slate-50 dark:border-slate-850 shadow-inner bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-650 dark:text-slate-400 overflow-hidden relative group-hover:scale-105 transition-transform duration-500">
                     {division.image ? (
-                      <img src={division.image} alt={division.name} className="w-full h-full object-cover" referrerpolicy="no-referrer" />
+                      <img src={division.image} alt={division.name} className="w-full h-full object-cover object-center" referrerpolicy="no-referrer" />
                     ) : (
                       <div className="w-full h-full bg-linear-to-br from-indigo-100 to-indigo-50 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center">
                         <Building2 size={26} className="text-indigo-200 dark:text-slate-700" />
@@ -440,7 +440,7 @@ export default function Divisions({ divisions, setDivisions, isAdmin = true, glo
                         </div>
                       ) : formData.image ? (
                         <>
-                          <img src={formData.image} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+                          <img src={formData.image} alt="Preview" className="absolute inset-0 w-full h-full object-cover object-center" />
                           <button 
                             onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
                             className="absolute top-2 right-2 h-8 w-8 rounded-lg bg-black/50 text-white flex items-center justify-center hover:bg-rose-500 transition-colors"
