@@ -6,6 +6,7 @@ import {
   Plus, 
   Filter, 
   MoreHorizontal, 
+  MoreVertical,
   Shield, 
   Mail, 
   Building2, 
@@ -148,6 +149,7 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState<Partial<User>>({
@@ -292,9 +294,7 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
         ramal: formData.ramal,
       };
 
-      if (formData.senha && formData.senha.trim() !== '') {
-        dbPayload.senha = formData.senha;
-      }
+
 
       if (currentUser) {
         // Update
@@ -439,95 +439,139 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
               {/* Background Glow */}
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl group-hover:bg-indigo-500/10 transition-colors" />
               
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-2xl bg-linear-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 border border-slate-200/50 dark:border-slate-800 shadow-inner overflow-hidden uppercase font-black text-sm relative group-hover:scale-105 transition-transform duration-500">
+              {/* Status Corner Ribbon (Star fold) */}
+              <div className="absolute top-0 right-0 z-20">
+                <div className="relative">
+                  <div 
+                    className={`w-12 h-12 ${user.status === 'Ativo' ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-200 dark:bg-slate-800'} fill-current`} 
+                    style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }} 
+                  />
+                  <span 
+                    className={`absolute top-1.5 right-1.5 text-[9px] font-black leading-none ${
+                      user.status === 'Ativo' ? 'text-white' : 'text-slate-400 dark:text-slate-500'
+                    }`}
+                  >
+                    ★
+                  </span>
+                </div>
+              </div>
+
+              <div className="relative z-10 flex flex-col h-full">
+                {/* Centered Circular Avatar and overlapping role badge */}
+                <div className="flex flex-col items-center mt-2 mb-4 relative shrink-0">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full border-4 border-slate-50 dark:border-slate-850 shadow-inner bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-650 dark:text-slate-400 overflow-hidden uppercase font-black text-xs group-hover:scale-105 transition-transform duration-555">
                       {(() => {
                         const div = divisions.find(d => d.name === user.divisao);
                         if (div && div.image) {
                           return <img src={div.image} alt={div.name} className="w-full h-full object-cover" />;
                         }
-                        return user.divisao ? user.divisao.substring(0, 3) : <UsersIcon size={24} />;
+                        return (
+                          <svg className="w-14 h-14 text-slate-350 dark:text-slate-700 mt-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        );
                       })()}
-                      <div className="absolute inset-0 bg-indigo-500/5" />
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-display font-bold text-slate-900 dark:text-white uppercase line-clamp-1">{user.name}</h4>
-                        {user.status === 'Ativo' ? (
-                          <div className="w-2 h-2 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                        ) : (
-                          <div className="w-2 h-2 shrink-0 rounded-full bg-slate-300 dark:bg-slate-700" />
-                        )}
-                      </div>
-                      <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">{user.posto} • SARAM {user.saram}</p>
+                    {/* Overlapping Bottom Badge */}
+                    <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 shadow-md bg-white dark:bg-slate-800 flex items-center justify-center absolute -bottom-1.5 left-1/2 -translate-x-1/2 translate-y-1/4 z-10">
+                      {(() => {
+                        switch (user.role) {
+                          case 'Administrador': return <Shield size={14} className="text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />;
+                          case 'Operador': return <Briefcase size={14} className="text-emerald-500 dark:text-emerald-400 stroke-[2.5]" />;
+                          case 'Visualizador': return <Eye size={14} className="text-slate-500 dark:text-slate-400 stroke-[2.5]" />;
+                          default: return <UserSoloIcon size={14} className="text-slate-500 dark:text-slate-400 stroke-[2.5]" />;
+                        }
+                      })()}
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                      <Building2 size={16} />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Divisão</p>
-                      <p className="text-xs font-bold text-slate-700 dark:text-slate-200">{user.divisao}</p>
-                    </div>
-                  </div>
+                {/* Center aligned User Name and details */}
+                <div className="text-center mt-4 mb-6 shrink-0">
+                  <h4 className="font-display font-bold text-slate-900 dark:text-white uppercase text-base tracking-tight line-clamp-1">{user.name}</h4>
+                  <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">{user.posto} • SARAM {user.saram}</p>
+                </div>
 
+                {/* Metrics Info Rows with colored circles */}
+                <div className="space-y-4 px-2 mb-6 flex-1">
                   <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                      <Shield size={16} />
+                    <div className="w-8 h-8 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                      <Building2 size={14} className="stroke-[2.5]" />
                     </div>
-                    <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Papel no Sistema</p>
-                      <span className={`inline-flex px-2 py-0.5 mt-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border ${getRoleBadgeStyle(user.role)}`}>
-                        {user.role}
-                      </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Divisão</p>
+                      <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1.5 truncate">{user.divisao || 'Não especificada'}</p>
                     </div>
                   </div>
                   
-                  {user.email && (
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-                        <Mail size={16} />
-                      </div>
-                      <div className="truncate">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">E-mail</p>
-                        <p className="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">{user.email}</p>
-                      </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      <Shield size={14} className="stroke-[2.5]" />
                     </div>
-                  )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Cargo</p>
+                      <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1.5 truncate">{user.role}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                      <Mail size={14} className="stroke-[2.5]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">E-mail</p>
+                      <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1.5 truncate">{user.email || 'Não cadastrado'}</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                {/* Footer Section with dropdown menu */}
+                <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between relative shrink-0">
                   <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Último Acesso</p>
-                    <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{user.lastAccess}</p>
+                    <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Último Acesso</p>
+                    <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400 mt-1.5">{user.lastAccess}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {isAdmin && (
-                      <>
-                        <button 
-                          onClick={() => handleOpenModal(user)}
-                          className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all border border-transparent hover:border-indigo-100 dark:hover:border-indigo-800"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        <button 
-                          onClick={() => {
-                            setUserToDelete(user);
-                            setIsDeleteModalOpen(true);
-                          }}
-                          className="w-9 h-9 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-all border border-transparent hover:border-rose-100 dark:hover:border-rose-800"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  
+                  {isAdmin && (
+                    <div className="relative">
+                      <button 
+                        onClick={() => setActiveDropdownId(activeDropdownId === user.id ? null : user.id)}
+                        className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700"
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                      
+                      {activeDropdownId === user.id && (
+                        <>
+                          <div className="fixed inset-0 z-30" onClick={() => setActiveDropdownId(null)} />
+                          <div className="absolute bottom-10 right-0 z-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-1.5 flex flex-col min-w-32 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                            <button 
+                              onClick={() => {
+                                setActiveDropdownId(null);
+                                handleOpenModal(user);
+                              }}
+                              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors w-full text-left"
+                            >
+                              <Edit2 size={14} className="text-slate-400" />
+                              Editar
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setActiveDropdownId(null);
+                                setUserToDelete(user);
+                                setIsDeleteModalOpen(true);
+                              }}
+                              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors w-full text-left"
+                            >
+                              <Trash2 size={14} className="text-rose-500" />
+                              Excluir
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
