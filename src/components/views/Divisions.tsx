@@ -234,7 +234,7 @@ export default function Divisions({ divisions, setDivisions, isAdmin = true, glo
             layout
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="group relative flex flex-col rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all p-6 min-h-[500px] overflow-hidden"
+            className="group relative flex flex-col rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all p-5 min-h-[410px] overflow-hidden"
           >
             {/* Corner Fold Star Ribbon */}
             <div className="absolute top-0 right-0 z-20">
@@ -249,12 +249,12 @@ export default function Divisions({ divisions, setDivisions, isAdmin = true, glo
 
             {/* Float Edit/Delete Three-dot Menu */}
             {isAdmin && (
-              <div className="absolute top-12 right-3 z-20">
+              <div className="absolute top-10 right-3 z-20">
                 <button 
                   onClick={() => setActiveDropdownId(activeDropdownId === division.id ? null : division.id)}
-                  className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700"
+                  className="w-7 h-7 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 flex items-center justify-center text-slate-500 dark:text-slate-400 transition-colors border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700"
                 >
-                  <MoreVertical size={16} />
+                  <MoreVertical size={14} />
                 </button>
                 
                 {activeDropdownId === division.id && (
@@ -289,93 +289,93 @@ export default function Divisions({ divisions, setDivisions, isAdmin = true, glo
 
             <div className="relative z-10 flex flex-col h-full flex-1">
               {/* Centered Circular Avatar with Division Image or icon */}
-              <div className="flex flex-col items-center mt-2 mb-4 relative shrink-0">
+              <div className="flex flex-col items-center mt-1 mb-3 relative shrink-0">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full border-4 border-slate-50 dark:border-slate-850 shadow-inner bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-650 dark:text-slate-400 overflow-hidden relative group-hover:scale-105 transition-transform duration-500">
+                  <div className="w-18 h-18 rounded-full border-[3px] border-slate-50 dark:border-slate-850 shadow-inner bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-650 dark:text-slate-400 overflow-hidden relative group-hover:scale-105 transition-transform duration-500">
                     {division.image ? (
                       <img src={division.image} alt={division.name} className="w-full h-full object-cover" referrerpolicy="no-referrer" />
                     ) : (
                       <div className="w-full h-full bg-linear-to-br from-indigo-100 to-indigo-50 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center">
-                        <Building2 size={32} className="text-indigo-200 dark:text-slate-700" />
+                        <Building2 size={26} className="text-indigo-200 dark:text-slate-700" />
                       </div>
                     )}
                   </div>
                   {/* Overlapping Bottom Badge */}
-                  <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 shadow-md bg-white dark:bg-slate-800 flex items-center justify-center absolute -bottom-1.5 left-1/2 -translate-x-1/2 translate-y-1/4 z-10 text-indigo-600 dark:text-indigo-400">
-                    <Building2 size={14} className="stroke-[2.5]" />
+                  <div className="w-6 h-6 rounded-full border border-white dark:border-slate-900 shadow-md bg-white dark:bg-slate-800 flex items-center justify-center absolute -bottom-1 left-1/2 -translate-x-1/2 translate-y-1/4 z-10 text-indigo-600 dark:text-indigo-400">
+                    <Building2 size={11} className="stroke-[2.5]" />
                   </div>
                 </div>
               </div>
 
               {/* Center aligned Name and description */}
-              <div className="text-center mt-4 mb-6 shrink-0">
-                <h4 className="font-display font-bold text-slate-900 dark:text-white uppercase text-lg tracking-tight line-clamp-1">{division.name}</h4>
-                <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1 line-clamp-1 max-w-[220px] mx-auto">{division.description || 'Divisão Cadastrada'}</p>
+              <div className="text-center mt-2.5 mb-4 shrink-0">
+                <h4 className="font-display font-bold text-slate-900 dark:text-white uppercase text-base tracking-tight line-clamp-1">{division.name}</h4>
+                <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5 line-clamp-1 max-w-[220px] mx-auto">{division.description || 'Divisão Cadastrada'}</p>
               </div>
 
               {/* Metrics Rows */}
-              <div className="space-y-4 px-2 mb-6 shrink-0">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
-                    <Building2 size={14} className="stroke-[2.5]" />
+              <div className="space-y-2.5 px-1 mb-4 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                    <Building2 size={12} className="stroke-[2.5]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Sub-Unidades</p>
-                    <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1.5">{(division.sectors?.length || 0)} setores</p>
+                    <p className="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Sub-Unidades</p>
+                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200 mt-0.5">{(division.sectors?.length || 0)} setores</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                    <FileText size={14} className="stroke-[2.5]" />
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <FileText size={12} className="stroke-[2.5]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Sigla/Ref</p>
-                    <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1.5 truncate">{division.name}</p>
+                    <p className="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Sigla/Ref</p>
+                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200 mt-0.5 truncate">{division.name}</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={14} className="stroke-[2.5]" />
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-full bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                    <CheckCircle2 size={12} className="stroke-[2.5]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Situação</p>
-                    <p className="text-xs font-bold text-slate-700 dark:text-slate-200 mt-1.5 truncate">Ativa</p>
+                    <p className="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider leading-none">Situação</p>
+                    <p className="text-[11px] font-bold text-slate-700 dark:text-slate-200 mt-0.5 truncate">Ativa</p>
                   </div>
                 </div>
               </div>
 
               {/* Sectors Content Section */}
-              <div className="flex-1 border-t border-slate-100 dark:border-slate-800/80 pt-4 flex flex-col min-h-0">
-                <div className="flex items-center justify-between mb-2 shrink-0">
+              <div className="flex-1 border-t border-slate-100 dark:border-slate-800/80 pt-3 flex flex-col min-h-0">
+                <div className="flex items-center justify-between mb-1.5 shrink-0">
                   <h4 className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Setores Cadastrados</h4>
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 space-y-1.5 mb-3">
+                <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 space-y-1 mb-2.5">
                   {division.sectors && division.sectors.length > 0 ? (
                     division.sectors.map((sector, sIdx) => (
-                      <div key={sIdx} className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 group/sector">
-                        <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{sector}</span>
+                      <div key={sIdx} className="flex items-center justify-between p-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-850 group/sector">
+                        <span className="text-[11px] font-medium text-slate-700 dark:text-slate-300">{sector}</span>
                         {isAdmin && (
                           <button 
                             onClick={() => handleRemoveSector(division.id, sIdx)}
-                            className="opacity-0 group-hover/sector:opacity-100 p-1 text-slate-400 hover:text-rose-500 transition-all"
+                            className="opacity-0 group-hover/sector:opacity-100 p-0.5 text-slate-400 hover:text-rose-500 transition-all"
                           >
-                            <X size={12} />
+                            <X size={10} />
                           </button>
                         )}
                       </div>
                     ))
                   ) : (
-                    <div className="h-full flex flex-col items-center justify-center opacity-60 py-4">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Nenhum setor</p>
+                    <div className="h-full flex flex-col items-center justify-center opacity-60 py-3">
+                      <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Nenhum setor</p>
                     </div>
                   )}
                 </div>
 
                 {isAdmin && (
-                  <div className="mt-auto pt-3 border-t border-slate-100 dark:border-slate-800 shrink-0">
+                  <div className="mt-auto pt-2.5 border-t border-slate-100 dark:border-slate-800 shrink-0">
                     <div className="relative group/input">
                       <input 
                         type="text"
@@ -383,13 +383,13 @@ export default function Divisions({ divisions, setDivisions, isAdmin = true, glo
                         value={newSectorName[division.id] || ''}
                         onChange={(e) => setNewSectorName(prev => ({ ...prev, [division.id]: e.target.value }))}
                         onKeyDown={(e) => e.key === 'Enter' && handleAddSector(division.id)}
-                        className="w-full h-9 pl-3 pr-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-150 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-450 dark:placeholder:text-slate-550 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium outline-none"
+                        className="w-full h-8 pl-2.5 pr-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-150 dark:border-slate-700 text-[11px] text-slate-900 dark:text-white placeholder:text-slate-450 dark:placeholder:text-slate-550 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium outline-none"
                       />
                       <button 
                         onClick={() => handleAddSector(division.id)}
-                        className="absolute right-1 top-1 h-7 w-7 flex items-center justify-center rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-all shadow-sm"
+                        className="absolute right-1 top-1 h-6 w-6 flex items-center justify-center rounded-md bg-indigo-600 text-white hover:bg-indigo-500 transition-all shadow-sm"
                       >
-                        <Plus size={14} />
+                        <Plus size={12} />
                       </button>
                     </div>
                   </div>
