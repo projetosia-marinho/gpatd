@@ -63,11 +63,27 @@ export default function Shell({
     }
   };
 
+  const isException = currentUser?.role === 'Administrador' || currentUser?.role === 'Visualizador';
+
   const criticalAlerts = processes.filter(p => {
     const startDate = new Date(p.dataInicio);
     const diffTime = Math.abs(new Date().getTime() - startDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return (p.status === 'Suspenso' || p.status === 'Em Andamento') && diffDays > 30;
+    const isCritical = (p.status === 'Suspenso' || p.status === 'Em Andamento') && diffDays > 30;
+
+    if (!isCritical) return false;
+    if (isException) return true;
+
+    // Filter by logged-in user association
+    const userName = currentUser?.name?.toLowerCase() || '';
+    const userSaram = currentUser?.saram || '';
+
+    const isMilitar = (p.militar && p.militar.toLowerCase().includes(userName)) || (p.saram && p.saram === userSaram);
+    const isApurador = p.apurador && p.apurador.toLowerCase().includes(userName);
+    const isAplicador = p.aplicador && p.aplicador.toLowerCase().includes(userName);
+    const isHistoryUser = p.history && Array.isArray(p.history) && p.history.some((h: any) => h.user && h.user.toLowerCase().includes(userName));
+
+    return isMilitar || isApurador || isAplicador || isHistoryUser;
   });
 
   const notifications = [
@@ -79,14 +95,16 @@ export default function Shell({
       time: 'Agora',
       process: p
     })),
-    {
-      id: 'admin-doc-1',
-      title: 'Novo Documento Adicionado',
-      subtitle: 'Administrador anexou "Normas_2024.pdf" ao sistema.',
-      type: 'info',
-      time: '2h atrás',
-      tab: 'documentos'
-    }
+    ...(isException ? [
+      {
+        id: 'admin-doc-1',
+        title: 'Novo Documento Adicionado',
+        subtitle: 'Administrador anexou "Normas_2024.pdf" ao sistema.',
+        type: 'info',
+        time: '2h atrás',
+        tab: 'documentos'
+      }
+    ] : [])
   ];
 
   const primaryNavigation = [
