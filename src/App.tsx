@@ -177,7 +177,16 @@ export default function App() {
             resumoFato: p.resumo_fato,
             nGrade: p.n_grade,
             observacoes: p.observacoes,
-            resumoPunicao: p.resumo_punicao
+            resumoPunicao: p.resumo_punicao,
+            apuradorPosto: p.apurador_posto,
+            apuradorQuadro: p.apurador_quadro,
+            apuradorSaram: p.apurador_saram,
+            aplicadorPosto: p.aplicador_posto,
+            aplicadorQuadro: p.aplicador_quadro,
+            oficioNumero: p.oficio_numero,
+            protComaer: p.prot_comaer,
+            dataOficio: p.data_oficio,
+            enquadramentoRdaer: p.enquadramento_rdaer
           })));
         }
       } catch (err) {
@@ -285,7 +294,16 @@ export default function App() {
         boletim: newProcessData.boletim || '',
         resumo_fato: newProcessData.resumoFato,
         apurador: newProcessData.apurador,
+        apurador_posto: newProcessData.apuradorPosto || null,
+        apurador_quadro: newProcessData.apuradorQuadro || null,
+        apurador_saram: newProcessData.apuradorSaram || null,
         aplicador: newProcessData.aplicador,
+        aplicador_posto: newProcessData.aplicadorPosto || null,
+        aplicador_quadro: newProcessData.aplicadorQuadro || null,
+        oficio_numero: newProcessData.oficioNumero || null,
+        prot_comaer: newProcessData.protComaer || null,
+        data_oficio: newProcessData.dataOficio || null,
+        enquadramento_rdaer: newProcessData.enquadramentoRdaer || null,
         documents: newProcessData.documents || [],
         history: newProcessData.history || [],
         n_grade: newProcessData.nGrade || '',

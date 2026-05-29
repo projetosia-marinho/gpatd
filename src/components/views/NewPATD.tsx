@@ -455,7 +455,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     divisao: currentUser && currentUser.role !== 'Administrador' && currentUser.divisao ? currentUser.divisao : 'DOA',
     setor: '',
     apurador: '',
+    apuradorPosto: '1T',
+    apuradorQuadro: 'QOINT',
+    apuradorSaram: '',
     aplicador: '',
+    aplicadorPosto: 'TC',
+    aplicadorQuadro: 'QOAV',
+    oficioNumero: '',
+    protComaer: '',
+    dataOficio: '',
+    enquadramentoRdaer: '',
     resumoFato: '',
     dataInicio: '',
     dataTermino: '',
@@ -506,8 +515,15 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </div>
               
               <div class="meta-box font-medium mt-8 border-top pt-4">
-                <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apurador || '___________________________'}</p>
-                <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicador || '___________________________'}</p>
+                <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'} (SARAM: ${formData.apuradorSaram || '_______'})</p>
+                <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
+              </div>
+
+              <div class="meta-box font-medium mt-8 border-top pt-4">
+                <p><strong>OFÍCIO Nº:</strong> ${formData.oficioNumero || '_______'}</p>
+                <p><strong>PROT. COMAER Nº:</strong> ${formData.protComaer || '_______'}</p>
+                <p><strong>DATA DO OFÍCIO:</strong> ${formatDateStr(formData.dataOficio)}</p>
+                <p><strong>ENQUADRAMENTO RDAER:</strong> ${formData.enquadramentoRdaer || '_______'}</p>
               </div>
 
               <div class="meta-box font-medium mt-8 border-top pt-4">
@@ -541,12 +557,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 <p class="indent-12 leading-relaxed">
                   1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
                   <strong>${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</strong>, 
-                  SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro, 
+                  SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro (Ofício nº <strong>${formData.oficioNumero || '_______'}</strong>, Prot. COMAER nº <strong>${formData.protComaer || '_______'}</strong>, de <strong>${formatDateStr(formData.dataOficio)}</strong>), 
                   <strong>RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
                   <strong>${formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
                 </p>
                 <p class="indent-12 leading-relaxed mt-4">
-                  2. Designo o <strong>${formData.apurador || '___________________________'}</strong> para atuar como Encarregado da presente apuração, 
+                  2. Designo o <strong>${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</strong>, SARAM <strong>${formData.apuradorSaram || '_______'}</strong>, para atuar como Encarregado da presente apuração, 
                   competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
                 </p>
                 <p class="indent-12 leading-relaxed mt-4">
@@ -563,7 +579,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               
               <div class="signature-box text-center mt-24">
                 <div class="line mx-auto w-64 border-bottom mb-2"></div>
-                <p class="font-bold uppercase">${formData.aplicador || '___________________________'}</p>
+                <p class="font-bold uppercase">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
                 <p class="text-xs uppercase text-slate-500">Autoridade Aplicadora / Competente</p>
               </div>
             </div>
@@ -601,6 +617,25 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 </tr>
               </table>
 
+              <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">1.2. DADOS DA APURAÇÃO E DOCUMENTAÇÃO ORIGINÁRIA</div>
+              <table class="w-full text-xs mt-2 border-collapse">
+                <tr>
+                  <td class="p-2 border"><strong>APURADOR (ENCARREGADO):</strong> ${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</td>
+                  <td class="p-2 border"><strong>SARAM:</strong> ${formData.apuradorSaram || '_______'}</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border" colspan="2"><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border"><strong>OFÍCIO Nº:</strong> ${formData.oficioNumero || '_______'}</td>
+                  <td class="p-2 border"><strong>PROT. COMAER:</strong> ${formData.protComaer || '_______'}</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border"><strong>DATA DO DOCUMENTO:</strong> ${formatDateStr(formData.dataOficio)}</td>
+                  <td class="p-2 border"><strong>ENQUADRAMENTO RDAER:</strong> ${formData.enquadramentoRdaer || '_______'}</td>
+                </tr>
+              </table>
+
               <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">2. DESCRIÇÃO DO FATO DISCIPLINAR (SÍNTESE)</div>
               <div class="p-3 border text-xs text-justify leading-relaxed min-h-24 bg-slate-50 italic">
                 ${formData.resumoFato || 'Sem fatos cadastrados até o momento.'}
@@ -623,7 +658,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   <p class="font-bold">ENTREGA PELO ENCARREGADO:</p>
                   <p class="mt-4">Entregue em: ____/____/________</p>
                   <div class="line mt-8 border-bottom w-full"></div>
-                  <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Encarregado (${formData.apurador || 'Apurador'})</p>
+                  <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Encarregado (${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || 'Apurador'})</p>
                 </div>
               </div>
             </div>
@@ -857,8 +892,15 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         </div>
         
         <div class="meta-box font-medium mt-8 border-top pt-4">
-          <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apurador || '___________________________'}</p>
-          <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicador || '___________________________'}</p>
+          <p><strong>APURADOR (ENCARREGADO):</strong> ${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'} (SARAM: ${formData.apuradorSaram || '_______'})</p>
+          <p><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
+        </div>
+
+        <div class="meta-box font-medium mt-8 border-top pt-4">
+          <p><strong>OFÍCIO Nº:</strong> ${formData.oficioNumero || '_______'}</p>
+          <p><strong>PROT. COMAER Nº:</strong> ${formData.protComaer || '_______'}</p>
+          <p><strong>DATA DO OFÍCIO:</strong> ${formatDateStr(formData.dataOficio)}</p>
+          <p><strong>ENQUADRAMENTO RDAER:</strong> ${formData.enquadramentoRdaer || '_______'}</p>
         </div>
 
         <div class="meta-box font-medium mt-8 border-top pt-4">
@@ -892,12 +934,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           <p class="indent-12 leading-relaxed">
             1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
             <strong>${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</strong>, 
-            SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro, 
+            SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro (Ofício nº <strong>${formData.oficioNumero || '_______'}</strong>, Prot. COMAER nº <strong>${formData.protComaer || '_______'}</strong>, de <strong>${formatDateStr(formData.dataOficio)}</strong>), 
             <strong>RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
             <strong>${formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
           </p>
           <p class="indent-12 leading-relaxed mt-4">
-            2. Designo o <strong>${formData.apurador || '___________________________'}</strong> para atuar as encarregado da presente apuração, 
+            2. Designo o <strong>${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</strong>, SARAM <strong>${formData.apuradorSaram || '_______'}</strong>, para atuar como Encarregado da presente apuração, 
             competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
           </p>
           <p class="indent-12 leading-relaxed mt-4">
@@ -914,7 +956,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         
         <div class="signature-box text-center mt-24">
           <div class="line mx-auto w-64 border-bottom mb-2"></div>
-          <p class="font-bold uppercase">${formData.aplicador || '___________________________'}</p>
+          <p class="font-bold uppercase">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
           <p class="text-xs uppercase text-slate-500">Autoridade Aplicadora / Competente</p>
         </div>
       </div>
@@ -952,6 +994,25 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           </tr>
         </table>
 
+        <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">1.2. DADOS DA APURAÇÃO E DOCUMENTAÇÃO ORIGINÁRIA</div>
+        <table class="w-full text-xs mt-2 border-collapse">
+          <tr>
+            <td class="p-2 border"><strong>APURADOR (ENCARREGADO):</strong> ${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</td>
+            <td class="p-2 border"><strong>SARAM:</strong> ${formData.apuradorSaram || '_______'}</td>
+          </tr>
+          <tr>
+            <td class="p-2 border" colspan="2"><strong>AUTORIDADE APLICADORA:</strong> ${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</td>
+          </tr>
+          <tr>
+            <td class="p-2 border"><strong>OFÍCIO Nº:</strong> ${formData.oficioNumero || '_______'}</td>
+            <td class="p-2 border"><strong>PROT. COMAER:</strong> ${formData.protComaer || '_______'}</td>
+          </tr>
+          <tr>
+            <td class="p-2 border"><strong>DATA DO DOCUMENTO:</strong> ${formatDateStr(formData.dataOficio)}</td>
+            <td class="p-2 border"><strong>ENQUADRAMENTO RDAER:</strong> ${formData.enquadramentoRdaer || '_______'}</td>
+          </tr>
+        </table>
+
         <div class="section-title mt-6 font-bold text-xs uppercase tracking-wider bg-slate-100 p-1">2. DESCRIÇÃO DO FATO DISCIPLINAR (SÍNTESE)</div>
         <div class="p-3 border text-xs text-justify leading-relaxed min-h-24 bg-slate-50 italic">
           ${formData.resumoFato || 'Sem fatos cadastrados até o momento.'}
@@ -974,7 +1035,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             <p class="font-bold">ENTREGA PELO ENCARREGADO:</p>
             <p class="mt-4">Entregue em: ____/____/________</p>
             <div class="line mt-8 border-bottom w-full"></div>
-            <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Encarregado (${formData.apurador || 'Apurador'})</p>
+            <p class="text-center mt-1 text-[10px] text-slate-400">Assinatura do Encarregado (${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || 'Apurador'})</p>
           </div>
         </div>
       </div>
@@ -1086,7 +1147,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         divisao: initialData.divisao || 'DOA',
         setor: initialData.setor || '',
         apurador: initialData.apurador || '',
+        apuradorPosto: initialData.apuradorPosto || '1T',
+        apuradorQuadro: initialData.apuradorQuadro || 'QOINT',
+        apuradorSaram: initialData.apuradorSaram || '',
         aplicador: initialData.aplicador || '',
+        aplicadorPosto: initialData.aplicadorPosto || 'TC',
+        aplicadorQuadro: initialData.aplicadorQuadro || 'QOAV',
+        oficioNumero: initialData.oficioNumero || '',
+        protComaer: initialData.protComaer || '',
+        dataOficio: initialData.dataOficio || '',
+        enquadramentoRdaer: initialData.enquadramentoRdaer || '',
         resumoFato: initialData.resumoFato || '',
         dataInicio: initialData.dataInicio || '',
         dataTermino: initialData.dataTermino || '',
@@ -1266,7 +1336,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     divisao: 'Divisão',
     setor: 'Setor',
     apurador: 'Apurador',
+    apuradorPosto: 'Posto do Apurador',
+    apuradorQuadro: 'Quadro do Apurador',
+    apuradorSaram: 'SARAM do Apurador',
     aplicador: 'Aplicador',
+    aplicadorPosto: 'Posto do Aplicador',
+    aplicadorQuadro: 'Quadro do Aplicador',
+    oficioNumero: 'Nº do Ofício',
+    protComaer: 'Prot. COMAER nº',
+    dataOficio: 'Data do Ofício/Protocolo',
+    enquadramentoRdaer: 'Enquadramento RDAER',
     resumoFato: 'Resumo do Fato',
     dataInicio: 'Data de Início',
     dataTermino: 'Data de Término',
@@ -1305,7 +1384,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     let newValue = e.target.value;
 
     // SARAM Restriction: only numbers, max 7
-    if (field === 'saram') {
+    if (field === 'saram' || field === 'apuradorSaram') {
       newValue = newValue.replace(/\D/g, '').slice(0, 7);
     }
 
@@ -1335,6 +1414,9 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     if (field === 'saram' && newValue) {
       delete newErrors.saram;
     }
+    if (field === 'apuradorSaram' && newValue) {
+      delete newErrors.apuradorSaram;
+    }
     if (field === 'nomeCompleto' && newValue) {
       delete newErrors.nomeCompleto;
     }
@@ -1358,7 +1440,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         divisao: currentUser && currentUser.role !== 'Administrador' && currentUser.divisao ? currentUser.divisao : 'DOA',
         setor: '',
         apurador: '',
+        apuradorPosto: '1T',
+        apuradorQuadro: 'QOINT',
+        apuradorSaram: '',
         aplicador: '',
+        aplicadorPosto: 'TC',
+        aplicadorQuadro: 'QOAV',
+        oficioNumero: '',
+        protComaer: '',
+        dataOficio: '',
+        enquadramentoRdaer: '',
         resumoFato: '',
         dataInicio: '',
         dataTermino: '',
@@ -1649,9 +1740,43 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             </h4>
             
             <div className="relative z-10 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <AutocompleteInputField label="Apurador" icon={User} value={formData.apurador} onChange={handleChange('apurador')} fieldName="apurador" />
-                <AutocompleteInputField label="Aplicador" icon={User} value={formData.aplicador} onChange={handleChange('aplicador')} fieldName="aplicador" />
+              {/* Seção Apurador */}
+              <div className="border-b border-slate-100 dark:border-slate-850/50 pb-6 space-y-4">
+                <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider ml-1">Identificação do Apurador</p>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="md:col-span-2">
+                    <AutocompleteInputField label="Apurador (Encarregado)" icon={User} value={formData.apurador} onChange={handleChange('apurador')} fieldName="apurador" />
+                  </div>
+                  <SelectField label="Posto (Apurador)" icon={Shield} value={formData.apuradorPosto} onChange={handleChange('apuradorPosto')} options={optionsPosto} />
+                  <SelectField label="Quadro (Apurador)" icon={Briefcase} value={formData.apuradorQuadro} onChange={handleChange('apuradorQuadro')} options={optionsQuadro} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <InputField label="SARAM (Apurador)" icon={User} value={formData.apuradorSaram} onChange={handleChange('apuradorSaram')} placeholder="0000000" error={errors.apuradorSaram} />
+                  <div className="hidden md:block md:col-span-3" />
+                </div>
+              </div>
+
+              {/* Seção Aplicador */}
+              <div className="border-b border-slate-100 dark:border-slate-850/50 pb-6 space-y-4">
+                <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider ml-1">Identificação do Aplicador</p>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="md:col-span-2">
+                    <AutocompleteInputField label="Autoridade Aplicadora" icon={User} value={formData.aplicador} onChange={handleChange('aplicador')} fieldName="aplicador" />
+                  </div>
+                  <SelectField label="Posto (Aplicador)" icon={Shield} value={formData.aplicadorPosto} onChange={handleChange('aplicadorPosto')} options={optionsPosto} />
+                  <SelectField label="Quadro (Aplicador)" icon={Briefcase} value={formData.aplicadorQuadro} onChange={handleChange('aplicadorQuadro')} options={optionsQuadro} />
+                </div>
+              </div>
+
+              {/* Seção Documentos de Entrada e Enquadramento */}
+              <div className="border-b border-slate-100 dark:border-slate-850/50 pb-6 space-y-4">
+                <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider ml-1">Documentação e Enquadramento</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <InputField label="Ofício nº" icon={FileText} value={formData.oficioNumero} onChange={handleChange('oficioNumero')} placeholder="Ex: 123/SEC/2026" />
+                  <InputField label="Prot. COMAER nº" icon={FileText} value={formData.protComaer} onChange={handleChange('protComaer')} placeholder="Ex: 60000.000000/2026-00" />
+                  <DatePickerField label="Data" value={formData.dataOficio} onChange={handleChange('dataOficio')} />
+                </div>
+                <TextAreaField label="Enquadramento RDAER" value={formData.enquadramentoRdaer} onChange={handleChange('enquadramentoRdaer')} placeholder="Ex: Artigo 10, item 12, do RDAER (Regulamento de Disciplina da Aeronáutica)..." />
               </div>
 
               <TextAreaField label="Resumo do Fato" value={formData.resumoFato} onChange={handleChange('resumoFato')} placeholder="Descreva os fatos ocorridos..." />
@@ -1934,8 +2059,15 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               </div>
                               
                               <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
-                                <p><strong>APURADOR (ENCARREGADO):</strong> {formData.apurador || '___________________________'}</p>
-                                <p><strong>AUTORIDADE APLICADORA:</strong> {formData.aplicador || '___________________________'}</p>
+                                <p><strong>APURADOR (ENCARREGADO):</strong> {formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || '___________________________'} (SARAM: {formData.apuradorSaram || '_______'})</p>
+                                <p><strong>AUTORIDADE APLICADORA:</strong> {formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
+                              </div>
+
+                              <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
+                                <p><strong>OFÍCIO Nº:</strong> {formData.oficioNumero || '_______'}</p>
+                                <p><strong>PROT. COMAER Nº:</strong> {formData.protComaer || '_______'}</p>
+                                <p><strong>DATA DO OFÍCIO:</strong> {formatDateStr(formData.dataOficio)}</p>
+                                <p><strong>ENQUADRAMENTO RDAER:</strong> {formData.enquadramentoRdaer || '_______'}</p>
                               </div>
 
                               <div className="mt-8 border-t border-slate-100 dark:border-slate-900 pt-4 space-y-3.5 text-sm">
@@ -1971,12 +2103,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                 <p className="indent-12">
                                   1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
                                   <strong> {formData.posto} {formData.quadro} {formData.nomeCompleto || '___________________________'}</strong>, 
-                                  SARAM <strong>{formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro, 
+                                  SARAM <strong>{formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro (Ofício nº <strong>{formData.oficioNumero || '_______'}</strong>, Prot. COMAER nº <strong>{formData.protComaer || '_______'}</strong>, de <strong>{formatDateStr(formData.dataOficio)}</strong>), 
                                   <strong> RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
                                   <strong> {formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
                                 </p>
                                 <p className="indent-12">
-                                  2. Designo o <strong>{formData.apurador || '___________________________'}</strong> para atuar como Encarregado da presente apuração, 
+                                  2. Designo o <strong>{formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || '___________________________'}</strong>, SARAM <strong>{formData.apuradorSaram || '_______'}</strong>, para atuar como Encarregado da presente apuração, 
                                   competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
                                 </p>
                                 <p className="indent-12">
@@ -1994,7 +2126,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                             
                             <div className="text-center mt-16">
                               <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" />
-                              <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.aplicador || '___________________________'}</p>
+                              <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
                               <p className="text-[9px] uppercase text-slate-400">Autoridade Aplicadora / Competente</p>
                             </div>
                           </div>
@@ -2035,6 +2167,27 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                 </tbody>
                               </table>
 
+                              <div className="mt-6 font-bold text-[9px] uppercase tracking-wider bg-slate-100 dark:bg-slate-900 p-1.5 border border-slate-200 dark:border-slate-850">1.2. DADOS DA APURAÇÃO E DOCUMENTAÇÃO ORIGINÁRIA</div>
+                              <table className="w-full text-xs mt-1 border-collapse border border-slate-200 dark:border-slate-850">
+                                <tbody>
+                                  <tr className="border-b border-slate-200 dark:border-slate-850">
+                                    <td className="p-2 border-r border-slate-200 dark:border-slate-850 font-medium"><strong>APURADOR (ENCARREGADO):</strong> {formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || '___________________________'}</td>
+                                    <td className="p-2 font-medium"><strong>SARAM:</strong> {formData.apuradorSaram || '_______'}</td>
+                                  </tr>
+                                  <tr className="border-b border-slate-200 dark:border-slate-850">
+                                    <td className="p-2 font-medium" colSpan={2}><strong>AUTORIDADE APLICADORA:</strong> {formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</td>
+                                  </tr>
+                                  <tr className="border-b border-slate-200 dark:border-slate-850">
+                                    <td className="p-2 border-r border-slate-200 dark:border-slate-850 font-medium"><strong>OFÍCIO Nº:</strong> {formData.oficioNumero || '_______'}</td>
+                                    <td className="p-2 font-medium"><strong>PROT. COMAER:</strong> {formData.protComaer || '_______'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="p-2 border-r border-slate-200 dark:border-slate-850 font-medium"><strong>DATA DO DOCUMENTO:</strong> {formatDateStr(formData.dataOficio)}</td>
+                                    <td className="p-2 font-medium"><strong>ENQUADRAMENTO RDAER:</strong> {formData.enquadramentoRdaer || '_______'}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+
                               <div className="mt-6 font-bold text-[9px] uppercase tracking-wider bg-slate-100 dark:bg-slate-900 p-1.5 border border-slate-200 dark:border-slate-850">2. DESCRIÇÃO DO FATO DISCIPLINAR (SÍNTESE)</div>
                               <div className="p-3 border border-slate-200 dark:border-slate-850 text-xs text-justify leading-relaxed bg-slate-50 dark:bg-slate-900/50 italic min-h-16 mt-1">
                                 {formData.resumoFato || 'Sem fatos cadastrados até o momento.'}
@@ -2058,7 +2211,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                 <p className="font-bold">ENTREGA PELO ENCARREGADO:</p>
                                 <p className="mt-3">Entregue em: ____/____/________</p>
                                 <div className="border-b border-slate-350 dark:border-slate-700 mt-8 w-full" />
-                                <p className="text-center mt-1.5 text-[9px] text-slate-400 uppercase tracking-wider">Assinatura do Encarregado ({formData.apurador || 'Apurador'})</p>
+                                <p className="text-center mt-1.5 text-[9px] text-slate-400 uppercase tracking-wider">Assinatura do Encarregado ({formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || 'Apurador'})</p>
                               </div>
                             </div>
                           </div>
