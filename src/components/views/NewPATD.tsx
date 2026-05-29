@@ -507,17 +507,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               <div class="capa-frame">
                 <!-- Top Emblem and Headers -->
                 <div class="w-full text-center flex flex-col items-center">
-                  <svg width="75" height="75" viewBox="0 0 100 100" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#009c3b" stroke-width="2.5"/>
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#ffdf00" stroke-width="1.5"/>
-                    <polygon points="50,15 60,40 85,40 65,55 75,80 50,65 25,80 35,55 15,40 40,40" fill="#009c3b" stroke="#ffdf00" stroke-width="1.5"/>
-                    <circle cx="50" cy="52" r="15" fill="#002244" stroke="#ffdf00" stroke-width="1"/>
-                    <circle cx="50" cy="46" r="1.5" fill="white"/>
-                    <circle cx="50" cy="58" r="1.5" fill="white"/>
-                    <circle cx="44" cy="52" r="1.5" fill="white"/>
-                    <circle cx="56" cy="52" r="1.5" fill="white"/>
-                    <circle cx="53" cy="55" r="1" fill="white"/>
-                  </svg>
+                  <img src="${window.location.origin}/brasao.png" width="75" height="75" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
                   <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Ministério da Defesa</p>
                   <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
                   <p class="text-red underline" style="font-size: 16px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
@@ -959,17 +949,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         <div class="capa-frame">
           <!-- Top Emblem and Headers -->
           <div class="w-full text-center flex flex-col items-center">
-            <svg width="75" height="75" viewBox="0 0 100 100" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="#009c3b" stroke-width="2.5"/>
-              <circle cx="50" cy="50" r="40" fill="none" stroke="#ffdf00" stroke-width="1.5"/>
-              <polygon points="50,15 60,40 85,40 65,55 75,80 50,65 25,80 35,55 15,40 40,40" fill="#009c3b" stroke="#ffdf00" stroke-width="1.5"/>
-              <circle cx="50" cy="52" r="15" fill="#002244" stroke="#ffdf00" stroke-width="1"/>
-              <circle cx="50" cy="46" r="1.5" fill="white"/>
-              <circle cx="50" cy="58" r="1.5" fill="white"/>
-              <circle cx="44" cy="52" r="1.5" fill="white"/>
-              <circle cx="56" cy="52" r="1.5" fill="white"/>
-              <circle cx="53" cy="55" r="1" fill="white"/>
-            </svg>
+            <img src="${window.location.origin}/brasao.png" width="75" height="75" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
             <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Ministério da Defesa</p>
             <p style="font-size: 16px; font-weight: bold; color: #000000; margin: 0 0 4px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
             <p class="text-red underline" style="font-size: 16px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
@@ -2136,17 +2116,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                             <div className="border-2 border-black dark:border-slate-800 p-8 flex flex-col justify-between items-center w-full flex-1" style={{ boxSizing: 'border-box' }}>
                               {/* Top Emblem and Headers */}
                               <div className="w-full text-center flex flex-col items-center">
-                                <svg width="60" height="60" viewBox="0 0 100 100" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
-                                  <circle cx="50" cy="50" r="45" fill="none" stroke="#009c3b" strokeWidth="2.5"/>
-                                  <circle cx="50" cy="50" r="40" fill="none" stroke="#ffdf00" strokeWidth="1.5"/>
-                                  <polygon points="50,15 60,40 85,40 65,55 75,80 50,65 25,80 35,55 15,40 40,40" fill="#009c3b" stroke="#ffdf00" strokeWidth="1.5"/>
-                                  <circle cx="50" cy="52" r="15" fill="#002244" stroke="#ffdf00" strokeWidth="1"/>
-                                  <circle cx="50" cy="46" r="1.5" fill="white"/>
-                                  <circle cx="50" cy="58" r="1.5" fill="white"/>
-                                  <circle cx="44" cy="52" r="1.5" fill="white"/>
-                                  <circle cx="56" cy="52" r="1.5" fill="white"/>
-                                  <circle cx="53" cy="55" r="1" fill="white"/>
-                                </svg>
+                                <img src="/brasao.png" width="60" height="60" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
                                 <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
                                 <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
                                 <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }}>Academia da Força Aérea</p>
