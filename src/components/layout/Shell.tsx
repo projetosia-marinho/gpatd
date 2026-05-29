@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
@@ -53,6 +53,18 @@ export default function Shell({
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { signOut } = useAuth();
+  
+  const [dismissedNotifIds, setDismissedNotifIds] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('dismissed_notifications') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('dismissed_notifications', JSON.stringify(dismissedNotifIds));
+  }, [dismissedNotifIds]);
 
   const handleNotificationAction = (notif: any) => {
     setIsNotificationsOpen(false);
@@ -86,13 +98,31 @@ export default function Shell({
     return isMilitar || isApurador || isAplicador || isHistoryUser;
   });
 
-  const notifications = [
+  const completedAlerts = currentUser?.role === 'Administrador' ? processes.filter(p => {
+    if (p.status !== 'Concluído') return false;
+    return p.history && Array.isArray(p.history) && p.history.some((h: any) => {
+      const isStatus = h.field === 'Status' || h.field === 'status';
+      const fromActive = h.oldValue === 'Em Andamento' || h.oldValue === 'Suspenso';
+      const toCompleted = h.newValue === 'Concluído';
+      return isStatus && fromActive && toCompleted;
+    });
+  }) : [];
+
+  const allRawNotifications = [
     ...criticalAlerts.map(p => ({
       id: `alert-${p.id}`,
       title: p.status === 'Suspenso' ? 'Processo Suspenso' : 'Atraso Crítico (>30 dias)',
       subtitle: `PATD ${p.patdNumber} - ${p.militar}`,
       type: 'critical',
       time: 'Agora',
+      process: p
+    })),
+    ...completedAlerts.map(p => ({
+      id: `completed-${p.id}`,
+      title: 'Status Concluído',
+      subtitle: `PATD ${p.patdNumber} - ${p.militar} foi concluído`,
+      type: 'info',
+      time: 'Recente',
       process: p
     })),
     ...(isException ? [
@@ -106,6 +136,15 @@ export default function Shell({
       }
     ] : [])
   ];
+
+  const notifications = allRawNotifications.filter(n => !dismissedNotifIds.includes(n.id));
+
+  const handleClearAll = () => {
+    setDismissedNotifIds(prev => [
+      ...prev,
+      ...notifications.map(n => n.id)
+    ]);
+  };
 
   const primaryNavigation = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
@@ -350,9 +389,14 @@ export default function Shell({
                               </div>
                             )}
                           </div>
-                          <button className="w-full p-3 text-center text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors uppercase tracking-widest">
-                            Limpar Tudo
-                          </button>
+                          {notifications.length > 0 && (
+                            <button 
+                              onClick={handleClearAll}
+                              className="w-full p-3 text-center text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors uppercase tracking-widest border-t border-slate-100 dark:border-slate-800"
+                            >
+                              Limpar Tudo
+                            </button>
+                          )}
                         </motion.div>
                       </>
                     )}
