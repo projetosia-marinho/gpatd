@@ -2311,7 +2311,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 </div>
 
                 {/* Preview Container */}
-                <div className="flex-1 bg-slate-100 dark:bg-slate-900/40 p-6 overflow-y-auto custom-scrollbar flex items-center justify-center min-h-0">
+                <div className="flex-1 bg-slate-100 dark:bg-slate-900/40 p-6 overflow-y-auto custom-scrollbar flex flex-col items-center justify-start min-h-0">
                   {(() => {
                     const formatDateStr = (dateStr: string) => {
                       if (!dateStr) return '___/___/_____';
@@ -2555,7 +2555,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                         );
                       case 'fatd':
                         return (
-                          <div className="flex flex-col gap-8 w-full max-w-[650px] my-4 overflow-y-auto">
+                          <div className="flex flex-col gap-8 w-full max-w-[650px] my-4">
                             {/* Folha 1 */}
                             <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
                               <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '5mm', width: '50mm', height: '50mm' }} />
