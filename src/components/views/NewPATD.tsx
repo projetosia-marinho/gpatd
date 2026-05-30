@@ -613,7 +613,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               <!-- Section 1: Militar Arrolado -->
               <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 15px;">
                 <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
-                <p style="margin: 2px 0 4px 0;">
+                <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
+                <p style="margin: 2px 0 4px 0; font-weight: bold;">
                   ${formData.nomeCompleto || '___________________________'}${formData.posto ? `, ${formData.posto}` : ''}${formData.quadro ? ` ${formData.quadro}` : ''}${formData.especialidade ? `/${formData.especialidade}` : ''}
                 </p>
                 <div style="margin: 0; display: flex; justify-content: space-between;">
@@ -625,7 +626,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               <!-- Section 2: Oficial Apurador -->
               <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 10px;">
                 <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
-                <p style="margin: 2px 0 4px 0;">
+                <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
+                <p style="margin: 2px 0 4px 0; font-weight: bold;">
                   ${formData.apurador || '___________________________'}${formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}${formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
                 </p>
                 <div style="margin: 0; display: flex; justify-content: space-between;">
@@ -662,7 +664,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </div>
 
               <!-- Footer -->
-              <div class="text-center" style="margin-top: 15mm; font-size: 10px; font-weight: bold; color: #64748b;">
+              <div class="text-left" style="margin-top: 15mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
                 PATD Nº ${formData.patdNumber || '___/___/_____'}
               </div>
             </div>
@@ -717,7 +719,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </div>
 
               <!-- Footer -->
-              <div class="text-center" style="margin-top: 20mm; font-size: 10px; font-weight: bold; color: #64748b;">
+              <div class="text-left" style="margin-top: 20mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
                 PATD Nº ${formData.patdNumber || '___/___/_____'}
               </div>
             </div>
@@ -806,7 +808,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           box-shadow: none;
           width: auto;
           min-height: auto;
-          padding: 10mm 10mm 10mm 10mm;
+          /* padding: 10mm 10mm 10mm 10mm; */
         }
       }
       .text-red {
@@ -959,7 +961,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           box-shadow: none;
           width: auto;
           min-height: auto;
-          padding: 10mm 10mm 10mm 10mm;
+          /* padding: 10mm 10mm 10mm 10mm; */
         }
       }
       .text-red {
@@ -1112,7 +1114,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         <!-- Section 1: Militar Arrolado -->
         <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 15px;">
           <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
-          <p style="margin: 2px 0 4px 0;">
+          <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
+          <p style="margin: 2px 0 4px 0; font-weight: bold;">
             ${formData.nomeCompleto || '___________________________'}${formData.posto ? `, ${formData.posto}` : ''}${formData.quadro ? ` ${formData.quadro}` : ''}${formData.especialidade ? `/${formData.especialidade}` : ''}
           </p>
           <div style="margin: 0; display: flex; justify-content: space-between;">
@@ -1124,7 +1127,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         <!-- Section 2: Oficial Apurador -->
         <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 10px;">
           <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
-          <p style="margin: 2px 0 4px 0;">
+          <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
+          <p style="margin: 2px 0 4px 0; font-weight: bold;">
             ${formData.apurador || '___________________________'}${formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}${formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
           </p>
           <div style="margin: 0; display: flex; justify-content: space-between;">
@@ -1161,7 +1165,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         </div>
 
         <!-- Footer -->
-        <div class="text-center" style="margin-top: 15mm; font-size: 10px; font-weight: bold; color: #64748b;">
+        <div class="text-left" style="margin-top: 15mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
           PATD Nº ${formData.patdNumber || '___/___/_____'}
         </div>
       </div>
@@ -1216,7 +1220,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         </div>
 
         <!-- Footer -->
-        <div class="text-center" style="margin-top: 20mm; font-size: 10px; font-weight: bold; color: #64748b;">
+        <div class="text-left" style="margin-top: 20mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
           PATD Nº ${formData.patdNumber || '___/___/_____'}
         </div>
       </div>
@@ -2348,6 +2352,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                 {/* Section 1: Militar Arrolado */}
                                 <div style={{ border: '1px solid #000000', padding: '6px 10px', fontSize: '11px', lineHeight: '1.4', marginTop: '15px' }}>
                                   <p style={{ margin: 0, fontWeight: 'bold' }} className="dark:text-white">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
+                                  <p style={{ margin: 0, fontSize: '9px', color: '#ff0000', fontWeight: 'normal' }}>(nome completo, posto/grad/quadro/esp)</p>
                                   <p style={{ margin: '2px 0 4px 0' }} className="dark:text-white">
                                     {formData.nomeCompleto || '___________________________'}{formData.posto ? `, ${formData.posto}` : ''}{formData.quadro ? ` ${formData.quadro}` : ''}{formData.especialidade ? `/${formData.especialidade}` : ''}
                                   </p>
@@ -2360,6 +2365,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                 {/* Section 2: Oficial Apurador */}
                                 <div style={{ border: '1px solid #000000', padding: '6px 10px', fontSize: '11px', lineHeight: '1.4', marginTop: '10px' }}>
                                   <p style={{ margin: 0, fontWeight: 'bold' }} className="dark:text-white">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
+                                  <p style={{ margin: 0, fontSize: '9px', color: '#ff0000', fontWeight: 'normal' }}>(nome completo, posto/grad/quadro/esp)</p>
                                   <p style={{ margin: '2px 0 4px 0' }} className="dark:text-white">
                                     {formData.apurador || '___________________________'}{formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}{formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
                                   </p>
@@ -2398,7 +2404,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               </div>
 
                               {/* Footer */}
-                              <div className="text-center dark:text-white" style={{ marginTop: '10mm', fontSize: '9px', fontWeight: 'bold' }}>
+                              <div className="text-left dark:text-white" style={{ marginTop: '10mm', fontSize: '9px', fontWeight: 'bold', color: '#ff0000', textAlign: 'left' }}>
                                 PATD Nº {formData.patdNumber || '___/___/_____'}
                               </div>
                             </div>
@@ -2455,7 +2461,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               </div>
 
                               {/* Footer */}
-                              <div className="text-center dark:text-white" style={{ marginTop: '15mm', fontSize: '9px', fontWeight: 'bold' }}>
+                              <div className="text-left dark:text-white" style={{ marginTop: '15mm', fontSize: '9px', fontWeight: 'bold', color: '#ff0000', textAlign: 'left' }}>
                                 PATD Nº {formData.patdNumber || '___/___/_____'}
                               </div>
                             </div>
