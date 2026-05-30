@@ -187,7 +187,8 @@ export default function App() {
             oficioNumero: p.oficio_numero,
             protComaer: p.prot_comaer,
             dataOficio: p.data_oficio,
-            enquadramentoRdaer: p.enquadramento_rdaer
+            enquadramentoRdaer: p.enquadramento_rdaer,
+            delegacaoDoc: p.delegacao_doc || null
           })));
         }
       } catch (err) {
@@ -306,6 +307,7 @@ export default function App() {
         prot_comaer: newProcessData.protComaer || null,
         data_oficio: newProcessData.dataOficio || null,
         enquadramento_rdaer: newProcessData.enquadramentoRdaer || null,
+        delegacao_doc: newProcessData.delegacaoDoc || null,
         documents: newProcessData.documents || [],
         history: newProcessData.history || [],
         n_grade: newProcessData.nGrade || '',
@@ -324,7 +326,8 @@ export default function App() {
           militar: dbPayload.militar,
           diasPunicao: dbPayload.dias_punicao,
           documents: dbPayload.documents,
-          history: dbPayload.history
+          history: dbPayload.history,
+          delegacaoDoc: newProcessData.delegacaoDoc || null
         } : p));
       } else {
         // Create new process
@@ -352,7 +355,8 @@ export default function App() {
           patdNumber: data.patd_number,
           diasPunicao: data.dias_punicao,
           documents: data.documents || [],
-          history: data.history || initialHistory
+          history: data.history || initialHistory,
+          delegacaoDoc: data.delegacao_doc || null
         };
         setProcesses(prev => [newProcess, ...prev]);
       }

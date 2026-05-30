@@ -109,6 +109,7 @@ export interface Process {
   nGrade?: string;
   observacoes?: string;
   resumoPunicao?: string;
+  delegacaoDoc?: { name: string; url: string; uploadedAt: string } | null;
 }
 
 export default function Processes({ 

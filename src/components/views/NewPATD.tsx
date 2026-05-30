@@ -22,7 +22,10 @@ import {
   X, 
   History as HistoryIcon, 
   Download,
-  Printer
+  Printer,
+  FileUp,
+  UploadCloud,
+  File
 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { Division } from './Divisions';
@@ -438,7 +441,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   const currentYear = new Date().getFullYear();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
-  const [activeDocTab, setActiveDocTab] = useState<'capa' | 'despacho' | 'fatd'>('capa');
+  const [activeDocTab, setActiveDocTab] = useState<'capa' | 'delegacao' | 'despacho' | 'fatd'>('capa');
   const [isSaving, setIsSaving] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [errors, setErrors] = useState<any>({});
@@ -477,10 +480,20 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     nGrade: '',
     boletim: '',
     observacoes: '',
-    documents: []
+    documents: [],
+    delegacaoDoc: null
   });
 
   const printDocument = (type: string) => {
+    if (type === 'delegacao') {
+      if (formData.delegacaoDoc) {
+        window.open(formData.delegacaoDoc.url, '_blank');
+      } else {
+        alert('Nenhuma Portaria de Delegação anexada para imprimir.');
+      }
+      return;
+    }
+
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     
@@ -1330,7 +1343,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         nGrade: initialData.nGrade || '',
         boletim: initialData.boletim || '',
         observacoes: initialData.observacoes || '',
-        documents: initialData.documents || []
+        documents: initialData.documents || [],
+        delegacaoDoc: initialData.delegacaoDoc || null
       });
       setHistory(initialData.history || []);
     }
@@ -1397,6 +1411,95 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     } catch (err: any) {
       console.error('Error uploading file:', err);
       alert(`Erro ao fazer upload do documento: ${err.message || err}`);
+    }
+  };
+
+  const handleDelegacaoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf' && file.type !== 'image/png') {
+      alert('Apenas arquivos PDF ou PNG são permitidos para a Portaria de Delegação.');
+      return;
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      alert('O arquivo não pode exceder o limite máximo de 20MB.');
+      return;
+    }
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `delegacao-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `process_docs/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+
+      const newDoc = {
+        name: file.name,
+        url: urlData.publicUrl,
+        uploadedAt: new Date().toLocaleDateString('pt-BR')
+      };
+
+      const newHistoryItem = {
+        field: 'Portaria de Delegação',
+        oldValue: '—',
+        newValue: `Adicionada: ${file.name}`,
+        user: currentUser?.name || 'Sistema',
+        date: new Date().toLocaleString('pt-BR')
+      };
+
+      setHistory((prev: any) => [newHistoryItem, ...prev]);
+
+      setFormData((prev: any) => ({
+        ...prev,
+        delegacaoDoc: newDoc
+      }));
+    } catch (err: any) {
+      console.error('Error uploading delegacao:', err);
+      alert(`Erro ao fazer upload da Portaria de Delegação: ${err.message || err}`);
+    }
+  };
+
+  const handleDelegacaoDelete = async () => {
+    if (!window.confirm('Tem certeza que deseja excluir a Portaria de Delegação?')) {
+      return;
+    }
+
+    try {
+      if (formData.delegacaoDoc?.url) {
+        const urlParts = formData.delegacaoDoc.url.split('/storage/v1/object/public/documents/');
+        if (urlParts.length > 1) {
+          const filePath = decodeURIComponent(urlParts[1]);
+          await supabase.storage.from('documents').remove([filePath]);
+        }
+      }
+
+      const newHistoryItem = {
+        field: 'Portaria de Delegação',
+        oldValue: formData.delegacaoDoc?.name || 'Existente',
+        newValue: 'Excluída',
+        user: currentUser?.name || 'Sistema',
+        date: new Date().toLocaleString('pt-BR')
+      };
+
+      setHistory((prev: any) => [newHistoryItem, ...prev]);
+
+      setFormData((prev: any) => ({
+        ...prev,
+        delegacaoDoc: null
+      }));
+    } catch (err: any) {
+      console.error('Error deleting delegacao:', err);
+      alert(`Erro ao excluir a Portaria de Delegação: ${err.message || err}`);
     }
   };
 
@@ -2164,6 +2267,17 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                       Capa do Processo
                     </button>
                     <button
+                      onClick={() => setActiveDocTab('delegacao')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all ${
+                        activeDocTab === 'delegacao'
+                          ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 font-black scale-102'
+                          : 'text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'
+                      }`}
+                    >
+                      <FileUp size={16} />
+                      Portaria de Delegação
+                    </button>
+                    <button
                       onClick={() => setActiveDocTab('despacho')}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left text-xs font-bold transition-all ${
                         activeDocTab === 'despacho'
@@ -2248,6 +2362,146 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                   <div className="border-b border-black dark:border-slate-800 mt-1 mb-1 w-full"></div>
                                 </div>
                               </div>
+                            </div>
+                          </div>
+                        );
+                      case 'delegacao':
+                        const isAdmin = currentUser?.role === 'Administrador';
+                        const isPng = formData.delegacaoDoc?.name?.toLowerCase().endsWith('.png') || formData.delegacaoDoc?.url?.toLowerCase().endsWith('.png');
+                        return (
+                          <div className="bg-white dark:bg-slate-950 p-8 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] min-h-[500px] flex flex-col justify-between overflow-y-auto my-4 relative">
+                            <div>
+                              <div className="text-center font-bold pb-4 border-b border-slate-100 dark:border-slate-850 mb-6">
+                                <h4 className="text-md font-display font-bold text-slate-900 dark:text-white flex items-center justify-center gap-2">
+                                  <FileUp className="text-indigo-600 dark:text-indigo-400" size={18} />
+                                  Portaria de Delegação de Competência
+                                </h4>
+                                <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">
+                                  Documento oficial de atribuição legal para apuração
+                                </p>
+                              </div>
+
+                              {formData.delegacaoDoc ? (
+                                <div className="space-y-6">
+                                  {/* Document Info Card */}
+                                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center gap-3">
+                                      <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-650 dark:text-indigo-400">
+                                        <File size={20} />
+                                      </div>
+                                      <div className="text-left">
+                                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[200px] md:max-w-[300px]">
+                                          {formData.delegacaoDoc.name}
+                                        </p>
+                                        <p className="text-[10px] text-slate-400 dark:text-slate-500">
+                                          Enviado em {formData.delegacaoDoc.uploadedAt}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                      <a
+                                        href={formData.delegacaoDoc.url}
+                                        download={formData.delegacaoDoc.name}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="h-9 px-3 flex items-center justify-center gap-1.5 rounded-lg bg-indigo-650 hover:bg-indigo-750 text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
+                                      >
+                                        <Download size={14} />
+                                        Download
+                                      </a>
+
+                                      {isAdmin && (
+                                        <button
+                                          type="button"
+                                          onClick={handleDelegacaoDelete}
+                                          className="h-9 w-9 flex items-center justify-center rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all"
+                                          title="Excluir Portaria de Delegação"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Document Preview Frame */}
+                                  <div className="border border-slate-100 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-900/30 flex items-center justify-center overflow-hidden min-h-[300px]">
+                                    {isPng ? (
+                                      <img
+                                        src={formData.delegacaoDoc.url}
+                                        alt="Portaria de Delegação"
+                                        className="max-h-[380px] object-contain rounded-lg shadow-md border border-slate-200 dark:border-slate-800"
+                                      />
+                                    ) : (
+                                      <div className="w-full flex flex-col items-center justify-center gap-4 py-8">
+                                        <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-inner">
+                                          <FileText size={32} />
+                                        </div>
+                                        <div className="text-center space-y-1">
+                                          <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Portaria de Delegação em formato PDF</p>
+                                          <p className="text-[10px] text-slate-400 dark:text-slate-550">Visualização integrada em PDF não disponível para este dispositivo</p>
+                                        </div>
+                                        <a
+                                          href={formData.delegacaoDoc.url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="px-4 py-2 flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-bold transition-all shadow-md cursor-pointer mt-2"
+                                        >
+                                          Abrir em Nova Guia para Visualização
+                                        </a>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="py-12 px-6 border-2 border-dashed border-slate-250 dark:border-slate-800 rounded-3xl flex flex-col items-center justify-center text-center">
+                                  {isAdmin ? (
+                                    <>
+                                      <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-indigo-50 dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 mb-4 shadow-sm">
+                                        <UploadCloud size={24} />
+                                      </div>
+                                      <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">
+                                        Upload da Portaria de Delegação
+                                      </h5>
+                                      <p className="text-[10px] text-slate-450 dark:text-slate-550 max-w-[280px] mb-4">
+                                        Selecione um arquivo no formato PDF ou imagem PNG. Limite de tamanho máximo de 20MB.
+                                      </p>
+                                      
+                                      <input
+                                        type="file"
+                                        id="delegacao-upload-input"
+                                        accept="image/png, application/pdf"
+                                        onChange={handleDelegacaoUpload}
+                                        className="hidden"
+                                      />
+                                      <label
+                                        htmlFor="delegacao-upload-input"
+                                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold uppercase tracking-wider transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
+                                      >
+                                        Selecionar Arquivo
+                                      </label>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-400 dark:text-slate-650 mb-4">
+                                        <FileText size={24} className="opacity-60" />
+                                      </div>
+                                      <h5 className="text-xs font-bold text-slate-700 dark:text-slate-350 mb-1">
+                                        Nenhuma Portaria Anexada
+                                      </h5>
+                                      <p className="text-[10px] text-slate-400 dark:text-slate-550 max-w-[280px]">
+                                        Este documento ainda não foi carregado pelo Administrador do sistema para este processo.
+                                      </p>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-850 text-center">
+                              <p className="text-[9px] text-slate-400 dark:text-slate-550 leading-relaxed max-w-[400px] mx-auto">
+                                A Portaria de Delegação de competência atribui as faculdades legais necessárias ao Oficial Apurador, devendo ser mantida em estrita conformidade com os regulamentos disciplinares militares.
+                              </p>
                             </div>
                           </div>
                         );
