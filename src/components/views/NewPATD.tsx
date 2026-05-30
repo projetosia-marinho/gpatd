@@ -611,7 +611,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </div>
 
               <!-- Section 1: Militar Arrolado -->
-              <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; marginTop: 15px;">
+              <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 15px;">
                 <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
                 <p style="margin: 2px 0 4px 0;">
                   ${formData.nomeCompleto || '___________________________'}${formData.posto ? `, ${formData.posto}` : ''}${formData.quadro ? ` ${formData.quadro}` : ''}${formData.especialidade ? `/${formData.especialidade}` : ''}
@@ -623,7 +623,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </div>
 
               <!-- Section 2: Oficial Apurador -->
-              <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; marginTop: 10px;">
+              <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 10px;">
                 <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
                 <p style="margin: 2px 0 4px 0;">
                   ${formData.apurador || '___________________________'}${formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}${formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
@@ -643,7 +643,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>${formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>, que <strong>${formData.resumoFato || 'Sem fatos cadastrados até o momento.'}</strong>.
                 </p>
                 <p style="text-indent: 2.5rem; margin: 0;">
-                  Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de <strong>05 (cinco) dias úteis</strong>, podendo constituir advogado e produzir quaisquer provas admitidas in direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+                  Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de <strong>05 (cinco) dias úteis</strong>, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
                 </p>
               </div>
 
@@ -1110,7 +1110,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         </div>
 
         <!-- Section 1: Militar Arrolado -->
-        <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; marginTop: 15px;">
+        <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 15px;">
           <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
           <p style="margin: 2px 0 4px 0;">
             ${formData.nomeCompleto || '___________________________'}${formData.posto ? `, ${formData.posto}` : ''}${formData.quadro ? ` ${formData.quadro}` : ''}${formData.especialidade ? `/${formData.especialidade}` : ''}
@@ -1122,7 +1122,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         </div>
 
         <!-- Section 2: Oficial Apurador -->
-        <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; marginTop: 10px;">
+        <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 10px;">
           <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
           <p style="margin: 2px 0 4px 0;">
             ${formData.apurador || '___________________________'}${formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}${formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
