@@ -461,6 +461,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     aplicador: '',
     aplicadorPosto: 'TC',
     aplicadorQuadro: 'QOAV',
+    aplicadorCargo: '',
     oficioNumero: '',
     protComaer: '',
     dataOficio: '',
@@ -579,7 +580,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               <div class="signature-box text-center" style="margin-top: 30mm;">
                 <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
                 <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
-                <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Autoridade Aplicadora / Competente</p>
+                <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">${formData.aplicadorCargo || 'Autoridade Aplicadora / Competente'}</p>
               </div>
             </div>
           `;
@@ -1019,7 +1020,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         <div class="signature-box text-center" style="margin-top: 30mm;">
           <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
           <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
-          <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Autoridade Aplicadora / Competente</p>
+          <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">${formData.aplicadorCargo || 'Autoridade Aplicadora / Competente'}</p>
         </div>
       </div>
     `;
@@ -1215,6 +1216,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         aplicador: initialData.aplicador || '',
         aplicadorPosto: initialData.aplicadorPosto || 'TC',
         aplicadorQuadro: initialData.aplicadorQuadro || 'QOAV',
+        aplicadorCargo: initialData.aplicadorCargo || '',
         oficioNumero: initialData.oficioNumero || '',
         protComaer: initialData.protComaer || '',
         dataOficio: initialData.dataOficio || '',
@@ -1404,6 +1406,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     aplicador: 'Aplicador',
     aplicadorPosto: 'Posto do Aplicador',
     aplicadorQuadro: 'Quadro do Aplicador',
+    aplicadorCargo: 'Cargo do Aplicador',
     oficioNumero: 'Nº do Ofício',
     protComaer: 'Prot. COMAER nº',
     dataOficio: 'Data do Ofício/Protocolo',
@@ -1508,6 +1511,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         aplicador: '',
         aplicadorPosto: 'TC',
         aplicadorQuadro: 'QOAV',
+        aplicadorCargo: '',
         oficioNumero: '',
         protComaer: '',
         dataOficio: '',
@@ -1827,6 +1831,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   </div>
                   <SelectField label="Posto (Aplicador)" icon={Shield} value={formData.aplicadorPosto} onChange={handleChange('aplicadorPosto')} options={optionsPosto} />
                   <SelectField label="Quadro (Aplicador)" icon={Briefcase} value={formData.aplicadorQuadro} onChange={handleChange('aplicadorQuadro')} options={optionsQuadro} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="md:col-span-2">
+                    <InputField label="Cargo (Aplicador)" icon={Briefcase} value={formData.aplicadorCargo} onChange={handleChange('aplicadorCargo')} placeholder="Ex: Comandante, Chefe de Divisão, etc." />
+                  </div>
+                  <div className="hidden md:block md:col-span-2" />
                 </div>
               </div>
 
@@ -2184,7 +2194,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                             <div className="text-center mt-12">
                               <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
                               <p className="font-bold uppercase text-[12px] text-slate-850 dark:text-slate-100">{formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
-                              <p className="text-[9px] uppercase text-slate-400">Autoridade Aplicadora / Competente</p>
+                              <p className="text-[9px] uppercase text-slate-400">{formData.aplicadorCargo || 'Autoridade Aplicadora / Competente'}</p>
                             </div>
                           </div>
                         );
