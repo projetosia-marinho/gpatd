@@ -540,48 +540,46 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           `;
         case 'despacho':
           return `
-            <div class="sheet despacho font-serif">
-              <div class="header text-center font-bold">
-                <p class="uppercase font-black text-sm">Ministério da Defesa</p>
-                <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
-                <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+            <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif;">
+              <!-- Header inside the printable sheet -->
+              <div class="text-center font-bold" style="margin-bottom: 2mm;">
+                <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo B - Despacho de Abertura e Designação de Apurador</p>
+                <p class="text-red" style="font-size: 16px; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.5px;">INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
+                <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
+                <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 31 da Lei nº 12.527, de 2011</p>
+                <p class="text-red" style="font-size: 12px; margin: 0 0 10px 0; font-weight: 500;">Arts. 55 a 62 do Decreto nº 7.724, de 2012</p>
               </div>
-              
-              <div class="divider"></div>
-              
-              <div class="title text-center font-bold uppercase mt-8">
-                <h2 class="text-sm font-black">DESPACHO DE INSTAURAÇÃO E ABERTURA</h2>
-                <h3 class="patd-num text-sm mt-1">PATD Nº ${formData.patdNumber || '___/___/_____'}</h3>
+
+              <!-- Top Emblem and Headers -->
+              <div class="w-full text-center flex flex-col items-center" style="margin-bottom: 25px;">
+                <img src="${window.location.origin}/brasao.png" width="65" height="65" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
+                <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Ministério da Defesa</p>
+                <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
+                <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
               </div>
-              
-              <div class="body-text mt-12 text-justify">
-                <p class="indent-12 leading-relaxed">
-                  1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
-                  <strong>${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</strong>, 
-                  SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro (Ofício nº <strong>${formData.oficioNumero || '_______'}</strong>, Prot. COMAER nº <strong>${formData.protComaer || '_______'}</strong>, de <strong>${formatDateStr(formData.dataOficio)}</strong>), 
-                  <strong>RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
-                  <strong>${formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
+
+              <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6;">
+                <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+                  Considerando o disposto no art. 1º da Portaria nº 853/SIJ, de 27 de abril de 2026, publicada no Boletim Interno Ostensivo n º 75, de 29 de abril de 2026, que designa oficiais para apurar transgressão disciplinar e autoridades para aplicar punição disciplinar, no âmbito desta Organização Militar, c/c o item 3.1 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, determino a abertura de Processo de Apuração de Transgressão Disciplinar (PATD), com a finalidade de apurar os fatos relatados no Ofício nº <strong>${formData.oficioNumero || '_______'}</strong>, (Prot. COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>.
                 </p>
-                <p class="indent-12 leading-relaxed mt-4">
-                  2. Designo o <strong>${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</strong>, SARAM <strong>${formData.apuradorSaram || '_______'}</strong>, para atuar como Encarregado da presente apuração, 
-                  competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
+                
+                <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+                  Designo o <strong>${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</strong> para, na condição de Oficial Apurador, efetuar a apuração da suposta transgressão disciplinar e propor solução à autoridade competente, com estrita observância dos procedimentos previstos na ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, e no Decreto nº 76.322, de 22 de setembro de 1975 (RDAER); sem prejuízo das demais funções.
                 </p>
-                <p class="indent-12 leading-relaxed mt-4">
-                  3. Conceda-se ao arrolado o prazo regulamentar para apresentação de Defesa Prévia e razões de justificativa, nos termos das normas vigentes.
-                </p>
-                <p class="indent-12 leading-relaxed mt-4">
-                  4. Publique-se. Registre-se e cumpra-se.
+                
+                <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+                  Após apurados os fatos, voltem-me os autos para decisão.
                 </p>
               </div>
-              
-              <div class="date text-right mt-16 font-medium">
+
+              <div class="text-right" style="margin-top: 25mm; font-size: 13px; font-weight: 550; text-align: right;">
                 <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
               </div>
-              
-              <div class="signature-box text-center mt-24">
-                <div class="line mx-auto w-64 border-bottom mb-2"></div>
-                <p class="font-bold uppercase">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
-                <p class="text-xs uppercase text-slate-500">Autoridade Aplicadora / Competente</p>
+
+              <div class="signature-box text-center" style="margin-top: 30mm;">
+                <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
+                <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
+                <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Autoridade Aplicadora / Competente</p>
               </div>
             </div>
           `;
@@ -982,48 +980,46 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     `;
 
     const despachoHTML = `
-      <div class="sheet despacho font-serif">
-        <div class="header text-center font-bold">
-          <p class="uppercase font-black text-sm">Ministério da Defesa</p>
-          <p class="uppercase font-black text-sm">Comando da Aeronáutica</p>
-          <p class="uppercase font-black text-sm">${formData.divisao || 'Divisão Cadastrada'}</p>
+      <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif;">
+        <!-- Header inside the printable sheet -->
+        <div class="text-center font-bold" style="margin-bottom: 2mm;">
+          <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo B - Despacho de Abertura e Designação de Apurador</p>
+          <p class="text-red" style="font-size: 16px; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.5px;">INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
+          <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
+          <p class="text-red" style="font-size: 12px; margin: 0 0 2px 0; font-weight: 500;">Art. 31 da Lei nº 12.527, de 2011</p>
+          <p class="text-red" style="font-size: 12px; margin: 0 0 10px 0; font-weight: 500;">Arts. 55 a 62 do Decreto nº 7.724, de 2012</p>
         </div>
-        
-        <div class="divider"></div>
-        
-        <div class="title text-center font-bold uppercase mt-8">
-          <h2 class="text-sm font-black">DESPACHO DE INSTAURAÇÃO E ABERTURA</h2>
-          <h3 class="patd-num text-sm mt-1">PATD Nº ${formData.patdNumber || '___/___/_____'}</h3>
+
+        <!-- Top Emblem and Headers -->
+        <div class="w-full text-center flex flex-col items-center" style="margin-bottom: 25px;">
+          <img src="${window.location.origin}/brasao.png" width="65" height="65" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
+          <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Ministério da Defesa</p>
+          <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
+          <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
         </div>
-        
-        <div class="body-text mt-12 text-justify">
-          <p class="indent-12 leading-relaxed">
-            1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
-            <strong>${formData.posto} ${formData.quadro} ${formData.nomeCompleto || '___________________________'}</strong>, 
-            SARAM <strong>${formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro (Ofício nº <strong>${formData.oficioNumero || '_______'}</strong>, Prot. COMAER nº <strong>${formData.protComaer || '_______'}</strong>, de <strong>${formatDateStr(formData.dataOficio)}</strong>), 
-            <strong>RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
-            <strong>${formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
+
+        <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6;">
+          <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+            Considerando o disposto no art. 1º da Portaria nº 853/SIJ, de 27 de abril de 2026, publicada no Boletim Interno Ostensivo n º 75, de 29 de abril de 2026, que designa oficiais para apurar transgressão disciplinar e autoridades para aplicar punição disciplinar, no âmbito desta Organização Militar, c/c o item 3.1 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, determino a abertura de Processo de Apuração de Transgressão Disciplinar (PATD), com a finalidade de apurar os fatos relatados no Ofício nº <strong>${formData.oficioNumero || '_______'}</strong>, (Prot. COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>.
           </p>
-          <p class="indent-12 leading-relaxed mt-4">
-            2. Designo o <strong>${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</strong>, SARAM <strong>${formData.apuradorSaram || '_______'}</strong>, para atuar como Encarregado da presente apuração, 
-            competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
+          
+          <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+            Designo o <strong>${formData.apuradorPosto || ''} ${formData.apuradorQuadro || ''} ${formData.apurador || '___________________________'}</strong> para, na condição de Oficial Apurador, efetuar a apuração da suposta transgressão disciplinar e propor solução à autoridade competente, com estrita observância dos procedimentos previstos na ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, e no Decreto nº 76.322, de 22 de setembro de 1975 (RDAER); sem prejuízo das demais funções.
           </p>
-          <p class="indent-12 leading-relaxed mt-4">
-            3. Conceda-se ao arrolado o prazo regulamentar para apresentação de Defesa Prévia e razões de justificativa, nos termos das normas vigentes.
-          </p>
-          <p class="indent-12 leading-relaxed mt-4">
-            4. Publique-se. Registre-se e cumpra-se.
+          
+          <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+            Após apurados os fatos, voltem-me os autos para decisão.
           </p>
         </div>
-        
-        <div class="date text-right mt-16 font-medium">
+
+        <div class="text-right" style="margin-top: 25mm; font-size: 13px; font-weight: 550; text-align: right;">
           <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
         </div>
-        
-        <div class="signature-box text-center mt-24">
-          <div class="line mx-auto w-64 border-bottom mb-2"></div>
-          <p class="font-bold uppercase">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
-          <p class="text-xs uppercase text-slate-500">Autoridade Aplicadora / Competente</p>
+
+        <div class="signature-box text-center" style="margin-top: 30mm;">
+          <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
+          <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.aplicadorPosto || ''} ${formData.aplicadorQuadro || ''} ${formData.aplicador || '___________________________'}</p>
+          <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Autoridade Aplicadora / Competente</p>
         </div>
       </div>
     `;
@@ -2149,49 +2145,45 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                         );
                       case 'despacho':
                         return (
-                          <div className="bg-white dark:bg-slate-950 p-12 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 font-serif border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4">
+                          <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
                             <div>
-                              <div className="text-center font-bold">
-                                <p className="uppercase text-xs leading-tight tracking-widest text-slate-400 dark:text-slate-500">Ministério da Defesa</p>
-                                <p className="uppercase text-sm leading-snug">Comando da Aeronáutica</p>
-                                <p className="uppercase text-sm leading-snug text-indigo-600 dark:text-indigo-400 font-black">{formData.divisao || 'Divisão Cadastrada'}</p>
+                              <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
+                                <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo B - Despacho de Abertura e Designação de Apurador</p>
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: '0 0 3px 0', letterSpacing: '0.5px' }}>INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
+                                <p style={{ fontSize: '9px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
+                                <p style={{ fontSize: '9px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 31 da Lei nº 12.527, de 2011</p>
+                                <p style={{ fontSize: '9px', color: '#ff0000', margin: 0, fontWeight: 500 }}>Arts. 55 a 62 do Decreto nº 7.724, de 2012</p>
                               </div>
-                              
-                              <div className="border-b-2 border-double border-slate-350 dark:border-slate-800 my-6" />
-                              
-                              <div className="text-center font-bold uppercase mt-8">
-                                <h3 className="text-xs text-slate-900 dark:text-white font-black">DESPACHO DE INSTAURAÇÃO E ABERTURA</h3>
-                                <h4 className="text-xs mt-1 text-slate-400 dark:text-slate-500">PATD Nº {formData.patdNumber || '___/___/_____'}</h4>
+
+                              <div className="w-full text-center flex flex-col items-center" style={{ marginBottom: '15px' }}>
+                                <img src="/brasao.png" width="50" height="50" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
                               </div>
-                              
-                              <div className="mt-12 text-xs text-justify space-y-4 leading-relaxed">
-                                <p className="indent-12">
-                                  1. Tendo em vista o cometimento, em tese, de transgressão disciplinar imputada ao 
-                                  <strong> {formData.posto} {formData.quadro} {formData.nomeCompleto || '___________________________'}</strong>, 
-                                  SARAM <strong>{formData.saram || '_______'}</strong>, conforme relatos e documentos preliminares que constam em registro (Ofício nº <strong>{formData.oficioNumero || '_______'}</strong>, Prot. COMAER nº <strong>{formData.protComaer || '_______'}</strong>, de <strong>{formatDateStr(formData.dataOficio)}</strong>), 
-                                  <strong> RESOLVO INSTAURAR</strong> o presente Processo Administrativo de Transgressão Disciplinar (PATD), sob o nº 
-                                  <strong> {formData.patdNumber || '___/___/_____'}</strong>, para apuração formal das circunstâncias e culpabilidade, sob a égide do Regulamento de Disciplina da Aeronáutica (RDAER).
+
+                              <div className="body-text text-justify" style={{ fontSize: '12px', lineHeight: '1.5' }}>
+                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                                  Considerando o disposto no art. 1º da Portaria nº 853/SIJ, de 27 de abril de 2026, publicada no Boletim Interno Ostensivo n º 75, de 29 de abril de 2026, que designa oficiais para apurar transgressão disciplinar e autoridades para aplicar punição disciplinar, no âmbito desta Organização Militar, c/c o item 3.1 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, determino a abertura de Processo de Apuração de Transgressão Disciplinar (PATD), com a finalidade de apurar os fatos relatados no Ofício nº <strong>{formData.oficioNumero || '_______'}</strong>, (Prot. COMAER nº <strong>{formData.protComaer || '_______'}</strong>), de <strong>{formatDateStr(formData.dataOficio)}</strong>.
                                 </p>
-                                <p className="indent-12">
-                                  2. Designo o <strong>{formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || '___________________________'}</strong>, SARAM <strong>{formData.apuradorSaram || '_______'}</strong>, para atuar como Encarregado da presente apuração, 
-                                  competindo-lhe proceder a todas as diligências necessárias, inquirição de testemunhas, se houver, e do próprio arrolado, colhendo as provas cabíveis e assegurando estritamente as garantias constitucionais do contraditório e da ampla defesa.
+                                
+                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                                  Designo o <strong>{formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || '___________________________'}</strong> para, na condição de Oficial Apurador, efetuar a apuração da suposta transgressão disciplinar e propor solução à autoridade competente, com estrita observância dos procedimentos previstos na ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, e no Decreto nº 76.322, de 22 de setembro de 1975 (RDAER); sem prejuízo das demais funções.
                                 </p>
-                                <p className="indent-12">
-                                  3. Conceda-se ao arrolado o prazo regulamentar para apresentação de Defesa Prévia e razões de justificativa, nos termos das normas vigentes.
-                                </p>
-                                <p className="indent-12">
-                                  4. Publique-se. Registre-se e cumpra-se.
+                                
+                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                                  Após apurados os fatos, voltem-me os autos para decisão.
                                 </p>
                               </div>
-                              
-                              <div className="text-right mt-12 text-xs">
+
+                              <div className="text-right dark:text-white" style={{ marginTop: '15mm', fontSize: '12px', textAlign: 'right' }}>
                                 <p>Pirassununga, {new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
                               </div>
                             </div>
                             
-                            <div className="text-center mt-16">
-                              <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" />
-                              <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
+                            <div className="text-center mt-12">
+                              <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
+                              <p className="font-bold uppercase text-[12px] text-slate-850 dark:text-slate-100">{formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
                               <p className="text-[9px] uppercase text-slate-400">Autoridade Aplicadora / Competente</p>
                             </div>
                           </div>
