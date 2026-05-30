@@ -541,7 +541,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           `;
         case 'despacho':
           return `
-            <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif;">
+            <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative;">
+              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
               <!-- Header inside the printable sheet -->
               <div class="text-center font-bold" style="margin-bottom: 2mm;">
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo B - Despacho de Abertura e Designação de Apurador</p>
@@ -556,7 +557,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 <img src="${window.location.origin}/brasao.png" width="65" height="65" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Ministério da Defesa</p>
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
-                <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
+                <p class="text-black underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
               </div>
 
               <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6;">
@@ -588,6 +589,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           return `
             <!-- Folha 1 -->
             <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-after: always; position: relative; box-sizing: border-box;">
+              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
               <!-- Header inside the printable sheet -->
               <div class="text-center font-bold" style="margin-bottom: 2mm;">
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
@@ -602,12 +604,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 <img src="${window.location.origin}/brasao.png" width="65" height="65" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Ministério da Defesa</p>
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
-                <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
+                <p class="text-black underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
               </div>
 
               <div class="title text-center font-bold uppercase" style="margin-top: 15px; margin-bottom: 15px;">
                 <h2 style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase; color: #000000;">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
-                <h3 style="font-size: 14px; font-weight: bold; margin: 5px 0 0 0; text-transform: uppercase;">FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span></h3>
+                <h3 style="font-size: 14px; font-weight: bold; margin: 5px 0 0 0; text-transform: uppercase;">FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></h3>
               </div>
 
               <!-- Identificação do Militar Arrolado -->
@@ -637,7 +639,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 </p>
                 
                 <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
-                  Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de 05 (cinco) dias úteis, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+                  Em face de o fato narrado, in tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de 05 (cinco) dias úteis, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
                 </p>
               </div>
 
@@ -653,15 +655,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
               <!-- Footer -->
               <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
-                PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
+                PATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span>
               </div>
             </div>
 
             <!-- Folha 2 -->
             <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative; box-sizing: border-box;">
+              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
               <!-- Header inside the printable sheet -->
               <div style="font-size: 13px; font-weight: bold; margin-bottom: 15mm; color: #000000;">
-                FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
+                FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
               </div>
 
               <!-- Title -->
@@ -693,8 +696,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 </ul>
               </div>
 
-              <div class="text-right" style="margin-top: 15mm; font-size: 13px; font-weight: 550; text-align: right;">
-                <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+              <div class="text-left" style="margin-top: 15mm; font-size: 13px; text-align: left;">
+                <p>Pirassununga, _______________________.</p>
               </div>
 
               <div class="signature-box text-center" style="margin-top: 20mm;">
@@ -705,7 +708,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
               <!-- Footer -->
               <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
-                PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
+                PATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span>
               </div>
             </div>
           `;
@@ -1027,7 +1030,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     `;
 
     const despachoHTML = `
-      <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif;">
+      <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative;">
+        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
         <!-- Header inside the printable sheet -->
         <div class="text-center font-bold" style="margin-bottom: 2mm;">
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo B - Despacho de Abertura e Designação de Apurador</p>
@@ -1042,7 +1046,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           <img src="${window.location.origin}/brasao.png" width="65" height="65" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Ministério da Defesa</p>
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
-          <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
+          <p class="text-black underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
         </div>
 
         <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6;">
@@ -1074,6 +1078,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     const fatdHTML = `
       <!-- Folha 1 -->
       <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-after: always; position: relative; box-sizing: border-box;">
+        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
         <!-- Header inside the printable sheet -->
         <div class="text-center font-bold" style="margin-bottom: 2mm;">
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
@@ -1088,12 +1093,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           <img src="${window.location.origin}/brasao.png" width="65" height="65" style="margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto;" />
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Ministério da Defesa</p>
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 3px 0; text-transform: uppercase;">Comando da Aeronáutica</p>
-          <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
+          <p class="text-black underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
         </div>
 
         <div class="title text-center font-bold uppercase" style="margin-top: 15px; margin-bottom: 15px;">
           <h2 style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase; color: #000000;">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
-          <h3 style="font-size: 14px; font-weight: bold; margin: 5px 0 0 0; text-transform: uppercase;">FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span></h3>
+          <h3 style="font-size: 14px; font-weight: bold; margin: 5px 0 0 0; text-transform: uppercase;">FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></h3>
         </div>
 
         <!-- Identificação do Militar Arrolado -->
@@ -1139,15 +1144,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
         <!-- Footer -->
         <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
-          PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
+          PATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span>
         </div>
       </div>
 
       <!-- Folha 2 -->
       <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative; box-sizing: border-box;">
+        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
         <!-- Header inside the printable sheet -->
         <div style="font-size: 13px; font-weight: bold; margin-bottom: 15mm; color: #000000;">
-          FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
+          FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
         </div>
 
         <!-- Title -->
@@ -1179,8 +1185,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           </ul>
         </div>
 
-        <div class="text-right" style="margin-top: 15mm; font-size: 13px; font-weight: 550; text-align: right;">
-          <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+        <div class="text-left" style="margin-top: 15mm; font-size: 13px; text-align: left;">
+          <p>Pirassununga, _______________________.</p>
         </div>
 
         <div class="signature-box text-center" style="margin-top: 20mm;">
@@ -1191,7 +1197,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
         <!-- Footer -->
         <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
-          PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
+          PATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span>
         </div>
       </div>
     `;
@@ -2247,7 +2253,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                         );
                       case 'despacho':
                         return (
-                          <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
+                          <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4 relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
+                            <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '15mm', width: '32mm', height: '32mm' }} />
                             <div>
                               <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
                                 <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo B - Despacho de Abertura e Designação de Apurador</p>
@@ -2261,7 +2268,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                 <img src="/brasao.png" width="50" height="50" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
                                 <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
                                 <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
-                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
                               </div>
 
                               <div className="body-text text-justify" style={{ fontSize: '12px', lineHeight: '1.5' }}>
@@ -2295,6 +2302,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                           <div className="flex flex-col gap-8 w-full max-w-[650px] my-4 overflow-y-auto">
                             {/* Folha 1 */}
                             <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
+                              <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '15mm', width: '32mm', height: '32mm' }} />
                               <div>
                                 <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
                                   <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
@@ -2308,12 +2316,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                   <img src="/brasao.png" width="50" height="50" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
                                   <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
                                   <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
-                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
+                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
                                 </div>
 
                                 <div className="text-center font-bold uppercase" style={{ margin: '15px 0', fontSize: '12px' }}>
                                   <h2 style={{ fontSize: '12px', fontWeight: 'bold', margin: 0 }} className="dark:text-white">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
-                                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', margin: '3px 0 0 0' }} className="dark:text-white">FATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span></h3>
+                                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', margin: '3px 0 0 0' }} className="dark:text-white">FATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span></h3>
                                 </div>
 
                                 {/* Identificação do Militar Arrolado */}
@@ -2359,15 +2367,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               </div>
 
                               <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold' }} className="dark:text-white">
-                                PATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span>
+                                PATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span>
                               </div>
                             </div>
 
                             {/* Folha 2 */}
                             <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
+                              <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '15mm', width: '32mm', height: '32mm' }} />
                               <div>
                                 <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '10mm' }} className="dark:text-white">
-                                  FATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
+                                  FATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
                                 </div>
 
                                 <div className="text-center font-bold dark:text-white" style={{ marginBottom: '8mm', fontSize: '12px' }}>
@@ -2376,7 +2385,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
                                 <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5' }}>
                                   <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
-                                    Eu, <strong>{formData.nomeCompleto || '___________________________'}</strong>, <strong>{formData.posto} {formData.quadro}</strong> do arrolado, SARAM <strong>{formData.saram || '_______'}</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de 05 (cinco) dias úteis, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+                                    Eu, <strong>{formData.nomeCompleto || '___________________________'}</strong>, <strong>{formData.posto} {formData.quadro}</strong> do arrolado, SARAM <strong>{formData.saram || '_______'}</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de 05 (cinco) dias úteis, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defense, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
                                   </p>
 
                                   <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
@@ -2397,8 +2406,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                   </ul>
                                 </div>
 
-                                <div className="text-right dark:text-white" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'right' }}>
-                                  <p>Pirassununga, {new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+                                <div className="text-left dark:text-white" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'left' }}>
+                                  <p>Pirassununga, _______________________.</p>
                                 </div>
                               </div>
 
@@ -2409,7 +2418,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               </div>
 
                               <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold' }} className="dark:text-white">
-                                PATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span>
+                                PATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span>
                               </div>
                             </div>
                           </div>
