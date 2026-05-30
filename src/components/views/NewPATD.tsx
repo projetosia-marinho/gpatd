@@ -586,8 +586,9 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           `;
         case 'fatd':
           return `
-            <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif;">
-              <!-- Outside Restrictive Header -->
+            <!-- Folha 1 -->
+            <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-after: always; position: relative; box-sizing: border-box;">
+              <!-- Header inside the printable sheet -->
               <div class="text-center font-bold" style="margin-bottom: 2mm;">
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
                 <p class="text-red" style="font-size: 16px; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.5px;">INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
@@ -604,123 +605,107 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
               </div>
 
-              <!-- Title -->
-              <div class="text-center font-bold uppercase" style="margin-top: 15px; margin-bottom: 20px;">
-                <h2 style="font-size: 14px; font-weight: bold; margin: 0 0 4px 0;">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
-                <h3 style="font-size: 14px; font-weight: bold; margin: 0;">FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></h3>
+              <div class="title text-center font-bold uppercase" style="margin-top: 15px; margin-bottom: 15px;">
+                <h2 style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase; color: #000000;">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
+                <h3 style="font-size: 14px; font-weight: bold; margin: 5px 0 0 0; text-transform: uppercase;">FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span></h3>
               </div>
 
-              <!-- Section 1: Militar Arrolado -->
-              <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 15px;">
-                <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
-                <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
-                <p style="margin: 2px 0 4px 0; font-weight: bold;">
-                  ${formData.nomeCompleto || '___________________________'}${formData.posto ? `, ${formData.posto}` : ''}${formData.quadro ? ` ${formData.quadro}` : ''}${formData.especialidade ? `/${formData.especialidade}` : ''}
-                </p>
-                <div style="margin: 0; display: flex; justify-content: space-between;">
+              <!-- Identificação do Militar Arrolado -->
+              <div style="border: 1px solid #000000; padding: 6px; font-size: 12px; margin-bottom: 12px; color: #000000;">
+                <p style="font-weight: bold; margin: 0 0 4px 0; font-size: 13px; text-transform: uppercase;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
+                <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase;">${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro} ${formData.especialidade ? `/ ${formData.especialidade}` : ''}</p>
+                <div style="display: flex; justify-content: space-between;">
                   <span>SARAM: <strong>${formData.saram || '_______'}</strong></span>
-                  <span>Seção/OM: <strong>${formData.setor || '—'} / ${formData.divisao || 'Academia da Força Aérea'}</strong></span>
+                  <span>Seção/OM: <strong>${formData.setor || '_______'} / ${formData.divisao || '_______'}</strong></span>
                 </div>
               </div>
 
-              <!-- Section 2: Oficial Apurador -->
-              <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 10px;">
-                <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
-                <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
-                <p style="margin: 2px 0 4px 0; font-weight: bold;">
-                  ${formData.apurador || '___________________________'}${formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}${formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
-                </p>
-                <div style="margin: 0; display: flex; justify-content: space-between;">
+              <!-- Identificação do Oficial Apurador -->
+              <div style="border: 1px solid #000000; padding: 6px; font-size: 12px; margin-bottom: 15px; color: #000000;">
+                <p style="font-weight: bold; margin: 0 0 4px 0; font-size: 13px; text-transform: uppercase;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
+                <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase;">${formData.apurador || '___________________________'} - ${formData.apuradorPosto} ${formData.apuradorQuadro}</p>
+                <div style="display: flex; justify-content: space-between;">
                   <span>SARAM: <strong>${formData.apuradorSaram || '_______'}</strong></span>
-                  <span>Seção/OM: <strong>${formData.divisao || 'Academia da Força Aérea'}</strong></span>
+                  <span>Seção/OM: <strong>${formData.divisao || '_______'}</strong></span>
                 </div>
               </div>
 
-              <!-- Section 3: Relato do Fato -->
-              <div class="text-center font-bold uppercase" style="margin-top: 20px; margin-bottom: 10px;">
-                <p style="font-size: 12px; font-weight: bold; margin: 0;">RELATO DO FATO</p>
-              </div>
-              <div class="body-text text-justify" style="font-size: 12px; line-height: 1.5; text-align: justify;">
-                <p style="text-indent: 2.5rem; margin: 0 0 10px 0;">
-                  Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>${formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>, que <strong>${formData.resumoFato || 'Sem fatos cadastrados até o momento.'}</strong>.
+              <div class="text-center font-bold" style="margin-top: 15px; margin-bottom: 10px; font-size: 13px; color: #000000;">RELATO DO FATO</div>
+              <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6; color: #000000;">
+                <p style="text-indent: 3rem; margin-top: 10px; text-align: justify;">
+                  Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>${formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>, que <strong>${formData.resumoFato || '___________________________'}</strong>.
                 </p>
-                <p style="text-indent: 2.5rem; margin: 0;">
-                  Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de <strong>05 (cinco) dias úteis</strong>, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+                
+                <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+                  Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de 05 (cinco) dias úteis, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
                 </p>
               </div>
 
-              <!-- Date -->
-              <div class="text-right" style="margin-top: 15mm; font-size: 12px; text-align: right;">
+              <div class="text-right" style="margin-top: 15mm; font-size: 13px; font-weight: 550; text-align: right;">
                 <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
               </div>
 
-              <!-- Signature -->
               <div class="signature-box text-center" style="margin-top: 20mm;">
-                <div style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto; margin-bottom: 4px;"></div>
-                <p style="margin: 0 0 2px 0; font-size: 12px;">
-                  (${formData.apurador || '___________________________'}, ${formData.apuradorPosto || ''})
-                </p>
+                <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
+                <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.apurador || '___________________________'} - ${formData.apuradorPosto} ${formData.apuradorQuadro}</p>
                 <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Oficial Apurador</p>
               </div>
 
               <!-- Footer -->
-              <div class="text-left" style="margin-top: 15mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
-                PATD Nº ${formData.patdNumber || '___/___/_____'}
+              <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
+                PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
               </div>
             </div>
 
-            <!-- Page 2 -->
-            <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-before: always;">
-              <!-- Title/Header Page 2 -->
-              <div class="text-right font-bold" style="font-size: 12px; text-align: right; margin-bottom: 15mm;">
-                FATD Nº ${formData.patdNumber || '___/___/_____'} - fls. 2/2
+            <!-- Folha 2 -->
+            <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative; box-sizing: border-box;">
+              <!-- Header inside the printable sheet -->
+              <div style="font-size: 13px; font-weight: bold; margin-bottom: 15mm; color: #000000;">
+                FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
               </div>
 
-              <!-- Section Title -->
-              <div style="margin-top: 10mm;">
-                <div class="text-center font-bold uppercase" style="margin-bottom: 15px;">
-                  <p style="font-size: 12px; font-weight: bold; margin: 0;">CIENTE DO MILITAR ARROLADO</p>
-                </div>
-                
-                <div class="body-text text-justify" style="font-size: 12px; line-height: 1.5; text-align: justify;">
-                  <p style="text-indent: 2.5rem; margin: 0 0 10px 0;">
-                    Eu, <strong>${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro} (SARAM: ${formData.saram || '_______'})</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de <strong>05 (cinco) dias úteis</strong>, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
-                  </p>
-                  
-                  <p style="text-indent: 2.5rem; margin: 0 0 15px 0;">
-                    Fui informado(a) ainda, que caso não formule minhas alegações de defesa no prazo assinalado, o PATD seguirá o tramite previsto na supracitada ICA 111-6.
-                  </p>
-                  
-                  <p style="margin: 0 0 10px 0; font-weight: bold;">
-                    Outrossim, declaro que, neste ato, recebi cópia dos seguintes documentos que dizem respeito ao fato objeto da apuração:
-                  </p>
-                  
-                  <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">
-                    <li style="margin-bottom: 4px;">Formulário de Apuração de Transgressão Disciplinar (FATD) - fls. 1/2;</li>
-                    <li style="margin-bottom: 4px;">Despacho de Instauração e Abertura do PATD;</li>
-                    ${formData.oficioNumero ? `<li style="margin-bottom: 4px;">Ofício nº ${formData.oficioNumero} (Protocolo COMAER nº ${formData.protComaer || '—'}), de ${formatDateStr(formData.dataOficio)};</li>` : ''}
-                    <li style="margin-bottom: 4px;">Cópia integral das peças que compõem os presentes autos do processo.</li>
-                  </ul>
-                </div>
+              <!-- Title -->
+              <div class="text-center font-bold" style="margin-bottom: 12mm; font-size: 14px; text-transform: uppercase; color: #000000;">
+                CIENTE DO MILITAR ARROLADO
               </div>
 
-              <!-- Date -->
-              <div class="text-right" style="margin-top: 25mm; font-size: 12px; text-align: right;">
+              <!-- Body text -->
+              <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6; color: #000000;">
+                <p style="text-indent: 3rem; text-align: justify; margin-bottom: 15px;">
+                  Eu, <strong>${formData.nomeCompleto || '___________________________'}</strong>, <strong>${formData.posto} ${formData.quadro}</strong> do arrolado, SARAM <strong>${formData.saram || '_______'}</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de 05 (cinco) dias úteis, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+                </p>
+
+                <p style="text-indent: 3rem; text-align: justify; margin-bottom: 15px;">
+                  Fui informado(a) ainda, que caso não formule minhas alegações de defesa no prazo assinalado, o PATD seguirá o tramite previsto na supracitada ICA 111-6.
+                </p>
+
+                <p style="text-indent: 3rem; text-align: justify; margin-bottom: 15px;">
+                  Outrossim, declaro que, neste ato, recebi cópia dos seguintes documentos que dizem respeito ao fato objeto da apuração:
+                </p>
+
+                <ul style="list-style-type: none; padding-left: 3rem; margin: 15px 0; line-height: 1.6;">
+                  <li style="margin-bottom: 4px;">• Capa;</li>
+                  <li style="margin-bottom: 4px;">• Portaria nº 853/SIJ, de 27 de abril de 2026;</li>
+                  <li style="margin-bottom: 4px;">• Despacho de Abertura do PATD;</li>
+                  <li style="margin-bottom: 4px;">• Ofício nº <strong>${formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>;</li>
+                  <li style="margin-bottom: 4px;">• Formulário de Apuração de Transgressão Disciplinar (FATD) - fls. 1/2;</li>
+                  <li style="margin-bottom: 4px;">• Ficha Individual do Militar Arrolado</li>
+                </ul>
+              </div>
+
+              <div class="text-right" style="margin-top: 15mm; font-size: 13px; font-weight: 550; text-align: right;">
                 <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
               </div>
 
-              <!-- Signature -->
-              <div class="signature-box text-center" style="margin-top: 30mm;">
-                <div style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto; margin-bottom: 4px;"></div>
-                <p style="margin: 0 0 2px 0; font-size: 12px;">
-                  (${formData.nomeCompleto || '___________________________'}, ${formData.posto || ''} ${formData.quadro || ''})
-                </p>
+              <div class="signature-box text-center" style="margin-top: 20mm;">
+                <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
+                <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro}</p>
                 <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Militar Arrolado</p>
               </div>
 
               <!-- Footer -->
-              <div class="text-left" style="margin-top: 20mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
-                PATD Nº ${formData.patdNumber || '___/___/_____'}
+              <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
+                PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
               </div>
             </div>
           `;
@@ -808,7 +793,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           box-shadow: none;
           width: auto;
           min-height: auto;
-          /* padding: 10mm 10mm 10mm 10mm; */
+          padding: 10mm 10mm 10mm 10mm;
         }
       }
       .text-red {
@@ -961,7 +946,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           box-shadow: none;
           width: auto;
           min-height: auto;
-          /* padding: 10mm 10mm 10mm 10mm; */
+          padding: 10mm 10mm 10mm 10mm;
         }
       }
       .text-red {
@@ -1087,8 +1072,9 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     `;
 
     const fatdHTML = `
-      <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif;">
-        <!-- Outside Restrictive Header -->
+      <!-- Folha 1 -->
+      <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-after: always; position: relative; box-sizing: border-box;">
+        <!-- Header inside the printable sheet -->
         <div class="text-center font-bold" style="margin-bottom: 2mm;">
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
           <p class="text-red" style="font-size: 16px; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.5px;">INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
@@ -1105,123 +1091,107 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           <p class="text-red underline" style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase;">Academia da Força Aérea</p>
         </div>
 
-        <!-- Title -->
-        <div class="text-center font-bold uppercase" style="margin-top: 15px; margin-bottom: 20px;">
-          <h2 style="font-size: 14px; font-weight: bold; margin: 0 0 4px 0;">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
-          <h3 style="font-size: 14px; font-weight: bold; margin: 0;">FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span></h3>
+        <div class="title text-center font-bold uppercase" style="margin-top: 15px; margin-bottom: 15px;">
+          <h2 style="font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase; color: #000000;">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
+          <h3 style="font-size: 14px; font-weight: bold; margin: 5px 0 0 0; text-transform: uppercase;">FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span></h3>
         </div>
 
-        <!-- Section 1: Militar Arrolado -->
-        <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 15px;">
-          <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
-          <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
-          <p style="margin: 2px 0 4px 0; font-weight: bold;">
-            ${formData.nomeCompleto || '___________________________'}${formData.posto ? `, ${formData.posto}` : ''}${formData.quadro ? ` ${formData.quadro}` : ''}${formData.especialidade ? `/${formData.especialidade}` : ''}
-          </p>
-          <div style="margin: 0; display: flex; justify-content: space-between;">
+        <!-- Identificação do Militar Arrolado -->
+        <div style="border: 1px solid #000000; padding: 6px; font-size: 12px; margin-bottom: 12px; color: #000000;">
+          <p style="font-weight: bold; margin: 0 0 4px 0; font-size: 13px; text-transform: uppercase;">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
+          <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase;">${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro} ${formData.especialidade ? `/ ${formData.especialidade}` : ''}</p>
+          <div style="display: flex; justify-content: space-between;">
             <span>SARAM: <strong>${formData.saram || '_______'}</strong></span>
-            <span>Seção/OM: <strong>${formData.setor || '—'} / ${formData.divisao || 'Academia da Força Aérea'}</strong></span>
+            <span>Seção/OM: <strong>${formData.setor || '_______'} / ${formData.divisao || '_______'}</strong></span>
           </div>
         </div>
 
-        <!-- Section 2: Oficial Apurador -->
-        <div style="border: 1px solid #000000; padding: 6px 10px; font-size: 12px; line-height: 1.5; margin-top: 10px;">
-          <p style="margin: 0; font-weight: bold;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
-          <p style="margin: 0; font-size: 10px; color: #ff0000; font-weight: normal;">(nome completo, posto/grad/quadro/esp)</p>
-          <p style="margin: 2px 0 4px 0; font-weight: bold;">
-            ${formData.apurador || '___________________________'}${formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}${formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
-          </p>
-          <div style="margin: 0; display: flex; justify-content: space-between;">
+        <!-- Identificação do Oficial Apurador -->
+        <div style="border: 1px solid #000000; padding: 6px; font-size: 12px; margin-bottom: 15px; color: #000000;">
+          <p style="font-weight: bold; margin: 0 0 4px 0; font-size: 13px; text-transform: uppercase;">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
+          <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase;">${formData.apurador || '___________________________'} - ${formData.apuradorPosto} ${formData.apuradorQuadro}</p>
+          <div style="display: flex; justify-content: space-between;">
             <span>SARAM: <strong>${formData.apuradorSaram || '_______'}</strong></span>
-            <span>Seção/OM: <strong>${formData.divisao || 'Academia da Força Aérea'}</strong></span>
+            <span>Seção/OM: <strong>${formData.divisao || '_______'}</strong></span>
           </div>
         </div>
 
-        <!-- Section 3: Relato do Fato -->
-        <div class="text-center font-bold uppercase" style="margin-top: 20px; margin-bottom: 10px;">
-          <p style="font-size: 12px; font-weight: bold; margin: 0;">RELATO DO FATO</p>
-        </div>
-        <div class="body-text text-justify" style="font-size: 12px; line-height: 1.5; text-align: justify;">
-          <p style="text-indent: 2.5rem; margin: 0 0 10px 0;">
-            Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>${formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>, que <strong>${formData.resumoFato || 'Sem fatos cadastrados até o momento.'}</strong>.
+        <div class="text-center font-bold" style="margin-top: 15px; margin-bottom: 10px; font-size: 13px; color: #000000;">RELATO DO FATO</div>
+        <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6; color: #000000;">
+          <p style="text-indent: 3rem; margin-top: 10px; text-align: justify;">
+            Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>${formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>, que <strong>${formData.resumoFato || '___________________________'}</strong>.
           </p>
-          <p style="text-indent: 2.5rem; margin: 0;">
-            Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de <strong>05 (cinco) dias úteis</strong>, podendo constituir advogado e produzir quaisquer provas admitidas in direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+          
+          <p style="text-indent: 3rem; margin-top: 15px; text-align: justify;">
+            Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>${formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de 05 (cinco) dias úteis, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
           </p>
         </div>
 
-        <!-- Date -->
-        <div class="text-right" style="margin-top: 15mm; font-size: 12px; text-align: right;">
+        <div class="text-right" style="margin-top: 15mm; font-size: 13px; font-weight: 550; text-align: right;">
           <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
         </div>
 
-        <!-- Signature -->
         <div class="signature-box text-center" style="margin-top: 20mm;">
-          <div style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto; margin-bottom: 4px;"></div>
-          <p style="margin: 0 0 2px 0; font-size: 12px;">
-            (${formData.apurador || '___________________________'}, ${formData.apuradorPosto || ''})
-          </p>
+          <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
+          <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.apurador || '___________________________'} - ${formData.apuradorPosto} ${formData.apuradorQuadro}</p>
           <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Oficial Apurador</p>
         </div>
 
         <!-- Footer -->
-        <div class="text-left" style="margin-top: 15mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
-          PATD Nº ${formData.patdNumber || '___/___/_____'}
+        <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
+          PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
         </div>
       </div>
 
-      <!-- Page 2 -->
-      <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-before: always;">
-        <!-- Title/Header Page 2 -->
-        <div class="text-right font-bold" style="font-size: 12px; text-align: right; margin-bottom: 15mm;">
-          FATD Nº ${formData.patdNumber || '___/___/_____'} - fls. 2/2
+      <!-- Folha 2 -->
+      <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative; box-sizing: border-box;">
+        <!-- Header inside the printable sheet -->
+        <div style="font-size: 13px; font-weight: bold; margin-bottom: 15mm; color: #000000;">
+          FATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
         </div>
 
-        <!-- Section Title -->
-        <div style="margin-top: 10mm;">
-          <div class="text-center font-bold uppercase" style="margin-bottom: 15px;">
-            <p style="font-size: 12px; font-weight: bold; margin: 0;">CIENTE DO MILITAR ARROLADO</p>
-          </div>
-          
-          <div class="body-text text-justify" style="font-size: 12px; line-height: 1.5; text-align: justify;">
-            <p style="text-indent: 2.5rem; margin: 0 0 10px 0;">
-              Eu, <strong>${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro} (SARAM: ${formData.saram || '_______'})</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de <strong>05 (cinco) dias úteis</strong>, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
-            </p>
-            
-            <p style="text-indent: 2.5rem; margin: 0 0 15px 0;">
-              Fui informado(a) ainda, que caso não formule minhas alegações de defesa no prazo assinalado, o PATD seguirá o tramite previsto na supracitada ICA 111-6.
-            </p>
-            
-            <p style="margin: 0 0 10px 0; font-weight: bold;">
-              Outrossim, declaro que, neste ato, recebi cópia dos seguintes documentos que dizem respeito ao fato objeto da apuração:
-            </p>
-            
-            <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">
-              <li style="margin-bottom: 4px;">Formulário de Apuração de Transgressão Disciplinar (FATD) - fls. 1/2;</li>
-              <li style="margin-bottom: 4px;">Despacho de Instauração e Abertura do PATD;</li>
-              ${formData.oficioNumero ? `<li style="margin-bottom: 4px;">Ofício nº ${formData.oficioNumero} (Protocolo COMAER nº ${formData.protComaer || '—'}), de ${formatDateStr(formData.dataOficio)};</li>` : ''}
-              <li style="margin-bottom: 4px;">Cópia integral das peças que compõem os presentes autos do processo.</li>
-            </ul>
-          </div>
+        <!-- Title -->
+        <div class="text-center font-bold" style="margin-bottom: 12mm; font-size: 14px; text-transform: uppercase; color: #000000;">
+          CIENTE DO MILITAR ARROLADO
         </div>
 
-        <!-- Date -->
-        <div class="text-right" style="margin-top: 25mm; font-size: 12px; text-align: right;">
+        <!-- Body text -->
+        <div class="body-text text-justify" style="font-size: 13px; line-height: 1.6; color: #000000;">
+          <p style="text-indent: 3rem; text-align: justify; margin-bottom: 15px;">
+            Eu, <strong>${formData.nomeCompleto || '___________________________'}</strong>, <strong>${formData.posto} ${formData.quadro}</strong> do arrolado, SARAM <strong>${formData.saram || '_______'}</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de 05 (cinco) dias úteis, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+          </p>
+
+          <p style="text-indent: 3rem; text-align: justify; margin-bottom: 15px;">
+            Fui informado(a) ainda, que caso não formule minhas alegações de defesa no prazo assinalado, o PATD seguirá o tramite previsto na supracitada ICA 111-6.
+          </p>
+
+          <p style="text-indent: 3rem; text-align: justify; margin-bottom: 15px;">
+            Outrossim, declaro que, neste ato, recebi cópia dos seguintes documentos que dizem respeito ao fato objeto da apuração:
+          </p>
+
+          <ul style="list-style-type: none; padding-left: 3rem; margin: 15px 0; line-height: 1.6;">
+            <li style="margin-bottom: 4px;">• Capa;</li>
+            <li style="margin-bottom: 4px;">• Portaria nº 853/SIJ, de 27 de abril de 2026;</li>
+            <li style="margin-bottom: 4px;">• Despacho de Abertura do PATD;</li>
+            <li style="margin-bottom: 4px;">• Ofício nº <strong>${formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>${formData.protComaer || '_______'}</strong>), de <strong>${formatDateStr(formData.dataOficio)}</strong>;</li>
+            <li style="margin-bottom: 4px;">• Formulário de Apuração de Transgressão Disciplinar (FATD) - fls. 1/2;</li>
+            <li style="margin-bottom: 4px;">• Ficha Individual do Militar Arrolado</li>
+          </ul>
+        </div>
+
+        <div class="text-right" style="margin-top: 15mm; font-size: 13px; font-weight: 550; text-align: right;">
           <p>Pirassununga, ${new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
         </div>
 
-        <!-- Signature -->
-        <div class="signature-box text-center" style="margin-top: 30mm;">
-          <div style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto; margin-bottom: 4px;"></div>
-          <p style="margin: 0 0 2px 0; font-size: 12px;">
-            (${formData.nomeCompleto || '___________________________'}, ${formData.posto || ''} ${formData.quadro || ''})
-          </p>
+        <div class="signature-box text-center" style="margin-top: 20mm;">
+          <div class="line mx-auto w-64 border-bottom mb-2" style="border-bottom: 1px solid #000000; width: 250px; margin-left: auto; margin-right: auto;"></div>
+          <p class="font-bold uppercase" style="margin: 0 0 2px 0; font-size: 13px;">${formData.nomeCompleto || '___________________________'} - ${formData.posto} ${formData.quadro}</p>
           <p class="text-xs uppercase text-slate-500" style="margin: 0; font-size: 10px;">Militar Arrolado</p>
         </div>
 
         <!-- Footer -->
-        <div class="text-left" style="margin-top: 20mm; font-size: 10px; font-weight: bold; color: #ff0000; text-align: left;">
-          PATD Nº ${formData.patdNumber || '___/___/_____'}
+        <div style="position: absolute; bottom: 15mm; left: 20mm; font-size: 11px; font-weight: bold; color: #000000;">
+          PATD Nº <span class="text-red">${formData.patdNumber || '___/___/_____'}</span>
         </div>
       </div>
     `;
@@ -2316,17 +2286,16 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                             <div className="text-center mt-12">
                               <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
                               <p className="font-bold uppercase text-[12px] text-slate-850 dark:text-slate-100">{formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
-                              <p className="text-[9px] uppercase text-slate-400">{formData.aplicadorCargo || 'Autoridade Aplicadora / Competente'}</p>
+                              <p className="text-[9px] uppercase text-slate-400">{formData.aplicadorCargo || 'Autoridade Competente'}</p>
                             </div>
                           </div>
                         );
                       case 'fatd':
                         return (
-                          <div className="flex flex-col gap-8 w-full max-w-[650px] my-4">
-                            {/* Page 1 */}
-                            <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
+                          <div className="flex flex-col gap-8 w-full max-w-[650px] my-4 overflow-y-auto">
+                            {/* Folha 1 */}
+                            <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
                               <div>
-                                {/* Outside Restrictive Header */}
                                 <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
                                   <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
                                   <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: '0 0 3px 0', letterSpacing: '0.5px' }}>INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
@@ -2335,7 +2304,6 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                   <p style={{ fontSize: '9px', color: '#ff0000', margin: 0, fontWeight: 500 }}>Arts. 55 a 62 do Decreto nº 7.724, de 2012</p>
                                 </div>
 
-                                {/* Top Emblem and Headers */}
                                 <div className="w-full text-center flex flex-col items-center" style={{ marginBottom: '15px' }}>
                                   <img src="/brasao.png" width="50" height="50" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
                                   <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
@@ -2343,126 +2311,105 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                   <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
                                 </div>
 
-                                {/* Title */}
-                                <div className="text-center font-bold uppercase" style={{ marginTop: '10px', marginBottom: '15px' }}>
-                                  <h2 style={{ fontSize: '12px', fontWeight: 'bold', margin: '0 0 2px 0' }} className="dark:text-white">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
-                                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', margin: 0 }} className="dark:text-white">FATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span></h3>
+                                <div className="text-center font-bold uppercase" style={{ margin: '15px 0', fontSize: '12px' }}>
+                                  <h2 style={{ fontSize: '12px', fontWeight: 'bold', margin: 0 }} className="dark:text-white">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
+                                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', margin: '3px 0 0 0' }} className="dark:text-white">FATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span></h3>
                                 </div>
 
-                                {/* Section 1: Militar Arrolado */}
-                                <div style={{ border: '1px solid #000000', padding: '6px 10px', fontSize: '11px', lineHeight: '1.4', marginTop: '15px' }}>
-                                  <p style={{ margin: 0, fontWeight: 'bold' }} className="dark:text-white">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
-                                  <p style={{ margin: 0, fontSize: '9px', color: '#ff0000', fontWeight: 'normal' }}>(nome completo, posto/grad/quadro/esp)</p>
-                                  <p style={{ margin: '2px 0 4px 0' }} className="dark:text-white">
-                                    {formData.nomeCompleto || '___________________________'}{formData.posto ? `, ${formData.posto}` : ''}{formData.quadro ? ` ${formData.quadro}` : ''}{formData.especialidade ? `/${formData.especialidade}` : ''}
-                                  </p>
-                                  <p style={{ margin: 0, display: 'flex', justifyContent: 'space-between' }} className="dark:text-white">
+                                {/* Identificação do Militar Arrolado */}
+                                <div style={{ border: '1px solid #000000', padding: '6px', fontSize: '11px', marginBottom: '10px' }} className="dark:border-slate-800">
+                                  <p style={{ fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
+                                  <p style={{ margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro} {formData.especialidade ? `/ ${formData.especialidade}` : ''}</p>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between' }} className="dark:text-white">
                                     <span>SARAM: <strong>{formData.saram || '_______'}</strong></span>
-                                    <span>Seção/OM: <strong>{formData.setor || '—'} / {formData.divisao || 'Academia da Força Aérea'}</strong></span>
-                                  </p>
+                                    <span>Seção/OM: <strong>{formData.setor || '_______'} / {formData.divisao || '_______'}</strong></span>
+                                  </div>
                                 </div>
 
-                                {/* Section 2: Oficial Apurador */}
-                                <div style={{ border: '1px solid #000000', padding: '6px 10px', fontSize: '11px', lineHeight: '1.4', marginTop: '10px' }}>
-                                  <p style={{ margin: 0, fontWeight: 'bold' }} className="dark:text-white">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
-                                  <p style={{ margin: 0, fontSize: '9px', color: '#ff0000', fontWeight: 'normal' }}>(nome completo, posto/grad/quadro/esp)</p>
-                                  <p style={{ margin: '2px 0 4px 0' }} className="dark:text-white">
-                                    {formData.apurador || '___________________________'}{formData.apuradorPosto ? `, ${formData.apuradorPosto}` : ''}{formData.apuradorQuadro ? ` ${formData.apuradorQuadro}` : ''}
-                                  </p>
-                                  <p style={{ margin: 0, display: 'flex', justifyContent: 'space-between' }} className="dark:text-white">
+                                {/* Identificação do Oficial Apurador */}
+                                <div style={{ border: '1px solid #000000', padding: '6px', fontSize: '11px', marginBottom: '10px' }} className="dark:border-slate-800">
+                                  <p style={{ fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
+                                  <p style={{ margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between' }} className="dark:text-white">
                                     <span>SARAM: <strong>{formData.apuradorSaram || '_______'}</strong></span>
-                                    <span>Seção/OM: <strong>{formData.divisao || 'Academia da Força Aérea'}</strong></span>
+                                    <span>Seção/OM: <strong>{formData.divisao || '_______'}</strong></span>
+                                  </div>
+                                </div>
+
+                                <div className="text-center font-bold dark:text-white" style={{ margin: '10px 0', fontSize: '11px' }}>RELATO DO FATO</div>
+                                <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5' }}>
+                                  <p style={{ textIndent: '2.5rem', marginTop: '5px', textAlign: 'justify' }} className="dark:text-white">
+                                    Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>{formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>{formData.protComaer || '_______'}</strong>), de <strong>{formatDateStr(formData.dataOficio)}</strong>, que <strong>{formData.resumoFato || '___________________________'}</strong>.
+                                  </p>
+                                  
+                                  <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                                    Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>{formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de 05 (cinco) dias úteis, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
                                   </p>
                                 </div>
 
-                                {/* Section 3: Relato do Fato */}
-                                <div className="text-center font-bold uppercase" style={{ marginTop: '15px', marginBottom: '8px' }}>
-                                  <p style={{ fontSize: '11px', fontWeight: 'bold', margin: 0 }} className="dark:text-white">RELATO DO FATO</p>
-                                </div>
-                                <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5', textAlign: 'justify' }}>
-                                  <p style={{ textIndent: '2rem', margin: '0 0 8px 0' }} className="dark:text-white">
-                                    Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>{formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>{formData.protComaer || '_______'}</strong>), de <strong>{formatDateStr(formData.dataOficio)}</strong>, que <strong>{formData.resumoFato || 'Sem fatos cadastrados até o momento.'}</strong>.
-                                  </p>
-                                  <p style={{ textIndent: '2rem', margin: 0 }} className="dark:text-white">
-                                    Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>{formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de <strong>05 (cinco) dias úteis</strong>, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
-                                  </p>
-                                </div>
-
-                                {/* Date */}
                                 <div className="text-right dark:text-white" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'right' }}>
                                   <p>Pirassununga, {new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
                                 </div>
                               </div>
 
-                              {/* Signature */}
-                              <div className="signature-box text-center" style={{ marginTop: '15mm' }}>
-                                <div style={{ borderBottom: '1px solid #000000', width: '200px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '4px' }} className="dark:border-slate-800" />
-                                <p className="text-[11px] dark:text-white" style={{ margin: '0 0 2px 0' }}>
-                                  ({formData.apurador || '___________________________'}, {formData.apuradorPosto || ''})
-                                </p>
-                                <p className="text-[9px] uppercase text-slate-400" style={{ margin: 0 }}>Oficial Apurador</p>
+                              <div className="text-center mt-8">
+                                <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
+                                <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
+                                <p className="text-[9px] uppercase text-slate-400">Oficial Apurador</p>
                               </div>
 
-                              {/* Footer */}
-                              <div className="text-left dark:text-white" style={{ marginTop: '10mm', fontSize: '9px', fontWeight: 'bold', color: '#ff0000', textAlign: 'left' }}>
-                                PATD Nº {formData.patdNumber || '___/___/_____'}
+                              <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold' }} className="dark:text-white">
+                                PATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span>
                               </div>
                             </div>
 
-                            {/* Page 2 */}
-                            <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
+                            {/* Folha 2 */}
+                            <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
                               <div>
-                                {/* Title/Header Page 2 */}
-                                <div className="text-right font-bold dark:text-white" style={{ fontSize: '11px', textAlign: 'right', marginBottom: '10mm' }}>
-                                  FATD Nº {formData.patdNumber || '___/___/_____'} - fls. 2/2
+                                <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '10mm' }} className="dark:text-white">
+                                  FATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
                                 </div>
 
-                                {/* Section Title */}
-                                <div style={{ marginTop: '5mm' }}>
-                                  <div className="text-center font-bold uppercase" style={{ marginBottom: '10px' }}>
-                                    <p style={{ fontSize: '11px', fontWeight: 'bold', margin: 0 }} className="dark:text-white">CIENTE DO MILITAR ARROLADO</p>
-                                  </div>
-                                  
-                                  <div className="body-text text-justify" style={{ fontSize: '11.5px', lineHeight: '1.55', textAlign: 'justify' }}>
-                                    <p style={{ textIndent: '2rem', margin: '0 0 8px 0' }} className="dark:text-white">
-                                      Eu, <strong>{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro} (SARAM: {formData.saram || '_______'})</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de <strong>05 (cinco) dias úteis</strong>, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
-                                    </p>
-                                    
-                                    <p style={{ textIndent: '2rem', margin: '0 0 15px 0' }} className="dark:text-white">
-                                      Fui informado(a) ainda, que caso não formule minhas alegações de defesa no prazo assinalado, o PATD seguirá o tramite previsto na supracitada ICA 111-6.
-                                    </p>
-                                    
-                                    <p style={{ margin: '0 0 8px 0', fontWeight: 'bold' }} className="dark:text-white">
-                                      Outrossim, declaro que, neste ato, recebi cópia dos seguintes documentos que dizem respeito ao fato objeto da apuração:
-                                    </p>
-                                    
-                                    <ul style={{ margin: 0, paddingLeft: '20px', listStyleType: 'disc' }} className="dark:text-white">
-                                      <li style={{ marginBottom: '3px' }}>Formulário de Apuração de Transgressão Disciplinar (FATD) - fls. 1/2;</li>
-                                      <li style={{ marginBottom: '3px' }}>Despacho de Instauração e Abertura do PATD;</li>
-                                      {formData.oficioNumero ? <li style={{ marginBottom: '3px' }}>Ofício nº {formData.oficioNumero} (Protocolo COMAER nº {formData.protComaer || '—'}), de {formatDateStr(formData.dataOficio)};</li> : null}
-                                      <li style={{ marginBottom: '3px' }}>Cópia integral das peças que compõem os presentes autos do processo.</li>
-                                    </ul>
-                                  </div>
+                                <div className="text-center font-bold dark:text-white" style={{ marginBottom: '8mm', fontSize: '12px' }}>
+                                  CIENTE DO MILITAR ARROLADO
                                 </div>
 
-                                {/* Date */}
-                                <div className="text-right dark:text-white" style={{ marginTop: '15mm', fontSize: '11px', textAlign: 'right' }}>
+                                <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5' }}>
+                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
+                                    Eu, <strong>{formData.nomeCompleto || '___________________________'}</strong>, <strong>{formData.posto} {formData.quadro}</strong> do arrolado, SARAM <strong>{formData.saram || '_______'}</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de 05 (cinco) dias úteis, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+                                  </p>
+
+                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
+                                    Fui informado(a) ainda, que caso não formule minhas alegações de defesa no prazo assinalado, o PATD seguirá o tramite previsto na supracitada ICA 111-6.
+                                  </p>
+
+                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
+                                    Outrossim, declaro que, neste ato, recebi cópia dos seguintes documentos que dizem respeito ao fato objeto da apuração:
+                                  </p>
+
+                                  <ul style={{ listStyleType: 'none', paddingLeft: '2.5rem', margin: '10px 0', lineHeight: '1.5' }} className="dark:text-white">
+                                    <li style={{ marginBottom: '3px' }}>• Capa;</li>
+                                    <li style={{ marginBottom: '3px' }}>• Portaria nº 853/SIJ, de 27 de abril de 2026;</li>
+                                    <li style={{ marginBottom: '3px' }}>• Despacho de Abertura do PATD;</li>
+                                    <li style={{ marginBottom: '3px' }}>• Ofício nº <strong>{formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>{formData.protComaer || '_______'}</strong>), de <strong>{formatDateStr(formData.dataOficio)}</strong>;</li>
+                                    <li style={{ marginBottom: '3px' }}>• Formulário de Apuração de Transgressão Disciplinar (FATD) - fls. 1/2;</li>
+                                    <li style={{ marginBottom: '3px' }}>• Ficha Individual do Militar Arrolado</li>
+                                  </ul>
+                                </div>
+
+                                <div className="text-right dark:text-white" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'right' }}>
                                   <p>Pirassununga, {new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
                                 </div>
                               </div>
 
-                              {/* Signature */}
-                              <div className="signature-box text-center" style={{ marginTop: '20mm' }}>
-                                <div style={{ borderBottom: '1px solid #000000', width: '200px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '4px' }} className="dark:border-slate-800" />
-                                <p className="text-[11px] dark:text-white" style={{ margin: '0 0 2px 0' }}>
-                                  ({formData.nomeCompleto || '___________________________'}, {formData.posto || ''} {formData.quadro || ''})
-                                </p>
-                                <p className="text-[9px] uppercase text-slate-400" style={{ margin: 0 }}>Militar Arrolado</p>
+                              <div className="text-center mt-8">
+                                <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
+                                <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
+                                <p className="text-[9px] uppercase text-slate-400">Militar Arrolado</p>
                               </div>
 
-                              {/* Footer */}
-                              <div className="text-left dark:text-white" style={{ marginTop: '15mm', fontSize: '9px', fontWeight: 'bold', color: '#ff0000', textAlign: 'left' }}>
-                                PATD Nº {formData.patdNumber || '___/___/_____'}
+                              <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold' }} className="dark:text-white">
+                                PATD Nº <span style={{ color: '#ff0000' }}>{formData.patdNumber || '___/___/_____'}</span>
                               </div>
                             </div>
                           </div>
@@ -2482,7 +2429,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-widest transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2"
                 >
                   <Printer size={16} />
-                  Imprimir Todo o Processo (4 Páginas)
+                  Imprimir Todo o Processo (3 Páginas)
                 </button>
                 
                 <div className="flex gap-3">
