@@ -542,7 +542,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         case 'despacho':
           return `
             <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative;">
-              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
+              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 8mm; width: 38mm; height: 38mm;" />
               <!-- Header inside the printable sheet -->
               <div class="text-center font-bold" style="margin-bottom: 2mm;">
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo B - Despacho de Abertura e Designação de Apurador</p>
@@ -589,7 +589,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           return `
             <!-- Folha 1 -->
             <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-after: always; position: relative; box-sizing: border-box;">
-              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
+              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 8mm; width: 38mm; height: 38mm;" />
               <!-- Header inside the printable sheet -->
               <div class="text-center font-bold" style="margin-bottom: 2mm;">
                 <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
@@ -661,7 +661,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
             <!-- Folha 2 -->
             <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative; box-sizing: border-box;">
-              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
+              <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 8mm; width: 38mm; height: 38mm;" />
               <!-- Header inside the printable sheet -->
               <div style="font-size: 13px; font-weight: bold; margin-bottom: 15mm; color: #000000;">
                 FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
@@ -1031,7 +1031,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
     const despachoHTML = `
       <div class="sheet despacho font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative;">
-        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
+        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 8mm; width: 38mm; height: 38mm;" />
         <!-- Header inside the printable sheet -->
         <div class="text-center font-bold" style="margin-bottom: 2mm;">
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo B - Despacho de Abertura e Designação de Apurador</p>
@@ -1078,7 +1078,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     const fatdHTML = `
       <!-- Folha 1 -->
       <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; page-break-after: always; position: relative; box-sizing: border-box;">
-        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
+        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 8mm; width: 38mm; height: 38mm;" />
         <!-- Header inside the printable sheet -->
         <div class="text-center font-bold" style="margin-bottom: 2mm;">
           <p style="font-size: 14px; font-weight: bold; color: #000000; margin: 0 0 6px 0;">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
@@ -1150,7 +1150,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
       <!-- Folha 2 -->
       <div class="sheet fatd font-serif" style="padding: 20mm 15mm 20mm 20mm !important; font-family: 'Times New Roman', Times, serif; position: relative; box-sizing: border-box;">
-        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 15mm; width: 32mm; height: 32mm;" />
+        <img src="${window.location.origin}/sinete.png" style="position: absolute; top: 10mm; right: 8mm; width: 38mm; height: 38mm;" />
         <!-- Header inside the printable sheet -->
         <div style="font-size: 13px; font-weight: bold; margin-bottom: 15mm; color: #000000;">
           FATD Nº <span class="text-black">${formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
@@ -2254,7 +2254,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                       case 'despacho':
                         return (
                           <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4 relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
-                            <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '15mm', width: '32mm', height: '32mm' }} />
+                            <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '8mm', width: '38mm', height: '38mm' }} />
                             <div>
                               <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
                                 <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo B - Despacho de Abertura e Designação de Apurador</p>
@@ -2302,7 +2302,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                           <div className="flex flex-col gap-8 w-full max-w-[650px] my-4 overflow-y-auto">
                             {/* Folha 1 */}
                             <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
-                              <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '15mm', width: '32mm', height: '32mm' }} />
+                              <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '8mm', width: '38mm', height: '38mm' }} />
                               <div>
                                 <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
                                   <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
@@ -2373,7 +2373,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
                             {/* Folha 2 */}
                             <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
-                              <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '15mm', width: '32mm', height: '32mm' }} />
+                              <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '8mm', width: '38mm', height: '38mm' }} />
                               <div>
                                 <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '10mm' }} className="dark:text-white">
                                   FATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
