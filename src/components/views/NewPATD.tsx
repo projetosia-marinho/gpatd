@@ -737,7 +737,9 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         padding: 40px 20px;
         font-family: 'Times New Roman', Times, serif;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
       }
       .sheet {
         background-color: #ffffff;
