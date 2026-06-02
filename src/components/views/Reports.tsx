@@ -94,12 +94,17 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
   const [endDate, setEndDate] = useState('');
   const [showPreview, setShowPreview] = useState(false);
 
+  const visibleProcesses = useMemo(() => {
+    if (canFilterAllDivisions) return processes;
+    return processes.filter(p => p.divisao === currentUser.divisao);
+  }, [processes, canFilterAllDivisions, currentUser.divisao]);
+
   // Stats calculation
   const stats = useMemo(() => {
-    const total = processes.length;
-    const completed = processes.filter(p => p.status === 'Concluído').length;
-    const inProgress = processes.filter(p => p.status === 'Em Andamento').length;
-    const suspended = processes.filter(p => p.status === 'Suspenso').length;
+    const total = visibleProcesses.length;
+    const completed = visibleProcesses.filter(p => p.status === 'Concluído').length;
+    const inProgress = visibleProcesses.filter(p => p.status === 'Em Andamento').length;
+    const suspended = visibleProcesses.filter(p => p.status === 'Suspenso').length;
     
     return [
       { label: 'Total de PATDs', value: total, icon: FileText, color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-900/20' },
@@ -107,20 +112,20 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
       { label: 'Concluídos', value: completed, icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
       { label: 'Suspensos', value: suspended, icon: AlertTriangle, color: 'text-rose-500', bg: 'bg-rose-50 dark:bg-rose-900/20' },
     ];
-  }, [processes]);
+  }, [visibleProcesses]);
 
   // Unique values for filters
   const filterOptions = useMemo(() => ({
-    divisoes: Array.from(new Set(processes.map(p => p.divisao))).sort(),
-    anos: Array.from(new Set(processes.map(p => new Date(p.dataInicio).getFullYear().toString()))).sort((a, b) => b.localeCompare(a)),
-    status: Array.from(new Set(processes.map(p => p.status))).sort(),
-    postos: Array.from(new Set(processes.map(p => p.posto))).sort(),
-    punicoes: Array.from(new Set(processes.map(p => p.punicao))).filter(Boolean).sort() as string[],
-  }), [processes]);
+    divisoes: Array.from(new Set(visibleProcesses.map(p => p.divisao))).sort(),
+    anos: (Array.from(new Set(visibleProcesses.map(p => new Date(p.dataInicio).getFullYear().toString()))) as string[]).sort((a, b) => b.localeCompare(a)),
+    status: Array.from(new Set(visibleProcesses.map(p => p.status))).sort(),
+    postos: Array.from(new Set(visibleProcesses.map(p => p.posto))).sort(),
+    punicoes: Array.from(new Set(visibleProcesses.map(p => p.punicao))).filter(Boolean).sort() as string[],
+  }), [visibleProcesses]);
 
   // Filtered Logic
   const filteredProcesses = useMemo(() => {
-    return processes.filter(p => {
+    return visibleProcesses.filter(p => {
       const pAno = new Date(p.dataInicio).getFullYear().toString();
       const pDate = new Date(p.dataInicio).getTime();
       const start = startDate ? new Date(startDate).getTime() : null;
@@ -139,7 +144,7 @@ export default function Reports({ processes, globalSearchTerm = '', currentUser 
         (!end || pDate <= end)
       );
     });
-  }, [processes, searchTerm, globalSearchTerm, filterDivisao, filterAno, filterStatus, filterPosto, filterPunicao, startDate, endDate]);
+  }, [visibleProcesses, searchTerm, globalSearchTerm, filterDivisao, filterAno, filterStatus, filterPosto, filterPunicao, startDate, endDate]);
 
   const getStatusStyle = (status: Process['status']) => {
     switch (status) {

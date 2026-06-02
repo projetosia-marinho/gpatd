@@ -799,6 +799,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       .italic { font-style: italic; }
       .rounded-lg { border-radius: 0.5rem; }
       @media print {
+        @page {
+          size: A4;
+          margin: 0;
+        }
         * {
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
@@ -806,12 +810,17 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         body {
           background-color: transparent;
           padding: 0;
+          margin: 0;
         }
         .sheet {
           box-shadow: none;
-          width: auto;
-          min-height: auto;
-          padding: 10mm 10mm 10mm 10mm;
+          width: 210mm;
+          height: 296mm;
+          box-sizing: border-box;
+          page-break-after: always;
+        }
+        .sheet:last-child {
+          page-break-after: avoid;
         }
       }
       .text-red {
@@ -951,6 +960,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       .italic { font-style: italic; }
       .rounded-lg { border-radius: 0.5rem; }
       @media print {
+        @page {
+          size: A4;
+          margin: 0;
+        }
         * {
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
@@ -958,13 +971,18 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         body {
           background-color: transparent;
           padding: 0;
+          margin: 0;
           gap: 0;
         }
         .sheet {
           box-shadow: none;
-          width: auto;
-          min-height: auto;
-          padding: 10mm 10mm 10mm 10mm;
+          width: 210mm;
+          height: 296mm;
+          box-sizing: border-box;
+          page-break-after: always;
+        }
+        .sheet:last-child {
+          page-break-after: avoid;
         }
       }
       .text-red {
@@ -1243,10 +1261,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
   const getAllowedQuadros = (posto: string) => {
     if (['BR', 'CL', 'TC', 'MJ', 'CP', '1T', '2T', 'AP'].includes(posto)) {
-      return ['QOAV', 'QOINF', 'QOINT', 'QOAP', 'QOMED', 'QOCON'];
+      return ['QOAV', 'QOINF', 'QOINT', 'QOAP', 'QOMED', 'QOCON', 'QOFARM', 'QODENT'];
     }
     if (['CD'].includes(posto)) {
-      return ['QOAV', 'QOINF', 'QOINT'];
+      return ['QOAV', 'QOINT', 'QOINF'];
     }
     if (['SO', '1S', '2S', '3S', 'AL'].includes(posto)) {
       return ['QSS', 'QSCON', 'QESA'];
@@ -1272,6 +1290,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       { value: 'QOAP', label: 'QOAP' },
       { value: 'QOMED', label: 'QOMED' },
       { value: 'QOCON', label: 'QOCON' },
+      { value: 'QOFARM', label: 'QOFARM' },
+      { value: 'QODENT', label: 'QODENT' },
       { value: 'QSS', label: 'QSS' },
       { value: 'QSCON', label: 'QSCON' },
       { value: 'QESA', label: 'QESA' },
@@ -1772,7 +1792,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     }
 
     // Save field memory for autocomplete
-    const fieldsToRemember = ['nomeCompleto', 'saram', 'especialidade', 'apurador', 'aplicador'];
+    const fieldsToRemember = ['nomeCompleto', 'saram', 'especialidade', 'apurador', 'aplicador', 'aplicadorCargo'];
     fieldsToRemember.forEach(field => {
       const val = formData[field]?.trim();
       if (val) {
@@ -1832,6 +1852,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     { value: 'QOAP', label: 'QOAP' },
     { value: 'QOMED', label: 'QOMED' },
     { value: 'QOCON', label: 'QOCON' },
+    { value: 'QOFARM', label: 'QOFARM' },
+    { value: 'QODENT', label: 'QODENT' },
     { value: 'QSS', label: 'QSS' },
     { value: 'QSCON', label: 'QSCON' },
     { value: 'QESA', label: 'QESA' },
@@ -2037,7 +2059,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="md:col-span-2">
-                    <InputField label="Cargo (Aplicador)" icon={Briefcase} value={formData.aplicadorCargo} onChange={handleChange('aplicadorCargo')} placeholder="Ex: Comandante, Chefe de Divisão, etc." />
+                    <AutocompleteInputField label="Cargo (Aplicador)" icon={Briefcase} value={formData.aplicadorCargo} onChange={handleChange('aplicadorCargo')} placeholder="Ex: Comandante, Chefe de Divisão, etc." fieldName="aplicadorCargo" />
                   </div>
                   <div className="hidden md:block md:col-span-2" />
                 </div>
