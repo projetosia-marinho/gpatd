@@ -465,43 +465,58 @@ export default function Dashboard({
                 className="overflow-y-auto max-h-[400px] pr-2 custom-scrollbar space-y-4"
                 onScroll={(e) => handleScroll(e, setVisibleRecent, latestProcesses.length)}
               >
-                {latestProcesses.slice(0, visibleRecent).map((process, i) => (
-                  <motion.div 
-                    key={process.id} 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100/50 dark:border-slate-800/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10 cursor-pointer transition-all group" 
-                    onClick={() => onSelectProcess?.(process)}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all overflow-hidden relative group-hover:border-indigo-500/50">
-                        <div className="absolute inset-0 bg-indigo-500/10 dark:bg-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 z-10">{process.divisao.substring(0, 3)}</span>
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-black text-slate-900 dark:text-white">PATD {process.patdNumber}</p>
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${
-                            process.status === 'Concluído' ? 'bg-emerald-100 text-emerald-700' : 
-                            process.status === 'Suspenso' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
-                          }`}>
-                            {process.status}
-                          </span>
+                {latestProcesses.slice(0, visibleRecent).map((process, i) => {
+                  const hasOperatorDoc = currentUser?.role === 'Administrador' && process.history && Array.isArray(process.history) && process.history.some((h: any) => {
+                    const isDoc = h.field === 'Documento PDF' || h.field === 'Portaria de Delegação';
+                    const isAddition = h.newValue && (h.newValue.includes('Adicionado') || h.newValue.includes('Adicionada'));
+                    const isNotCurrentAdmin = h.user && h.user !== currentUser.name;
+                    return isDoc && isAddition && isNotCurrentAdmin;
+                  });
+
+                  return (
+                    <motion.div 
+                      key={process.id} 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100/50 dark:border-slate-800/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10 cursor-pointer transition-all group" 
+                      onClick={() => onSelectProcess?.(process)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all overflow-hidden relative group-hover:border-indigo-500/50">
+                          <div className="absolute inset-0 bg-indigo-500/10 dark:bg-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 z-10">{process.divisao.substring(0, 3)}</span>
                         </div>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-tighter mt-0.5">{process.militar} • <span className="opacity-60">{process.saram}</span></p>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-black text-slate-900 dark:text-white">PATD {process.patdNumber}</p>
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tighter ${
+                              process.status === 'Concluído' ? 'bg-emerald-100 text-emerald-700' : 
+                              process.status === 'Suspenso' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {process.status}
+                            </span>
+                          </div>
+                          <p className="text-xs font-bold text-slate-500 uppercase tracking-tighter mt-0.5">{process.militar} • <span className="opacity-60">{process.saram}</span></p>
+                          {hasOperatorDoc && (
+                            <span className="flex items-center gap-1 mt-1.5 text-[9px] font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md w-fit">
+                              <AlertCircle size={10} />
+                              Doc. Inserido por Operador
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      <div className="flex flex-col items-end">
-                        <span className="opacity-50">Início</span>
-                        <span className="text-slate-600 dark:text-slate-300">{new Date(process.dataInicio).toLocaleDateString()}</span>
+                      
+                      <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <div className="flex flex-col items-end">
+                          <span className="opacity-50">Início</span>
+                          <span className="text-slate-600 dark:text-slate-300">{new Date(process.dataInicio).toLocaleDateString()}</span>
+                        </div>
+                        <ArrowUpRight size={16} className="text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                       </div>
-                      <ArrowUpRight size={16} className="text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
                 {visibleRecent < latestProcesses.length && (
                   <div className="py-4 text-center text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">Carregando mais processos...</div>
                 )}

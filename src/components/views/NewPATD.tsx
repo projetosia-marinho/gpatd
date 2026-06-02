@@ -447,6 +447,25 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   const [errors, setErrors] = useState<any>({});
   const [seqTrigger, setSeqTrigger] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [libraryDocs, setLibraryDocs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchLibraryDocs = async () => {
+      try {
+        const { data, error } = await supabase.from('documents').select('*');
+        if (data) {
+          const filtered = data.filter(d => 
+            d.name.toLowerCase().includes('portaria') || 
+            d.name.toLowerCase().includes('delega')
+          );
+          setLibraryDocs(filtered);
+        }
+      } catch (err) {
+        console.error('Error fetching library docs:', err);
+      }
+    };
+    fetchLibraryDocs();
+  }, []);
   
   const [formData, setFormData] = useState<any>({
     patdNumber: `001/DIV/${currentYear}`,
@@ -2513,10 +2532,69 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                       <h5 className="text-xs font-bold text-slate-700 dark:text-slate-350 mb-1">
                                         Nenhuma Portaria Anexada
                                       </h5>
-                                      <p className="text-[10px] text-slate-400 dark:text-slate-550 max-w-[280px]">
-                                        Este documento ainda não foi carregado pelo Administrador do sistema para este processo.
-                                      </p>
                                     </>
+                                  )}
+                                  {libraryDocs.length > 0 && (
+                                    <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-6 w-full">
+                                      <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-3 text-left flex items-center gap-1.5">
+                                        <FileText size={14} className="text-indigo-500" />
+                                        Modelos de Portaria na Biblioteca
+                                      </h5>
+                                      <div className="space-y-2">
+                                        {libraryDocs.map((doc) => (
+                                          <div key={doc.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-850 hover:border-indigo-500/30 transition-all text-left">
+                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-750 dark:text-slate-350 truncate pr-2">
+                                              <FileText size={14} className="text-rose-500 shrink-0" />
+                                              <span className="truncate">{doc.name}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  if (doc.drive_link) {
+                                                    window.open(doc.drive_link, '_blank');
+                                                  } else {
+                                                    alert('Link do documento não encontrado.');
+                                                  }
+                                                }}
+                                                className="px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-650 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all text-[10px] font-bold cursor-pointer"
+                                              >
+                                                Visualizar
+                                              </button>
+                                              {isAdmin && !formData.delegacaoDoc && (
+                                                <button
+                                                  type="button"
+                                                  onClick={async () => {
+                                                    const newDoc = {
+                                                      name: doc.name,
+                                                      url: doc.drive_link,
+                                                      uploadedAt: new Date().toLocaleDateString('pt-BR')
+                                                    };
+                                                    
+                                                    const newHistoryItem = {
+                                                      field: 'Portaria de Delegação',
+                                                      oldValue: '—',
+                                                      newValue: `Adicionada da Biblioteca: ${doc.name}`,
+                                                      user: currentUser?.name || 'Sistema',
+                                                      date: new Date().toLocaleString('pt-BR')
+                                                    };
+
+                                                    setHistory((prev: any) => [newHistoryItem, ...prev]);
+                                                    setFormData((prev: any) => ({
+                                                      ...prev,
+                                                      delegacaoDoc: newDoc
+                                                    }));
+                                                  }}
+                                                  className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-all text-[10px] font-bold cursor-pointer"
+                                                >
+                                                  Vincular
+                                                </button>
+                                              )}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
                                   )}
                                 </div>
                               )}

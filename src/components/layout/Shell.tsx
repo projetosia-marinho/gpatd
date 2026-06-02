@@ -108,6 +108,15 @@ export default function Shell({
     });
   }) : [];
 
+  const operatorDocUploads = currentUser?.role === 'Administrador' ? processes.filter(p => {
+    return p.history && Array.isArray(p.history) && p.history.some((h: any) => {
+      const isDoc = h.field === 'Documento PDF' || h.field === 'Portaria de Delegação';
+      const isAddition = h.newValue && (h.newValue.includes('Adicionado') || h.newValue.includes('Adicionada'));
+      const isNotCurrentAdmin = h.user && h.user !== currentUser.name;
+      return isDoc && isAddition && isNotCurrentAdmin;
+    });
+  }) : [];
+
   const allRawNotifications = [
     ...criticalAlerts.map(p => ({
       id: `alert-${p.id}`,
@@ -125,6 +134,22 @@ export default function Shell({
       time: 'Recente',
       process: p
     })),
+    ...operatorDocUploads.map(p => {
+      const docHistory = [...p.history].reverse().find((h: any) => {
+        const isDoc = h.field === 'Documento PDF' || h.field === 'Portaria de Delegação';
+        const isAddition = h.newValue && (h.newValue.includes('Adicionado') || h.newValue.includes('Adicionada'));
+        const isNotCurrentAdmin = h.user && h.user !== currentUser.name;
+        return isDoc && isAddition && isNotCurrentAdmin;
+      });
+      return {
+        id: `opdoc-${p.id}-${docHistory ? docHistory.date : ''}`,
+        title: 'Documento Anexado por Operador',
+        subtitle: `O operador ${docHistory ? docHistory.user : 'envolvido'} anexou um documento no PATD ${p.patdNumber}`,
+        type: 'info',
+        time: 'Recente',
+        process: p
+      };
+    }),
     ...(isException ? [
       {
         id: 'admin-doc-1',
