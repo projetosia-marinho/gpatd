@@ -71,9 +71,10 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Load options from localStorage
+  // Load options from localStorage (scoped per logged user email if available)
   useEffect(() => {
-    const key = `patd_field_memory_${fieldName}`;
+    const userEmail = localStorage.getItem('logged_user_email') || 'anonymous';
+    const key = `patd_field_memory_${userEmail}_${fieldName}`;
     try {
       const saved = localStorage.getItem(key);
       if (saved) {
@@ -1810,12 +1811,13 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       return;
     }
 
-    // Save field memory for autocomplete
+    // Save field memory for autocomplete (scoped per logged user email if available)
     const fieldsToRemember = ['nomeCompleto', 'saram', 'especialidade', 'apurador', 'aplicador', 'aplicadorCargo'];
+    const userEmail = localStorage.getItem('logged_user_email') || 'anonymous';
     fieldsToRemember.forEach(field => {
       const val = formData[field]?.trim();
       if (val) {
-        const key = `patd_field_memory_${field}`;
+        const key = `patd_field_memory_${userEmail}_${field}`;
         try {
           const saved = localStorage.getItem(key);
           let list: string[] = saved ? JSON.parse(saved) : [];
