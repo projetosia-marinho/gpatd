@@ -2366,7 +2366,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                           <div className="bg-white dark:bg-slate-950 p-8 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] flex flex-col justify-between overflow-y-auto my-4" style={{ padding: '10mm 15mm', fontFamily: "'Times New Roman', Times, serif" }}>
                             {/* Outside the bordered frame */}
                             <div className="text-center" style={{ marginBottom: '6mm' }}>
-                              <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo C - Capa</p>
+                              <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 4px 0' }} className="text-black dark:text-white">Anexo C - Capa</p>
                               <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#ff0000', margin: '0 0 3px 0', letterSpacing: '0.5px' }}>INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
                               <p style={{ fontSize: '11px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
                               <p style={{ fontSize: '11px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 31 da Lei nº 12.527, de 2011</p>
@@ -2378,30 +2378,30 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                               {/* Top Emblem and Headers */}
                               <div className="w-full text-center flex flex-col items-center">
                                 <img src="/brasao.png" width="60" height="60" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">Ministério da Defesa</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">Comando da Aeronáutica</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="text-black dark:text-white">Academia da Força Aérea</p>
                               </div>
 
                               {/* Process Title */}
                               <div className="w-full text-center" style={{ marginTop: '5mm', marginBottom: '5mm' }}>
-                                <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }} className="dark:text-white">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#000000', margin: 0 }} className="dark:text-white">Nº <span style={{ color: '#000000' }} className="dark:text-white">{formData.patdNumber || '___/___/_____'}</span></p>
+                                <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }} className="text-black dark:text-white">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0 }} className="text-black dark:text-white">Nº <span className="text-black dark:text-white">{formData.patdNumber || '___/___/_____'}</span></p>
                               </div>
 
                               {/* Footer/Sections inside Frame */}
                               <div className="w-full" style={{ marginBottom: '2mm' }}>
                                 {/* Militar Arrolado */}
                                 <div className="text-center" style={{ marginBottom: '8mm' }}>
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="dark:text-white">Militar Arrolado</p>
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: '6px 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="text-black dark:text-white">Militar Arrolado</p>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '6px 0 2px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
                                   <div className="border-b border-black dark:border-slate-800 mt-1 mb-1 w-full"></div>
                                 </div>
 
                                 {/* Oficial Apurador */}
                                 <div className="text-center">
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="dark:text-white">Oficial Apurador</p>
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000000', margin: '6px 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="text-black dark:text-white">Oficial Apurador</p>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '6px 0 2px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
                                   <div className="border-b border-black dark:border-slate-800 mt-1 mb-1 w-full"></div>
                                 </div>
                               </div>
