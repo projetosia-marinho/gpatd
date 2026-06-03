@@ -2363,10 +2363,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                     switch(activeDocTab) {
                       case 'capa':
                         return (
-                          <div className="bg-white dark:bg-slate-950 p-8 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] flex flex-col justify-between overflow-y-auto my-4" style={{ padding: '10mm 15mm', fontFamily: "'Times New Roman', Times, serif" }}>
+                          <div className="bg-white p-8 shadow-2xl rounded-2xl text-slate-800 border border-slate-200 w-full max-w-[650px] aspect-[1/1.41] flex flex-col justify-between overflow-y-auto my-4" style={{ padding: '10mm 15mm', fontFamily: "'Times New Roman', Times, serif" }}>
                             {/* Outside the bordered frame */}
                             <div className="text-center" style={{ marginBottom: '6mm' }}>
-                              <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 4px 0' }} className="text-black dark:text-white">Anexo C - Capa</p>
+                              <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 4px 0', color: '#000000' }}>Anexo C - Capa</p>
                               <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#ff0000', margin: '0 0 3px 0', letterSpacing: '0.5px' }}>INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
                               <p style={{ fontSize: '11px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
                               <p style={{ fontSize: '11px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 31 da Lei nº 12.527, de 2011</p>
@@ -2374,35 +2374,35 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                             </div>
 
                             {/* Bordered Frame */}
-                            <div className="border-2 border-black dark:border-slate-800 p-8 flex flex-col justify-between items-center w-full flex-1" style={{ boxSizing: 'border-box' }}>
+                            <div className="border-2 border-black p-8 flex flex-col justify-between items-center w-full flex-1" style={{ boxSizing: 'border-box' }}>
                               {/* Top Emblem and Headers */}
                               <div className="w-full text-center flex flex-col items-center">
                                 <img src="/brasao.png" width="60" height="60" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">Ministério da Defesa</p>
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 3px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">Comando da Aeronáutica</p>
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="text-black dark:text-white">Academia da Força Aérea</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 3px 0', textTransform: 'uppercase', color: '#000000' }}>Ministério da Defesa</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 3px 0', textTransform: 'uppercase', color: '#000000' }}>Comando da Aeronáutica</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', textDecoration: 'underline', color: '#000000' }}>Academia da Força Aérea</p>
                               </div>
 
                               {/* Process Title */}
                               <div className="w-full text-center" style={{ marginTop: '5mm', marginBottom: '5mm' }}>
-                                <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }} className="text-black dark:text-white">PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
-                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0 }} className="text-black dark:text-white">Nº <span className="text-black dark:text-white">{formData.patdNumber || '___/___/_____'}</span></p>
+                                <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap', color: '#000000' }}>PROCESSO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</p>
+                                <p style={{ fontSize: '14px', fontWeight: 'bold', margin: 0, color: '#000000' }}>Nº <span>{formData.patdNumber || '___/___/_____'}</span></p>
                               </div>
 
                               {/* Footer/Sections inside Frame */}
                               <div className="w-full" style={{ marginBottom: '2mm' }}>
                                 {/* Militar Arrolado */}
                                 <div className="text-center" style={{ marginBottom: '8mm' }}>
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="text-black dark:text-white">Militar Arrolado</p>
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '6px 0 2px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
-                                  <div className="border-b border-black dark:border-slate-800 mt-1 mb-1 w-full"></div>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#000000' }}>Militar Arrolado</p>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '6px 0 2px 0', textTransform: 'uppercase', color: '#000000' }}>{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
+                                  <div className="border-b border-black mt-1 mb-1 w-full"></div>
                                 </div>
 
                                 {/* Oficial Apurador */}
                                 <div className="text-center">
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }} className="text-black dark:text-white">Oficial Apurador</p>
-                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '6px 0 2px 0', textTransform: 'uppercase' }} className="text-black dark:text-white">{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
-                                  <div className="border-b border-black dark:border-slate-800 mt-1 mb-1 w-full"></div>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#000000' }}>Oficial Apurador</p>
+                                  <p style={{ fontSize: '13px', fontWeight: 'bold', margin: '6px 0 2px 0', textTransform: 'uppercase', color: '#000000' }}>{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
+                                  <div className="border-b border-black mt-1 mb-1 w-full"></div>
                                 </div>
                               </div>
                             </div>
@@ -2609,11 +2609,11 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                         );
                       case 'despacho':
                         return (
-                          <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4 relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
+                          <div className="bg-white shadow-2xl rounded-2xl text-slate-800 border border-slate-200 w-full max-w-[650px] aspect-[1/1.41] text-left flex flex-col justify-between overflow-y-auto my-4 relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif" }}>
                             <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '5mm', width: '50mm', height: '50mm' }} />
                             <div>
                               <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
-                                <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo B - Despacho de Abertura e Designação de Apurador</p>
+                                <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }}>Anexo B - Despacho de Abertura e Designação de Apurador</p>
                                 <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: '0 0 3px 0', letterSpacing: '0.5px' }}>INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
                                 <p style={{ fontSize: '9px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
                                 <p style={{ fontSize: '9px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 31 da Lei nº 12.527, de 2011</p>
@@ -2622,33 +2622,33 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
                               <div className="w-full text-center flex flex-col items-center" style={{ marginBottom: '15px' }}>
                                 <img src="/brasao.png" width="50" height="50" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
-                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
-                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>Ministério da Defesa</p>
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>Comando da Aeronáutica</p>
+                                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }}>Academia da Força Aérea</p>
                               </div>
 
-                              <div className="body-text text-justify" style={{ fontSize: '12px', lineHeight: '1.5' }}>
-                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                              <div className="body-text text-justify" style={{ fontSize: '12px', lineHeight: '1.5', color: '#000000' }}>
+                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }}>
                                   Considerando o disposto no art. 1º da Portaria nº 853/SIJ, de 27 de abril de 2026, publicada no Boletim Interno Ostensivo n º 75, de 29 de abril de 2026, que designa oficiais para apurar transgressão disciplinar e autoridades para aplicar punição disciplinar, no âmbito desta Organização Militar, c/c o item 3.1 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, determino a abertura de Processo de Apuração de Transgressão Disciplinar (PATD), com a finalidade de apurar os fatos relatados no Ofício nº <strong>{formData.oficioNumero || '_______'}</strong>, (Prot. COMAER nº <strong>{formData.protComaer || '_______'}</strong>), de <strong>{formatDateStr(formData.dataOficio)}</strong>.
                                 </p>
                                 
-                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }}>
                                   Designo o <strong>{formData.apuradorPosto || ''} {formData.apuradorQuadro || ''} {formData.apurador || '___________________________'}</strong> para, na condição de Oficial Apurador, efetuar a apuração da suposta transgressão disciplinar e propor solução à autoridade competente, com estrita observância dos procedimentos previstos na ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021, e no Decreto nº 76.322, de 22 de setembro de 1975 (RDAER); sem prejuízo das demais funções.
                                 </p>
                                 
-                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                                <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }}>
                                   Após apurados os fatos, voltem-me os autos para decisão.
                                 </p>
                               </div>
 
-                              <div className="text-right dark:text-white" style={{ marginTop: '15mm', fontSize: '12px', textAlign: 'right' }}>
+                              <div className="text-right" style={{ marginTop: '15mm', fontSize: '12px', textAlign: 'right', color: '#000000' }}>
                                 <p>Pirassununga, {new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
                               </div>
                             </div>
                             
                             <div className="text-center mt-12">
-                              <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
-                              <p className="font-bold uppercase text-[12px] text-slate-850 dark:text-slate-100">{formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
+                              <div className="w-56 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto', borderBottom: '1px solid #000000' }} />
+                              <p className="font-bold uppercase text-[12px]" style={{ color: '#000000' }}>{formData.aplicadorPosto || ''} {formData.aplicadorQuadro || ''} {formData.aplicador || '___________________________'}</p>
                               <p className="text-[9px] uppercase text-slate-400">{formData.aplicadorCargo || 'Autoridade Competente'}</p>
                             </div>
                           </div>
@@ -2657,11 +2657,11 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                         return (
                           <div className="flex flex-col gap-8 w-full max-w-[650px] my-4">
                             {/* Folha 1 */}
-                            <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
+                            <div className="bg-white shadow-2xl rounded-2xl text-slate-800 border border-slate-200 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
                               <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '5mm', width: '50mm', height: '50mm' }} />
                               <div>
                                 <div className="text-center font-bold" style={{ marginBottom: '2mm' }}>
-                                  <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }} className="dark:text-white">Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
+                                  <p style={{ fontSize: '11px', fontWeight: 'bold', color: '#000000', margin: '0 0 4px 0' }}>Anexo D - Formulário de Apuração de Transgressão Disciplinar (FATD)</p>
                                   <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#ff0000', margin: '0 0 3px 0', letterSpacing: '0.5px' }}>INFORMAÇÃO PESSOAL – ACESSO RESTRITO</p>
                                   <p style={{ fontSize: '9px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 5º, Inciso X, da Constituição Federal do Brasil, de 1988</p>
                                   <p style={{ fontSize: '9px', color: '#ff0000', margin: '0 0 1px 0', fontWeight: 500 }}>Art. 31 da Lei nº 12.527, de 2011</p>
@@ -2670,89 +2670,89 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
                                 <div className="w-full text-center flex flex-col items-center" style={{ marginBottom: '15px' }}>
                                   <img src="/brasao.png" width="50" height="50" style={{ marginBottom: '8px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
-                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Ministério da Defesa</p>
-                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }} className="dark:text-white">Comando da Aeronáutica</p>
-                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }} className="dark:text-white">Academia da Força Aérea</p>
+                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>Ministério da Defesa</p>
+                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: '0 0 2px 0', textTransform: 'uppercase' }}>Comando da Aeronáutica</p>
+                                  <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#000000', margin: 0, textTransform: 'uppercase', textDecoration: 'underline' }}>Academia da Força Aérea</p>
                                 </div>
 
                                 <div className="text-center font-bold uppercase" style={{ margin: '15px 0', fontSize: '12px' }}>
-                                  <h2 style={{ fontSize: '12px', fontWeight: 'bold', margin: 0 }} className="dark:text-white">FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
-                                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', margin: '3px 0 0 0' }} className="dark:text-white">FATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span></h3>
+                                  <h2 style={{ fontSize: '12px', fontWeight: 'bold', margin: 0, color: '#000000' }}>FORMULÁRIO DE APURAÇÃO DE TRANSGRESSÃO DISCIPLINAR</h2>
+                                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', margin: '3px 0 0 0', color: '#000000' }}>FATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span></h3>
                                 </div>
 
                                 {/* Identificação do Militar Arrolado */}
-                                <div style={{ border: '1px solid #000000', padding: '6px', fontSize: '11px', marginBottom: '10px' }} className="dark:border-slate-800">
-                                  <p style={{ fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
-                                  <p style={{ margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro} {formData.especialidade ? `/ ${formData.especialidade}` : ''}</p>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between' }} className="dark:text-white">
+                                <div style={{ border: '1px solid #000000', padding: '6px', fontSize: '11px', marginBottom: '10px', color: '#000000' }}>
+                                  <p style={{ fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }}>IDENTIFICAÇÃO DO MILITAR ARROLADO</p>
+                                  <p style={{ margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }}>{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro} {formData.especialidade ? `/ ${formData.especialidade}` : ''}</p>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#000000' }}>
                                     <span>SARAM: <strong>{formData.saram || '_______'}</strong></span>
                                     <span>Seção/OM: <strong>{formData.setor || '_______'} / {formData.divisao || '_______'}</strong></span>
                                   </div>
                                 </div>
 
                                 {/* Identificação do Oficial Apurador */}
-                                <div style={{ border: '1px solid #000000', padding: '6px', fontSize: '11px', marginBottom: '10px' }} className="dark:border-slate-800">
-                                  <p style={{ fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
-                                  <p style={{ margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }} className="dark:text-white">{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between' }} className="dark:text-white">
+                                <div style={{ border: '1px solid #000000', padding: '6px', fontSize: '11px', marginBottom: '10px', color: '#000000' }}>
+                                  <p style={{ fontWeight: 'bold', margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }}>IDENTIFICAÇÃO DO OFICIAL APURADOR</p>
+                                  <p style={{ margin: '0 0 4px 0', fontSize: '11px', textTransform: 'uppercase' }}>{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', color: '#000000' }}>
                                     <span>SARAM: <strong>{formData.apuradorSaram || '_______'}</strong></span>
                                     <span>Seção/OM: <strong>{formData.divisao || '_______'}</strong></span>
                                   </div>
                                 </div>
 
-                                <div className="text-center font-bold dark:text-white" style={{ margin: '10px 0', fontSize: '11px' }}>RELATO DO FATO</div>
-                                <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5' }}>
-                                  <p style={{ textIndent: '2.5rem', marginTop: '5px', textAlign: 'justify' }} className="dark:text-white">
+                                <div className="text-center font-bold" style={{ margin: '10px 0', fontSize: '11px', color: '#000000' }}>RELATO DO FATO</div>
+                                <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5', color: '#000000' }}>
+                                  <p style={{ textIndent: '2.5rem', marginTop: '5px', textAlign: 'justify' }}>
                                     Tendo chegado ao meu conhecimento, por intermédio do Ofício nº <strong>{formData.oficioNumero || '_______'}</strong> (Protocolo COMAER nº <strong>{formData.protComaer || '_______'}</strong>), de <strong>{formatDateStr(formData.dataOficio)}</strong>, que <strong>{formData.resumoFato || '___________________________'}</strong>.
                                   </p>
                                   
-                                  <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }} className="dark:text-white">
+                                  <p style={{ textIndent: '2.5rem', marginTop: '10px', textAlign: 'justify' }}>
                                     Em face de o fato narrado, em tese, constituir transgressão disciplinar, podendo ser enquadrada no(s) item(ns) <strong>{formData.enquadramentoRdaer || '_______'}</strong>, do art. 10, do RDAer, encaminho ao senhor cópia da referida ocorrência para, querendo, manifestar-se no prazo de 05 (cinco) dias úteis, podendo constituir advogado e produzir quaisquer provas admitidas em direito para a defesa de seus interesses, em cumprimento ao art. 5º, inciso LV, da Constituição Federal, combinado com o caput do art. 34 do RDAer e com o item 4 da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
                                   </p>
                                 </div>
 
-                                <div className="text-right dark:text-white" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'right' }}>
+                                <div className="text-right" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'right', color: '#000000' }}>
                                   <p>Pirassununga, {new Date().toLocaleDateString('pt-BR', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
                                 </div>
                               </div>
 
                               <div className="text-center mt-8">
-                                <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
-                                <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
+                                <div className="w-56 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto', borderBottom: '1px solid #000000' }} />
+                                <p className="font-bold uppercase text-[11px] text-slate-850" style={{ color: '#000000' }}>{formData.apurador || '___________________________'} - {formData.apuradorPosto} {formData.apuradorQuadro}</p>
                                 <p className="text-[9px] uppercase text-slate-400">Oficial Apurador</p>
                               </div>
 
-                              <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold' }} className="dark:text-white">
-                                PATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span>
+                              <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold', color: '#000000' }}>
+                                PATD Nº <span>{formData.patdNumber || '___/___/_____'}</span>
                               </div>
                             </div>
 
                             {/* Folha 2 */}
-                            <div className="bg-white dark:bg-slate-950 shadow-2xl rounded-2xl text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-850 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
+                            <div className="bg-white shadow-2xl rounded-2xl text-slate-800 border border-slate-200 aspect-[1/1.41] text-left flex flex-col justify-between relative" style={{ padding: '20mm 15mm 20mm 20mm', fontFamily: "'Times New Roman', Times, serif", boxSizing: 'border-box' }}>
                               <img src="/sinete.png" style={{ position: 'absolute', top: '10mm', right: '5mm', width: '50mm', height: '50mm' }} />
                               <div>
-                                <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '10mm' }} className="dark:text-white">
+                                <div style={{ fontSize: '11px', fontWeight: 'bold', marginBottom: '10mm', color: '#000000' }}>
                                   FATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span> - fls. 2/2
                                 </div>
 
-                                <div className="text-center font-bold dark:text-white" style={{ marginBottom: '8mm', fontSize: '12px' }}>
+                                <div className="text-center font-bold" style={{ marginBottom: '8mm', fontSize: '12px', color: '#000000' }}>
                                   CIENTE DO MILITAR ARROLADO
                                 </div>
 
-                                <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5' }}>
-                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
-                                    Eu, <strong>{formData.nomeCompleto || '___________________________'}</strong>, <strong>{formData.posto} {formData.quadro}</strong> do arrolado, SARAM <strong>{formData.saram || '_______'}</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de 05 (cinco) dias úteis, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defense, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
+                                <div className="body-text text-justify" style={{ fontSize: '11px', lineHeight: '1.5', color: '#000000' }}>
+                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }}>
+                                    Eu, <strong>{formData.nomeCompleto || '___________________________'}</strong>, <strong>{formData.posto} {formData.quadro}</strong> do arrolado, SARAM <strong>{formData.saram || '_______'}</strong>, declaro que tenho conhecimento de que me está sendo imputada a autoria dos atos acima e me foi concedido o prazo de 05 (cinco) dias úteis, a contar do primeiro dia útil subsequente a esta data, para apresentar, por escrito, as minhas alegações de defesa, nos termos do item 5.1.2, “b” da ICA 111-6, aprovada pela Portaria GABAER nº 120/GC3 de 9 de julho de 2021.
                                   </p>
 
-                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
+                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }}>
                                     Fui informado(a) ainda, que caso não formule minhas alegações de defesa no prazo assinalado, o PATD seguirá o tramite previsto na supracitada ICA 111-6.
                                   </p>
 
-                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }} className="dark:text-white">
+                                  <p style={{ textIndent: '2.5rem', textAlign: 'justify', marginBottom: '10px' }}>
                                     Outrossim, declaro que, neste ato, recebi cópia dos seguintes documentos que dizem respeito ao fato objeto da apuração:
                                   </p>
 
-                                  <ul style={{ listStyleType: 'none', paddingLeft: '2.5rem', margin: '10px 0', lineHeight: '1.5' }} className="dark:text-white">
+                                  <ul style={{ listStyleType: 'none', paddingLeft: '2.5rem', margin: '10px 0', lineHeight: '1.5', color: '#000000' }}>
                                     <li style={{ marginBottom: '3px' }}>• Capa;</li>
                                     <li style={{ marginBottom: '3px' }}>• Portaria nº 853/SIJ, de 27 de abril de 2026;</li>
                                     <li style={{ marginBottom: '3px' }}>• Despacho de Abertura do PATD;</li>
@@ -2762,19 +2762,19 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                   </ul>
                                 </div>
 
-                                <div className="text-left dark:text-white" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'left' }}>
+                                <div className="text-left" style={{ marginTop: '10mm', fontSize: '11px', textAlign: 'left', color: '#000000' }}>
                                   <p>Pirassununga, _______________________.</p>
                                 </div>
                               </div>
 
                               <div className="text-center mt-8">
-                                <div className="w-56 border-b border-slate-350 dark:border-slate-800 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto' }} />
-                                <p className="font-bold uppercase text-[11px] text-slate-850 dark:text-slate-100">{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
+                                <div className="w-56 mx-auto mb-2" style={{ width: '200px', marginLeft: 'auto', marginRight: 'auto', borderBottom: '1px solid #000000' }} />
+                                <p className="font-bold uppercase text-[11px] text-slate-850" style={{ color: '#000000' }}>{formData.nomeCompleto || '___________________________'} - {formData.posto} {formData.quadro}</p>
                                 <p className="text-[9px] uppercase text-slate-400">Militar Arrolado</p>
                               </div>
 
-                              <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold' }} className="dark:text-white">
-                                PATD Nº <span style={{ color: '#000000' }}>{formData.patdNumber || '___/___/_____'}</span>
+                              <div style={{ position: 'absolute', bottom: '10mm', left: '20mm', fontSize: '10px', fontWeight: 'bold', color: '#000000' }}>
+                                PATD Nº <span>{formData.patdNumber || '___/___/_____'}</span>
                               </div>
                             </div>
                           </div>
