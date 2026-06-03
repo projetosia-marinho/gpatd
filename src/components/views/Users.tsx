@@ -357,6 +357,8 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
     }
   };
 
+  // Nota: A exclusão da linha em 'profiles' dispara automaticamente o trigger de banco 
+  // 'on_profile_deleted', que apaga o correspondente em 'auth.users' no Supabase.
   const handleDelete = async () => {
     if (userToDelete) {
       try {
