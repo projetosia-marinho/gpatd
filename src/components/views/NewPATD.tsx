@@ -585,6 +585,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   // Spreadsheet import states & ref
   const [multipleRowsData, setMultipleRowsData] = useState<any[]>([]);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const spreadsheetInputRef = useRef<HTMLInputElement>(null);
   const [libraryDocs, setLibraryDocs] = useState<any[]>([]);
 
@@ -1475,9 +1476,17 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   // Form memory persistence
   useEffect(() => {
     if (!initialData) {
-      const saved = localStorage.getItem('new_patd_form_memory');
-      if (saved) {
-        setFormData(JSON.parse(saved));
+      try {
+        const saved = localStorage.getItem('new_patd_form_memory');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            setFormData((prev: any) => ({ ...prev, ...parsed }));
+          }
+        }
+      } catch (e) {
+        console.error('Error restoring form memory:', e);
+        localStorage.removeItem('new_patd_form_memory');
       }
     }
   }, [initialData]);
@@ -1550,6 +1559,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       return;
     }
 
+    setIsImporting(true);
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
@@ -1720,6 +1730,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       } catch (err: any) {
         console.error('Erro ao ler planilha:', err);
         alert(`Erro ao processar o arquivo: ${err.message || err}`);
+      } finally {
+        setIsImporting(false);
       }
     };
     reader.readAsArrayBuffer(file);
@@ -2247,7 +2259,39 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-10 pb-20">
+    <div className="max-w-6xl mx-auto space-y-10 pb-20 relative">
+      {/* Loading Overlay for Spreadsheet Import */}
+      <AnimatePresence>
+        {isImporting && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="flex flex-col items-center gap-6 p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 shadow-2xl border border-slate-100 dark:border-slate-800"
+            >
+              <div className="relative">
+                <div className="w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700" />
+                <div className="absolute inset-0 w-16 h-16 rounded-full border-4 border-transparent border-t-indigo-500 animate-spin" />
+              </div>
+              <div className="text-center space-y-1.5">
+                <p className="text-lg font-display font-bold text-slate-900 dark:text-white">Importando Planilha</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Lendo e processando os dados do arquivo...</p>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Header and Top Actions */}
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
