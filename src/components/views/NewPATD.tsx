@@ -1559,14 +1559,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
-        const rawRows: any[] = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-        
-        if (rawRows.length === 0) {
-          alert('A planilha está vazia.');
-          return;
-        }
-
-        const normalizeKey = (k: string) => k.toLowerCase().replace(/[\s_\-–—]/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const normalizeKey = (k: string) => k.toLowerCase().replace(/[\s_\-–—º°]/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
         const mappings: { [key: string]: string[] } = {
           patdNumber: ['patdnumber', 'npatd', 'numeropatd', 'patd', 'ndopatd', 'numerodopatd'],
@@ -1601,6 +1594,45 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           boletim: ['boletim', 'bulletin'],
           observacoes: ['observacoes', 'obs', 'observacao']
         };
+
+        // Convert sheet to Array of Arrays (AOA) first to locate the header row
+        const aoaRows: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        // Flatten all aliases to a Set for quick lookup
+        const allAliases = new Set(Object.values(mappings).flat());
+        
+        let headerRowIndex = 0;
+        let maxMatches = 0;
+        
+        // Scan the first 15 rows (or total length if less)
+        const scanLimit = Math.min(aoaRows.length, 15);
+        for (let i = 0; i < scanLimit; i++) {
+          const row = aoaRows[i];
+          if (!row || !Array.isArray(row)) continue;
+          
+          let matches = 0;
+          for (let cell of row) {
+            if (cell !== null && cell !== undefined) {
+              const normalized = normalizeKey(String(cell));
+              if (normalized && allAliases.has(normalized)) {
+                matches++;
+              }
+            }
+          }
+          if (matches > maxMatches) {
+            maxMatches = matches;
+            headerRowIndex = i;
+          }
+        }
+        
+        console.log(`Detected header row index: ${headerRowIndex} with ${maxMatches} matches`);
+
+        const rawRows: any[] = XLSX.utils.sheet_to_json(worksheet, { range: headerRowIndex, defval: '' });
+        
+        if (rawRows.length === 0) {
+          alert('A planilha está vazia.');
+          return;
+        }
 
         const parseDateToInputFormat = (value: any) => {
           if (!value) return '';
@@ -1659,15 +1691,29 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           return extracted;
         };
 
-        if (rawRows.length === 1) {
-          const mappedData = extractRowData(rawRows[0]);
+        console.log('--- SHEET IMPORT DEBUG ---');
+        console.log('rawRows:', rawRows);
+        
+        // Filter out rows that are entirely empty or don't have mapped keys
+        const processed = rawRows
+          .map((r: any) => extractRowData(r))
+          .filter((item: any) => Object.keys(item).length > 0 && Object.values(item).some(val => val !== ''));
+          
+        console.log('processedRows:', processed);
+
+        if (processed.length === 0) {
+          alert('Nenhum registro com dados válidos foi encontrado na planilha.');
+          return;
+        }
+
+        if (processed.length === 1) {
+          const mappedData = processed[0];
           setFormData((prev: any) => ({
             ...prev,
             ...mappedData
           }));
           alert('Formulário preenchido com sucesso a partir da planilha!');
         } else {
-          const processed = rawRows.map((r: any) => extractRowData(r));
           setMultipleRowsData(processed);
           setIsImportModalOpen(true);
         }
