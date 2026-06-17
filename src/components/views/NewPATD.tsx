@@ -25,11 +25,13 @@ import {
   Printer,
   FileUp,
   UploadCloud,
-  File
+  File,
+  Search
 } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { Division } from './Divisions';
 import { supabase } from '../../lib/supabase';
+import * as XLSX from 'xlsx';
 
 const InputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error }: any) => (
   <div className="space-y-1.5 flex-1">
@@ -438,6 +440,137 @@ const HistoryModal = ({ isOpen, onClose, historyData }: { isOpen: boolean, onClo
   );
 };
 
+const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onClose: () => void, data: any[], onSelect: (selected: any) => void }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const filtered = useMemo(() => {
+    if (!searchTerm) return data;
+    const low = searchTerm.toLowerCase();
+    return data.filter(item => 
+      (item.nomeCompleto || '').toLowerCase().includes(low) ||
+      (item.saram || '').toLowerCase().includes(low) ||
+      (item.patdNumber || '').toLowerCase().includes(low)
+    );
+  }, [data, searchTerm]);
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800 flex flex-col max-h-[85vh] z-10"
+          >
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+              <div>
+                <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white">Selecionar Registro</h3>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                  Encontramos {data.length} linhas na planilha. Escolha uma para carregar:
+                </p>
+              </div>
+              <button 
+                onClick={onClose}
+                className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-rose-500 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="px-8 py-4 bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 shrink-0">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input
+                  type="text"
+                  placeholder="Pesquisar por nome, SARAM ou PATD..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full h-10 pl-10 pr-4 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm focus:outline-hidden focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-850 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+              <div className="overflow-x-auto rounded-2xl border border-slate-100 dark:border-slate-800">
+                <table className="w-full border-collapse text-left">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                      <th className="px-5 py-4">Nº PATD</th>
+                      <th className="px-5 py-4">Militar</th>
+                      <th className="px-5 py-4">Posto/Quadro</th>
+                      <th className="px-5 py-4">Fato</th>
+                      <th className="px-5 py-4 text-right">Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 text-slate-700 dark:text-slate-300 text-sm font-medium">
+                    {filtered.map((row, idx) => (
+                      <tr 
+                        key={idx} 
+                        className="hover:bg-slate-50/80 dark:hover:bg-indigo-500/5 transition-colors cursor-pointer"
+                        onClick={() => onSelect(row)}
+                      >
+                        <td className="px-5 py-4 font-mono font-bold text-slate-900 dark:text-white">
+                          {row.patdNumber || '—'}
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-slate-800 dark:text-slate-200">{row.nomeCompleto || 'Sem Nome'}</span>
+                            <span className="text-[10px] text-slate-400 uppercase tracking-wider">SARAM: {row.saram || '—'}</span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="px-2.5 py-1 text-xs font-bold bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300">
+                            {row.posto || '—'} {row.quadro || '—'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 max-w-xs truncate">
+                          {row.resumoFato || '—'}
+                        </td>
+                        <td className="px-5 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={() => onSelect(row)}
+                            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/10"
+                          >
+                            Selecionar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {filtered.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-5 py-10 text-center text-slate-400">
+                          Nenhum registro encontrado correspondente à pesquisa.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
+              <button 
+                onClick={onClose}
+                className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 text-white text-sm font-bold hover:bg-slate-800 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 export default function NewPATD({ initialData, onSave, divisions = [], currentUser, processes = [] }: { initialData?: any, onSave?: (data: any) => void, divisions?: Division[], currentUser?: any, processes?: any[] }) {
   const currentYear = new Date().getFullYear();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -448,6 +581,11 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   const [errors, setErrors] = useState<any>({});
   const [seqTrigger, setSeqTrigger] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Spreadsheet import states & ref
+  const [multipleRowsData, setMultipleRowsData] = useState<any[]>([]);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const spreadsheetInputRef = useRef<HTMLInputElement>(null);
   const [libraryDocs, setLibraryDocs] = useState<any[]>([]);
 
   useEffect(() => {
@@ -1396,6 +1534,151 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     fileInputRef.current?.click();
   };
 
+  const handleSpreadsheetClick = () => {
+    spreadsheetInputRef.current?.click();
+  };
+
+  const handleSpreadsheetUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    e.target.value = '';
+
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    if (fileExt !== 'xlsx' && fileExt !== 'xls' && fileExt !== 'csv') {
+      alert('Formato de arquivo não suportado. Use apenas arquivos .xlsx, .xls ou .csv.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const data = new Uint8Array(event.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+        
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        const rawRows: any[] = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        
+        if (rawRows.length === 0) {
+          alert('A planilha está vazia.');
+          return;
+        }
+
+        const normalizeKey = (k: string) => k.toLowerCase().replace(/[\s_\-–—]/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        const mappings: { [key: string]: string[] } = {
+          patdNumber: ['patdnumber', 'npatd', 'numeropatd', 'patd', 'ndopatd', 'numerodopatd'],
+          posto: ['posto', 'rank'],
+          quadro: ['quadro', 'frame'],
+          saram: ['saram', 'sarammilitar', 'saramarrolado', 'saramdomilitar'],
+          nomeCompleto: ['nomecompleto', 'nome', 'militar', 'militararrolado', 'nomedomilitar', 'arrolado', 'completo'],
+          especialidade: ['especialidade', 'specialty'],
+          divisao: ['divisao', 'division', 'setor', 'divisaoousetor'],
+          setor: ['setor', 'sector'],
+          apurador: ['apurador', 'oficialapurador', 'nomeapurador', 'nomedoapurador'],
+          apuradorPosto: ['apuradorposto', 'postoapurador', 'postodoapurador'],
+          apuradorQuadro: ['apuradorquadro', 'quadroapurador', 'quadrodoapurador'],
+          apuradorSaram: ['apuradorsaram', 'saramapurador', 'saramdoapurador'],
+          aplicador: ['aplicador', 'autoridadeaplicadora', 'nomeaplicador', 'nomedoaplicador'],
+          aplicadorPosto: ['aplicadorposto', 'postoaplicador', 'postodoaplicador'],
+          aplicadorQuadro: ['aplicadorquadro', 'quadroaplicador', 'quadrodoaplicador'],
+          aplicadorCargo: ['aplicadorcargo', 'cargoaplicador', 'cargodoaplicador'],
+          oficioNumero: ['oficionumero', 'noficio', 'oficio', 'oficionum'],
+          protComaer: ['protcomaer', 'protocolocomaer', 'protocolo', 'comaer'],
+          dataOficio: ['dataoficio', 'datadooficio'],
+          enquadramentoRdaer: ['enquadramentordaer', 'enquadramento', 'rdaer'],
+          resumoFato: ['resumofato', 'resumodofato', 'fato', 'resumo'],
+          dataInicio: ['datainicio', 'datadeinicio', 'inicio'],
+          dataTermino: ['datatermino', 'datadetermino', 'termino'],
+          status: ['status'],
+          punicao: ['punicao', 'punishment'],
+          qtdDias: ['qtddias', 'quantidadededias', 'quantidadedias', 'dias', 'ndias', 'numerodias'],
+          dataPunicao: ['datapunicao', 'datadapunicao'],
+          resumoPunicao: ['resumopunicao', 'resumodapunicao'],
+          nGrade: ['ngrade', 'grade'],
+          boletim: ['boletim', 'bulletin'],
+          observacoes: ['observacoes', 'obs', 'observacao']
+        };
+
+        const parseDateToInputFormat = (value: any) => {
+          if (!value) return '';
+          if (value instanceof Date) {
+            const offset = value.getTimezoneOffset();
+            const correctedDate = new Date(value.getTime() - (offset * 60 * 1000));
+            return correctedDate.toISOString().split('T')[0];
+          }
+          if (typeof value === 'number') {
+            const date = new Date((value - 25569) * 86400 * 1000);
+            return date.toISOString().split('T')[0];
+          }
+          if (typeof value === 'string') {
+            const trimmed = value.trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+              return trimmed;
+            }
+            const dmy = trimmed.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+            if (dmy) {
+              const day = dmy[1].padStart(2, '0');
+              const month = dmy[2].padStart(2, '0');
+              const year = dmy[3];
+              return `${year}-${month}-${day}`;
+            }
+          }
+          return '';
+        };
+
+        const extractRowData = (rawRow: any) => {
+          const extracted: any = {};
+          const rowKeysMapped = Object.keys(rawRow).reduce((acc: any, key: string) => {
+            acc[normalizeKey(key)] = rawRow[key];
+            return acc;
+          }, {});
+
+          Object.keys(mappings).forEach((field) => {
+            const aliases = mappings[field];
+            const matchedKey = aliases.find(alias => rowKeysMapped[alias] !== undefined && rowKeysMapped[alias] !== '');
+            if (matchedKey !== undefined) {
+              let value = rowKeysMapped[matchedKey];
+              if (value !== null && value !== undefined) {
+                if (typeof value === 'string') {
+                  value = value.trim();
+                }
+                
+                if (['dataOficio', 'dataInicio', 'dataTermino', 'dataPunicao'].includes(field)) {
+                  extracted[field] = parseDateToInputFormat(value);
+                } else if (field === 'qtdDias') {
+                  extracted[field] = String(value);
+                } else {
+                  extracted[field] = value;
+                }
+              }
+            }
+          });
+          return extracted;
+        };
+
+        if (rawRows.length === 1) {
+          const mappedData = extractRowData(rawRows[0]);
+          setFormData((prev: any) => ({
+            ...prev,
+            ...mappedData
+          }));
+          alert('Formulário preenchido com sucesso a partir da planilha!');
+        } else {
+          const processed = rawRows.map((r: any) => extractRowData(r));
+          setMultipleRowsData(processed);
+          setIsImportModalOpen(true);
+        }
+      } catch (err: any) {
+        console.error('Erro ao ler planilha:', err);
+        alert(`Erro ao processar o arquivo: ${err.message || err}`);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1935,6 +2218,30 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         
         <div className="flex flex-wrap gap-3 overflow-x-auto pb-2 scrollbar-none">
           <motion.button 
+            type="button"
+            onClick={handleSpreadsheetClick}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/5 backdrop-blur-xl border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all shadow-lg shadow-black/5 group shrink-0"
+          >
+            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+              <UploadCloud size={18} />
+            </div>
+            <div className="text-left">
+              <p className="leading-none">Importar Planilha</p>
+              <p className="text-[9px] opacity-60 lowercase font-medium mt-1">Excel (.xlsx) ou .csv</p>
+            </div>
+          </motion.button>
+
+          <input 
+            type="file" 
+            ref={spreadsheetInputRef} 
+            onChange={handleSpreadsheetUpload} 
+            accept=".xlsx, .xls, .csv" 
+            className="hidden" 
+          />
+
+          <motion.button 
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setIsHistoryOpen(true)}
@@ -2257,6 +2564,19 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         isOpen={isHistoryOpen} 
         onClose={() => setIsHistoryOpen(false)} 
         historyData={history} 
+      />
+      <ImportModal 
+        isOpen={isImportModalOpen} 
+        onClose={() => setIsImportModalOpen(false)} 
+        data={multipleRowsData} 
+        onSelect={(selectedRow) => {
+          setFormData((prev: any) => ({
+            ...prev,
+            ...selectedRow
+          }));
+          setIsImportModalOpen(false);
+          alert('Registro selecionado e carregado no formulário com sucesso!');
+        }} 
       />
       <AnimatePresence>
         {isDocModalOpen && (
