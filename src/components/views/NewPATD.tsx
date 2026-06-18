@@ -441,8 +441,9 @@ const HistoryModal = ({ isOpen, onClose, historyData }: { isOpen: boolean, onClo
   );
 };
 
-const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onClose: () => void, data: any[], onSelect: (selected: any) => void }) => {
+const ImportModal = ({ isOpen, onClose, data, onSelect, onSelectMultiple }: { isOpen: boolean, onClose: () => void, data: any[], onSelect: (selected: any) => void, onSelectMultiple: (selected: any[]) => void }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedIdxs, setSelectedIdxs] = useState<Record<number, boolean>>({});
   
   const filtered = useMemo(() => {
     if (!searchTerm) return data;
@@ -453,6 +454,17 @@ const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onC
       (item.patdNumber || '').toLowerCase().includes(low)
     );
   }, [data, searchTerm]);
+
+  const selectedCount = Object.keys(selectedIdxs).length;
+
+  const handleBulkImportClick = () => {
+    const selectedRows = filtered.filter((_, idx) => selectedIdxs[idx]);
+    if (selectedRows.length === 0) {
+      alert('Nenhum registro selecionado.');
+      return;
+    }
+    onSelectMultiple(selectedRows);
+  };
 
   return (
     <AnimatePresence>
@@ -475,7 +487,7 @@ const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onC
               <div>
                 <h3 className="text-2xl font-display font-bold text-slate-900 dark:text-white">Selecionar Registro</h3>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
-                  Encontramos {data.length} linhas na planilha. Escolha uma para carregar:
+                  Encontramos {data.length} linhas na planilha. Escolha uma para carregar ou selecione várias para importar em lote:
                 </p>
               </div>
               <button 
@@ -504,6 +516,22 @@ const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onC
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
+                      <th className="px-5 py-4 w-12 text-center">
+                        <input 
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                          checked={filtered.length > 0 && filtered.every((_, i) => selectedIdxs[i])}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              const newSel: Record<number, boolean> = {};
+                              filtered.forEach((_, i) => { newSel[i] = true; });
+                              setSelectedIdxs(newSel);
+                            } else {
+                              setSelectedIdxs({});
+                            }
+                          }}
+                        />
+                      </th>
                       <th className="px-5 py-4">Nº PATD</th>
                       <th className="px-5 py-4">Militar</th>
                       <th className="px-5 py-4">Posto/Quadro</th>
@@ -515,9 +543,27 @@ const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onC
                     {filtered.map((row, idx) => (
                       <tr 
                         key={idx} 
-                        className="hover:bg-slate-50/80 dark:hover:bg-indigo-500/5 transition-colors cursor-pointer"
+                        className={`hover:bg-slate-50/80 dark:hover:bg-indigo-500/5 transition-colors cursor-pointer ${selectedIdxs[idx] ? 'bg-indigo-500/5' : ''}`}
                         onClick={() => onSelect(row)}
                       >
+                        <td className="px-5 py-4 w-12 text-center" onClick={(e) => e.stopPropagation()}>
+                          <input 
+                            type="checkbox"
+                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                            checked={!!selectedIdxs[idx]}
+                            onChange={(e) => {
+                              setSelectedIdxs(prev => {
+                                const next = { ...prev };
+                                if (e.target.checked) {
+                                  next[idx] = true;
+                                } else {
+                                  delete next[idx];
+                                }
+                                return next;
+                              });
+                            }}
+                          />
+                        </td>
                         <td className="px-5 py-4 font-mono font-bold text-slate-900 dark:text-white">
                           {row.patdNumber || '—'}
                         </td>
@@ -547,7 +593,7 @@ const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onC
                     ))}
                     {filtered.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="px-5 py-10 text-center text-slate-400">
+                        <td colSpan={6} className="px-5 py-10 text-center text-slate-400">
                           Nenhum registro encontrado correspondente à pesquisa.
                         </td>
                       </tr>
@@ -557,13 +603,22 @@ const ImportModal = ({ isOpen, onClose, data, onSelect }: { isOpen: boolean, onC
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex justify-between shrink-0">
               <button 
                 onClick={onClose}
-                className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-slate-700 text-white text-sm font-bold hover:bg-slate-800 transition-colors"
+                className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold transition-colors"
               >
                 Cancelar
               </button>
+              
+              {selectedCount > 0 && (
+                <button 
+                  onClick={handleBulkImportClick}
+                  className="px-6 py-2.5 rounded-xl bg-indigo-650 hover:bg-indigo-750 text-white text-sm font-bold transition-all shadow-lg shadow-indigo-500/20"
+                >
+                  Importar Lote ({selectedCount})
+                </button>
+              )}
             </div>
           </motion.div>
         </div>
@@ -2666,6 +2721,73 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           setIsImportModalOpen(false);
           alert('Registro selecionado e carregado no formulário com sucesso!');
         }} 
+        onSelectMultiple={async (selectedRows) => {
+          setIsSaving(true);
+          let successCount = 0;
+          try {
+            const payload = selectedRows.map(row => {
+              const initialHistory = [
+                { 
+                  field: 'Criação', 
+                  oldValue: '—', 
+                  newValue: 'Processo Importado via Planilha (Lote)', 
+                  user: currentUser?.name || 'Sistema', 
+                  date: new Date().toLocaleString('pt-BR') 
+                }
+              ];
+
+              return {
+                patd_number: row.patdNumber || '000/UNKNOWN/2026',
+                militar: row.nomeCompleto || row.militar,
+                saram: row.saram,
+                posto: row.posto,
+                especialidade: row.especialidade || '',
+                quadro: row.quadro,
+                divisao: row.divisao || 'DOA',
+                setor: row.setor || '',
+                data_inicio: row.dataInicio || new Date().toISOString().split('T')[0],
+                status: 'Em Andamento',
+                punicao: 'Em Branco',
+                dias_punicao: 0,
+                boletim: '',
+                resumo_fato: row.resumoFato || '',
+                apurador: row.apurador || '',
+                apurador_posto: row.apuradorPosto || null,
+                apurador_quadro: row.apuradorQuadro || null,
+                apurador_saram: row.apuradorSaram || null,
+                aplicador: row.aplicador || '',
+                aplicador_posto: row.aplicadorPosto || null,
+                aplicador_quadro: row.aplicadorQuadro || null,
+                aplicador_cargo: row.aplicadorCargo || null,
+                oficio_numero: row.oficioNumero || null,
+                prot_comaer: row.protComaer || null,
+                data_oficio: row.dataOficio || null,
+                enquadramento_rdaer: row.enquadramentoRdaer || null,
+                delegacao_doc: null,
+                documents: [],
+                history: initialHistory,
+                n_grade: '',
+                observacoes: '',
+                resumo_punicao: ''
+              };
+            });
+
+            const { data, error } = await supabase.from('processes').insert(payload).select();
+            if (error) throw error;
+            successCount = selectedRows.length;
+            alert(`${successCount} processos foram criados em lote com sucesso!`);
+            
+            // Go back to the processes view and reload
+            onSave?.(null);
+            window.location.reload();
+          } catch (err: any) {
+            console.error('Error importing batch:', err);
+            alert(`Erro ao criar processos em lote: ${err.message || err}`);
+          } finally {
+            setIsSaving(false);
+            setIsImportModalOpen(false);
+          }
+        }}
       />
       <AnimatePresence>
         {isDocModalOpen && (
