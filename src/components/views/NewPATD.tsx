@@ -1570,7 +1570,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
-        const normalizeKey = (k: string) => k.toLowerCase().replace(/[\s_\-–—º°]/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const normalizeKey = (k: string) => k.toLowerCase().replace(/[\s_\-–—º°()]/g, '').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
         const mappings: { [key: string]: string[] } = {
           patdNumber: ['patdnumber', 'npatd', 'numeropatd', 'patd', 'ndopatd', 'numerodopatd'],
@@ -1581,10 +1581,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           especialidade: ['especialidade', 'specialty'],
           divisao: ['divisao', 'division', 'setor', 'divisaoousetor'],
           setor: ['setor', 'sector'],
-          apurador: ['apurador', 'oficialapurador', 'nomeapurador', 'nomedoapurador'],
-          apuradorPosto: ['apuradorposto', 'postoapurador', 'postodoapurador'],
-          apuradorQuadro: ['apuradorquadro', 'quadroapurador', 'quadrodoapurador'],
-          apuradorSaram: ['apuradorsaram', 'saramapurador', 'saramdoapurador'],
+          apurador: ['apurador', 'oficialapurador', 'nomeapurador', 'nomedoapurador', 'apuradorencarregado', 'encarregado'],
+          apuradorPosto: ['apuradorposto', 'postoapurador', 'postodoapurador', 'postoapuradorencarregado'],
+          apuradorQuadro: ['apuradorquadro', 'quadroapurador', 'quadrodoapurador', 'quadroapuradorencarregado'],
+          apuradorSaram: ['apuradorsaram', 'saramapurador', 'saramdoapurador', 'saramapuradorencarregado'],
           aplicador: ['aplicador', 'autoridadeaplicadora', 'nomeaplicador', 'nomedoaplicador'],
           aplicadorPosto: ['aplicadorposto', 'postoaplicador', 'postodoaplicador'],
           aplicadorQuadro: ['aplicadorquadro', 'quadroaplicador', 'quadrodoaplicador'],
