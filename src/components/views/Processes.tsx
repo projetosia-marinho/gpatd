@@ -620,7 +620,12 @@ export default function Processes({
                       </div>
                     </td>
                     <td className="px-6 py-5 pr-8 text-right" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {((process.documents && process.documents.length > 0) || process.delegacaoDoc) && (
+                          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-inner flex items-center justify-center shrink-0 cursor-help" title="Possui documentos inseridos">
+                            <FileText size={14} />
+                          </div>
+                        )}
                         <button 
                           onClick={() => onEdit?.(process)}
                           className="p-2 text-slate-400 hover:text-indigo-500 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all shadow-sm border border-transparent hover:border-slate-100 dark:hover:border-slate-700" 

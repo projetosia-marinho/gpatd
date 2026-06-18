@@ -89,10 +89,11 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
 
   // Filter options when value changes
   useEffect(() => {
-    if (!value) {
+    const stringVal = value !== undefined && value !== null ? String(value) : '';
+    if (!stringVal) {
       setFilteredSuggestions(suggestions);
     } else {
-      const lowVal = value.toLowerCase();
+      const lowVal = stringVal.toLowerCase();
       setFilteredSuggestions(
         suggestions.filter((opt) => opt.toLowerCase().includes(lowVal) && opt.toLowerCase() !== lowVal)
       );
@@ -1690,10 +1691,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 
                 if (['dataOficio', 'dataInicio', 'dataTermino', 'dataPunicao'].includes(field)) {
                   extracted[field] = parseDateToInputFormat(value);
-                } else if (field === 'qtdDias') {
-                  extracted[field] = String(value);
                 } else {
-                  extracted[field] = value;
+                  extracted[field] = String(value);
                 }
               }
             }

@@ -82,6 +82,9 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
   // Validated and formatted data for table correction
   const [validatedRows, setValidatedRows] = useState<any[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Record<number, boolean>>({});
+  const [bulkField, setBulkField] = useState('');
+  const [bulkValue, setBulkValue] = useState('');
 
   // Import states
   const [importProgress, setImportProgress] = useState(0);
@@ -96,6 +99,9 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
     setFieldMapping({});
     setValidatedRows([]);
     setValidationErrors([]);
+    setSelectedRows({});
+    setBulkField('');
+    setBulkValue('');
     setImportProgress(0);
     setImportStatusText('');
     setImportedCount(0);
@@ -310,6 +316,27 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
       [fieldKey]: newValue
     };
     validateData(updated);
+  };
+
+  const handleApplyBulk = () => {
+    if (!bulkField) {
+      alert('Selecione um campo para preenchimento em lote.');
+      return;
+    }
+    const selectedIndices = Object.keys(selectedRows).map(Number);
+    if (selectedIndices.length === 0) {
+      alert('Selecione ao menos um processo para preenchimento em lote.');
+      return;
+    }
+    const updated = [...validatedRows];
+    selectedIndices.forEach(idx => {
+      updated[idx] = {
+        ...updated[idx],
+        [bulkField]: bulkValue
+      };
+    });
+    validateData(updated);
+    setBulkValue('');
   };
 
   const startImport = async () => {
@@ -592,11 +619,79 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
                   )}
                 </div>
 
+                {/* Bulk Actions Panel */}
+                {Object.keys(selectedRows).length > 0 && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 rounded-2xl bg-indigo-650 dark:bg-indigo-950 border border-indigo-500/25 text-white flex flex-wrap items-center justify-between gap-4 shadow-lg"
+                  >
+                    <div className="flex items-center gap-2 text-xs font-bold">
+                      <span className="bg-white/20 px-2.5 py-1 rounded-lg">
+                        {Object.keys(selectedRows).length} selecionados
+                      </span>
+                      <span>Preenchimento em lote:</span>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-3">
+                      <select 
+                        value={bulkField}
+                        onChange={(e) => setBulkField(e.target.value)}
+                        className="h-9 px-3 rounded-lg bg-white/10 border border-white/20 text-xs text-white focus:outline-hidden cursor-pointer"
+                        style={{ colorScheme: 'dark' }}
+                      >
+                        <option value="" className="text-slate-900">-- Selecione o campo --</option>
+                        {PROCESS_FIELDS.filter(f => fieldMapping[f.key]).map(f => (
+                          <option key={f.key} value={f.key} className="text-slate-900">{f.label}</option>
+                        ))}
+                      </select>
+                      
+                      <input 
+                        type="text" 
+                        placeholder="Novo valor..." 
+                        value={bulkValue}
+                        onChange={(e) => setBulkValue(e.target.value)}
+                        className="h-9 px-3 rounded-lg bg-white/10 border border-white/20 text-xs text-white placeholder:text-white/40 focus:outline-hidden focus:bg-white/20"
+                      />
+                      
+                      <button
+                        onClick={handleApplyBulk}
+                        className="h-9 px-4 rounded-lg bg-white text-indigo-600 hover:bg-white/90 text-xs font-bold transition-all shadow-md flex items-center gap-1 cursor-pointer"
+                      >
+                        Aplicar
+                      </button>
+                      
+                      <button
+                        onClick={() => setSelectedRows({})}
+                        className="text-xs text-white/70 hover:text-white underline cursor-pointer"
+                      >
+                        Limpar seleção
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
                 {/* Table containing rows with validation highlights */}
                 <div className="overflow-x-auto rounded-[2rem] border border-slate-100 dark:border-slate-800">
                   <table className="w-full border-collapse text-left text-xs font-medium text-slate-700 dark:text-slate-300">
                     <thead>
-                      <tr className="bg-slate-50 dark:bg-slate-850 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
+                      <tr className="bg-slate-50 dark:bg-slate-855 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
+                        <th className="px-4 py-3.5 w-12 text-center">
+                          <input 
+                            type="checkbox" 
+                            className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                            checked={validatedRows.length > 0 && Object.keys(selectedRows).length === validatedRows.length}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                const newSel: Record<number, boolean> = {};
+                                validatedRows.forEach((_, idx) => { newSel[idx] = true; });
+                                setSelectedRows(newSel);
+                              } else {
+                                setSelectedRows({});
+                              }
+                            }}
+                          />
+                        </th>
                         <th className="px-4 py-3.5 w-16 text-center">Linha</th>
                         {PROCESS_FIELDS.filter(f => fieldMapping[f.key]).map(f => (
                           <th key={f.key} className="px-4 py-3.5 min-w-[150px]">
@@ -607,7 +702,25 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                       {validatedRows.map((row, rowIdx) => (
-                        <tr key={rowIdx} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all">
+                        <tr key={rowIdx} className={`hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all ${selectedRows[rowIdx] ? 'bg-indigo-50/30 dark:bg-indigo-950/10' : ''}`}>
+                          <td className="px-4 py-3 text-center border-r border-slate-100 dark:border-slate-800">
+                            <input 
+                              type="checkbox" 
+                              className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                              checked={!!selectedRows[rowIdx]}
+                              onChange={(e) => {
+                                setSelectedRows(prev => {
+                                  const next = { ...prev };
+                                  if (e.target.checked) {
+                                    next[rowIdx] = true;
+                                  } else {
+                                    delete next[rowIdx];
+                                  }
+                                  return next;
+                                });
+                              }}
+                            />
+                          </td>
                           <td className="px-4 py-3 text-center font-bold text-slate-400 border-r border-slate-100 dark:border-slate-800">
                             {rowIdx + 2}
                           </td>
