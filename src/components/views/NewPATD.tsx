@@ -1776,7 +1776,6 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             ...prev,
             ...mappedData
           }));
-          alert('Formulário preenchido com sucesso a partir da planilha!');
         } else {
           setMultipleRowsData(processed);
           setIsImportModalOpen(true);
@@ -2719,7 +2718,6 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             ...selectedRow
           }));
           setIsImportModalOpen(false);
-          alert('Registro selecionado e carregado no formulário com sucesso!');
         }} 
         onSelectMultiple={async (selectedRows) => {
           setIsSaving(true);
