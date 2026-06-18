@@ -20,10 +20,12 @@ import {
   X,
   History,
   Building2,
-  User
+  User,
+  FileUp
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Division } from './Divisions';
+import BulkImportModal from './BulkImportModal';
 
 const FilterDropdown = ({ label, value, options, onChange }: any) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -143,6 +145,7 @@ export default function Processes({
   const [processToDelete, setProcessToDelete] = useState<Process | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const loadingRef = React.useRef<HTMLDivElement>(null);
 
   // Audit States
@@ -408,6 +411,15 @@ export default function Processes({
             >
               <Trash2 size={16} />
               Excluir ({selectedIds.length})
+            </button>
+          )}
+          {currentUser.role !== 'Visualizador' && (
+            <button 
+              onClick={() => setIsImportOpen(true)}
+              className="flex items-center gap-2 h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/10 cursor-pointer"
+            >
+              <FileUp size={16} />
+              Importar Planilha
             </button>
           )}
           <button 
@@ -1156,6 +1168,17 @@ export default function Processes({
           </>
         )}
       </AnimatePresence>
+
+      <BulkImportModal 
+        isOpen={isImportOpen} 
+        onClose={() => setIsImportOpen(false)} 
+        currentUser={currentUser} 
+        divisions={divisions} 
+        onImportSuccess={(newProcesses) => {
+          setProcesses(newProcesses);
+          setIsImportOpen(false);
+        }} 
+      />
 
       {/* Decorative Background Accents */}
       <div className="fixed top-1/4 -right-20 w-80 h-80 bg-indigo-500/5 rounded-full blur-[120px] -z-10" />
