@@ -33,7 +33,7 @@ import { Division } from './Divisions';
 import { supabase } from '../../lib/supabase';
 import * as XLSX from 'xlsx';
 
-const InputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error }: any) => (
+const InputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error, onBlur }: any) => (
   <div className="space-y-1.5 flex-1">
     <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">{label}</label>
     <div className="relative group">
@@ -44,6 +44,7 @@ const InputField = ({ label, icon: Icon, value, onChange, placeholder, disabled 
         type={type}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder={placeholder}
         disabled={disabled}
         className={`w-full h-11 pl-10 pr-4 rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-800/80'} focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 ${error ? 'focus:ring-rose-100/30 dark:focus:ring-rose-900/20' : 'focus:ring-indigo-500/10'} focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium tracking-tight relative z-0`}
@@ -67,7 +68,7 @@ const InputField = ({ label, icon: Icon, value, onChange, placeholder, disabled 
   </div>
 );
 
-const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error, fieldName }: any) => {
+const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error, fieldName, onBlur }: any) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -128,6 +129,7 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
           value={value}
           onChange={onChange}
           onFocus={() => setShowDropdown(true)}
+          onBlur={onBlur}
           placeholder={placeholder}
           disabled={disabled}
           className={`w-full h-11 pl-10 pr-4 rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-800/80'} focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 ${error ? 'focus:ring-rose-100/30 dark:focus:ring-rose-900/20' : 'focus:ring-indigo-500/10'} focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium tracking-tight relative z-0`}
@@ -636,6 +638,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   const [history, setHistory] = useState<any[]>([]);
   const [errors, setErrors] = useState<any>({});
   const [seqTrigger, setSeqTrigger] = useState(0);
+  const [isFormLoaded, setIsFormLoaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Spreadsheet import states & ref
@@ -1476,7 +1479,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
   const getAllowedQuadros = (posto: string) => {
     if (['BR', 'CL', 'TC', 'MJ', 'CP', '1T', '2T', 'AP'].includes(posto)) {
-      return ['QOAV', 'QOINF', 'QOINT', 'QOAP', 'QOMED', 'QOCON', 'QOFARM', 'QODENT'];
+      return ['QOAV', 'QOINF', 'QOINT', 'QOAP', 'QOMED', 'QOCON', 'QOFARM', 'QODENT', 'QOENG', 'QOECTA', 'QOESUP', 'QOEARM', 'QOEAV', 'QOEA'];
     }
     if (['CD'].includes(posto)) {
       return ['QOAV', 'QOINT', 'QOINF'];
@@ -1507,6 +1510,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       { value: 'QOCON', label: 'QOCON' },
       { value: 'QOFARM', label: 'QOFARM' },
       { value: 'QODENT', label: 'QODENT' },
+      { value: 'QOENG', label: 'QOENG' },
+      { value: 'QOECTA', label: 'QOECTA' },
+      { value: 'QOESUP', label: 'QOESUP' },
+      { value: 'QOEARM', label: 'QOEARM' },
+      { value: 'QOEAV', label: 'QOEAV' },
+      { value: 'QOEA', label: 'QOEA' },
       { value: 'QSS', label: 'QSS' },
       { value: 'QSCON', label: 'QSCON' },
       { value: 'QESA', label: 'QESA' },
@@ -1529,71 +1538,133 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     }
   }, [formData.posto]);
 
-  // Form memory persistence
+  // Form memory persistence and initial load
   useEffect(() => {
-    if (!initialData) {
-      try {
-        const saved = localStorage.getItem('new_patd_form_memory');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed && typeof parsed === 'object') {
-            setFormData((prev: any) => ({ ...prev, ...parsed }));
+    const key = initialData 
+      ? (initialData._isPrefilledNew ? 'new_patd_form_memory' : `edit_patd_form_memory_${initialData.id}`)
+      : 'new_patd_form_memory';
+    
+    // Check if there is an autosaved version in localStorage
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          setFormData((prev: any) => ({ ...prev, ...parsed }));
+          
+          const savedHistory = localStorage.getItem(`${key}_history`);
+          if (savedHistory) {
+            setHistory(JSON.parse(savedHistory));
+          } else if (initialData && !initialData._isPrefilledNew) {
+            setHistory(initialData.history || []);
           }
+          setIsFormLoaded(true);
+          return;
         }
-      } catch (e) {
-        console.error('Error restoring form memory:', e);
-        localStorage.removeItem('new_patd_form_memory');
       }
+    } catch (e) {
+      console.error('Error restoring form memory:', e);
     }
-  }, [initialData]);
 
-  useEffect(() => {
-    if (!initialData) {
-      localStorage.setItem('new_patd_form_memory', JSON.stringify(formData));
-    }
-  }, [formData, initialData]);
-
-  // Populate form if editing
-  useEffect(() => {
     if (initialData) {
-      setFormData({
-        patdNumber: initialData.patdNumber || '',
-        posto: initialData.posto || '1T',
-        quadro: initialData.quadro || 'QOINT',
-        saram: initialData.saram || '',
-        nomeCompleto: initialData.militar || '',
-        especialidade: initialData.especialidade || '',
-        divisao: initialData.divisao || 'DOA',
-        setor: initialData.setor || '',
-        apurador: initialData.apurador || '',
-        apuradorPosto: initialData.apuradorPosto || '1T',
-        apuradorQuadro: initialData.apuradorQuadro || 'QOINT',
-        apuradorSaram: initialData.apuradorSaram || '',
-        aplicador: initialData.aplicador || '',
-        aplicadorPosto: initialData.aplicadorPosto || 'TC',
-        aplicadorQuadro: initialData.aplicadorQuadro || 'QOAV',
-        aplicadorCargo: initialData.aplicadorCargo || '',
-        oficioNumero: initialData.oficioNumero || '',
-        protComaer: initialData.protComaer || '',
-        dataOficio: initialData.dataOficio || '',
-        enquadramentoRdaer: initialData.enquadramentoRdaer || '',
-        resumoFato: initialData.resumoFato || '',
-        dataInicio: initialData.dataInicio || '',
-        dataTermino: initialData.dataTermino || '',
-        status: initialData.status || 'Em Andamento',
-        punicao: initialData.punicao || 'Em Branco',
-        qtdDias: String(initialData.diasPunicao || '0'),
-        dataPunicao: initialData.dataPunicao || '',
-        resumoPunicao: initialData.resumoPunicao || '',
-        nGrade: initialData.nGrade || '',
-        boletim: initialData.boletim || '',
-        observacoes: initialData.observacoes || '',
-        documents: initialData.documents || [],
-        delegacaoDoc: initialData.delegacaoDoc || null
-      });
+      if (initialData._isPrefilledNew) {
+        setFormData((prev: any) => ({
+          ...prev,
+          posto: initialData.posto || '1T',
+          quadro: initialData.quadro || 'QOINT',
+          saram: initialData.saram || '',
+          nomeCompleto: initialData.militar || '',
+          especialidade: initialData.especialidade || '',
+          divisao: currentUser?.divisao || prev.divisao || 'DOA'
+        }));
+      } else {
+        setFormData({
+          patdNumber: initialData.patdNumber || '',
+          posto: initialData.posto || '1T',
+          quadro: initialData.quadro || 'QOINT',
+          saram: initialData.saram || '',
+          nomeCompleto: initialData.militar || '',
+          especialidade: initialData.especialidade || '',
+          divisao: initialData.divisao || 'DOA',
+          setor: initialData.setor || '',
+          apurador: initialData.apurador || '',
+          apuradorPosto: initialData.apuradorPosto || '1T',
+          apuradorQuadro: initialData.apuradorQuadro || 'QOINT',
+          apuradorSaram: initialData.apuradorSaram || '',
+          aplicador: initialData.aplicador || '',
+          aplicadorPosto: initialData.aplicadorPosto || 'TC',
+          aplicadorQuadro: initialData.aplicadorQuadro || 'QOAV',
+          aplicadorCargo: initialData.aplicadorCargo || '',
+          oficioNumero: initialData.oficioNumero || '',
+          protComaer: initialData.protComaer || '',
+          dataOficio: initialData.dataOficio || '',
+          enquadramentoRdaer: initialData.enquadramentoRdaer || '',
+          resumoFato: initialData.resumoFato || '',
+          dataInicio: initialData.dataInicio || '',
+          dataTermino: initialData.dataTermino || '',
+          status: initialData.status || 'Em Andamento',
+          punicao: initialData.punicao || 'Em Branco',
+          qtdDias: String(initialData.diasPunicao || '0'),
+          dataPunicao: initialData.dataPunicao || '',
+          resumoPunicao: initialData.resumoPunicao || '',
+          nGrade: initialData.nGrade || '',
+          boletim: initialData.boletim || '',
+          observacoes: initialData.observacoes || '',
+          documents: initialData.documents || [],
+          delegacaoDoc: initialData.delegacaoDoc || null
+        });
+      }
       setHistory(initialData.history || []);
+    } else {
+      setFormData({
+        patdNumber: `001/DIV/${currentYear}`,
+        posto: '1T',
+        quadro: 'QOINT',
+        saram: '',
+        nomeCompleto: '',
+        especialidade: '',
+        divisao: currentUser && currentUser.role !== 'Administrador' && currentUser.divisao ? currentUser.divisao : 'DOA',
+        setor: '',
+        apurador: '',
+        apuradorPosto: '1T',
+        apuradorQuadro: 'QOINT',
+        apuradorSaram: '',
+        aplicador: '',
+        aplicadorPosto: 'TC',
+        aplicadorQuadro: 'QOAV',
+        aplicadorCargo: '',
+        oficioNumero: '',
+        protComaer: '',
+        dataOficio: '',
+        enquadramentoRdaer: '',
+        resumoFato: '',
+        dataInicio: '',
+        dataTermino: '',
+        status: 'Em Andamento',
+        punicao: 'Em Branco',
+        qtdDias: '0',
+        dataPunicao: '',
+        resumoPunicao: '',
+        nGrade: '',
+        boletim: '',
+        observacoes: '',
+        documents: [],
+        delegacaoDoc: null
+      });
+      setHistory([]);
     }
-  }, [initialData]);
+    setIsFormLoaded(true);
+  }, [initialData, currentUser]);
+
+  // Auto-save form data on changes, only after form is loaded
+  useEffect(() => {
+    if (!isFormLoaded) return;
+    const key = initialData 
+      ? (initialData._isPrefilledNew ? 'new_patd_form_memory' : `edit_patd_form_memory_${initialData.id}`)
+      : 'new_patd_form_memory';
+    localStorage.setItem(key, JSON.stringify(formData));
+    localStorage.setItem(`${key}_history`, JSON.stringify(history));
+  }, [formData, history, initialData, isFormLoaded]);
 
   const handleFileClick = () => {
     fileInputRef.current?.click();
@@ -1941,7 +2012,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
   // Auto-generate ID logic (only if not editing)
   useEffect(() => {
-    if (initialData) return;
+    if (initialData && !initialData._isPrefilledNew) return;
 
     let active = true;
 
@@ -2130,6 +2201,91 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     validateDates(updatedData);
   };
 
+  const handleFieldBlur = async (type: 'arrolado' | 'apurador', field: 'saram' | 'nome') => {
+    let searchVal = '';
+    if (type === 'arrolado') {
+      searchVal = field === 'saram' ? formData.saram : formData.nomeCompleto;
+    } else {
+      searchVal = field === 'saram' ? formData.apuradorSaram : formData.apurador;
+    }
+
+    if (!searchVal) return;
+
+    try {
+      let query = supabase.from('efetivo').select('*');
+      if (currentUser?.role === 'Operador') {
+        query = query.eq('divisao', currentUser.divisao);
+      }
+      if (field === 'saram') {
+        query = query.eq('saram', searchVal.trim());
+      } else {
+        query = query.ilike('nome_completo', searchVal.trim());
+      }
+      
+      const { data, error } = await query.maybeSingle();
+      if (error) throw error;
+
+      if (data) {
+        // We found a record! Let's fill the fields.
+        if (type === 'arrolado') {
+          setFormData((prev: any) => ({
+            ...prev,
+            saram: data.saram,
+            nomeCompleto: data.nome_completo,
+            posto: data.posto,
+            quadro: data.quadro,
+            especialidade: data.especialidade || ''
+          }));
+          
+          const changes = [];
+          if (formData.saram !== data.saram) changes.push({ field: 'SARAM', old: formData.saram, new: data.saram });
+          if (formData.nomeCompleto !== data.nome_completo) changes.push({ field: 'Nome Completo', old: formData.nomeCompleto, new: data.nome_completo });
+          if (formData.posto !== data.posto) changes.push({ field: 'Posto', old: formData.posto, new: data.posto });
+          if (formData.quadro !== data.quadro) changes.push({ field: 'Quadro', old: formData.quadro, new: data.quadro });
+          if (formData.especialidade !== (data.especialidade || '')) changes.push({ field: 'Especialidade', old: formData.especialidade, new: data.especialidade || '' });
+          
+          if (changes.length > 0) {
+            const historyItems = changes.map(c => ({
+              field: c.field,
+              oldValue: c.old,
+              newValue: c.new,
+              user: currentUser?.name || 'Sistema',
+              date: new Date().toLocaleString('pt-BR')
+            }));
+            setHistory(prev => [...historyItems, ...prev]);
+          }
+        } else {
+          setFormData((prev: any) => ({
+            ...prev,
+            apuradorSaram: data.saram,
+            apurador: data.nome_completo,
+            apuradorPosto: data.posto,
+            apuradorQuadro: data.quadro
+          }));
+          
+          const changes = [];
+          if (formData.apuradorSaram !== data.saram) changes.push({ field: 'SARAM do Apurador', old: formData.apuradorSaram, new: data.saram });
+          if (formData.apurador !== data.nome_completo) changes.push({ field: 'Apurador', old: formData.apurador, new: data.nome_completo });
+          if (formData.apuradorPosto !== data.posto) changes.push({ field: 'Posto do Apurador', old: formData.apuradorPosto, new: data.posto });
+          if (formData.apuradorQuadro !== data.quadro) changes.push({ field: 'Quadro do Apurador', old: formData.apuradorQuadro, new: data.quadro });
+          
+          if (changes.length > 0) {
+            const historyItems = changes.map(c => ({
+              field: c.field,
+              oldValue: c.old,
+              newValue: c.new,
+              user: currentUser?.name || 'Sistema',
+              date: new Date().toLocaleString('pt-BR')
+            }));
+            setHistory(prev => [...historyItems, ...prev]);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching details from efetivo:', err);
+    }
+  };
+
   const handleClear = () => {
     if (confirm('Deseja realmente limpar todos os campos?')) {
       const emptyForm = {
@@ -2169,9 +2325,11 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       setFormData(emptyForm);
       setSeqTrigger(prev => prev + 1);
       setErrors({});
-      if (!initialData) {
-        localStorage.removeItem('new_patd_form_memory');
-      }
+      const key = initialData 
+        ? (initialData._isPrefilledNew ? 'new_patd_form_memory' : `edit_patd_form_memory_${initialData.id}`)
+        : 'new_patd_form_memory';
+      localStorage.removeItem(key);
+      localStorage.removeItem(`${key}_history`);
     }
   };
 
@@ -2230,9 +2388,11 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     // Simulate API delay
     setTimeout(() => {
       onSave?.({ ...formData, history });
-      if (!initialData) {
-        localStorage.removeItem('new_patd_form_memory');
-      }
+      const key = initialData 
+        ? (initialData._isPrefilledNew ? 'new_patd_form_memory' : `edit_patd_form_memory_${initialData.id}`)
+        : 'new_patd_form_memory';
+      localStorage.removeItem(key);
+      localStorage.removeItem(`${key}_history`);
       setIsSaving(false);
     }, 800);
   };
@@ -2269,6 +2429,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     { value: 'QOCON', label: 'QOCON' },
     { value: 'QOFARM', label: 'QOFARM' },
     { value: 'QODENT', label: 'QODENT' },
+    { value: 'QOENG', label: 'QOENG' },
+    { value: 'QOECTA', label: 'QOECTA' },
+    { value: 'QOESUP', label: 'QOESUP' },
+    { value: 'QOEARM', label: 'QOEARM' },
+    { value: 'QOEAV', label: 'QOEAV' },
+    { value: 'QOEA', label: 'QOEA' },
     { value: 'QSS', label: 'QSS' },
     { value: 'QSCON', label: 'QSCON' },
     { value: 'QESA', label: 'QESA' },
@@ -2468,8 +2634,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <AutocompleteInputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} placeholder="0000000" error={errors.saram} fieldName="saram" />
-                <AutocompleteInputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} fieldName="nomeCompleto" />
+                <AutocompleteInputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} onBlur={() => handleFieldBlur('arrolado', 'saram')} placeholder="0000000" error={errors.saram} fieldName="saram" />
+                <AutocompleteInputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} onBlur={() => handleFieldBlur('arrolado', 'nome')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} fieldName="nomeCompleto" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2507,13 +2673,13 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider ml-1">Identificação do Apurador</p>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="md:col-span-2">
-                    <AutocompleteInputField label="Apurador (Encarregado)" icon={User} value={formData.apurador} onChange={handleChange('apurador')} fieldName="apurador" />
+                    <AutocompleteInputField label="Apurador (Encarregado)" icon={User} value={formData.apurador} onChange={handleChange('apurador')} onBlur={() => handleFieldBlur('apurador', 'nome')} fieldName="apurador" />
                   </div>
                   <SelectField label="Posto (Apurador)" icon={Shield} value={formData.apuradorPosto} onChange={handleChange('apuradorPosto')} options={optionsPosto} />
                   <SelectField label="Quadro (Apurador)" icon={Briefcase} value={formData.apuradorQuadro} onChange={handleChange('apuradorQuadro')} options={optionsQuadro} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <InputField label="SARAM (Apurador)" icon={User} value={formData.apuradorSaram} onChange={handleChange('apuradorSaram')} placeholder="0000000" error={errors.apuradorSaram} />
+                  <InputField label="SARAM (Apurador)" icon={User} value={formData.apuradorSaram} onChange={handleChange('apuradorSaram')} onBlur={() => handleFieldBlur('apurador', 'saram')} placeholder="0000000" error={errors.apuradorSaram} />
                   <div className="hidden md:block md:col-span-3" />
                 </div>
               </div>
@@ -2744,10 +2910,11 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 divisao: row.divisao || 'DOA',
                 setor: row.setor || '',
                 data_inicio: row.dataInicio || new Date().toISOString().split('T')[0],
-                status: 'Em Andamento',
-                punicao: 'Em Branco',
-                dias_punicao: 0,
-                boletim: '',
+                data_termino: row.dataTermino || null,
+                status: row.status || 'Em Andamento',
+                punicao: row.punicao || 'Em Branco',
+                dias_punicao: Number(row.qtdDias) || Number(row.diasPunicao) || 0,
+                boletim: row.boletim || '',
                 resumo_fato: row.resumoFato || '',
                 apurador: row.apurador || '',
                 apurador_posto: row.apuradorPosto || null,
@@ -2764,9 +2931,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 delegacao_doc: null,
                 documents: [],
                 history: initialHistory,
-                n_grade: '',
-                observacoes: '',
-                resumo_punicao: ''
+                n_grade: row.nGrade || '',
+                observacoes: row.observacoes || '',
+                resumo_punicao: row.resumoPunicao || '',
+                data_punicao: row.dataPunicao || null
               };
             });
 

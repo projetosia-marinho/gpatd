@@ -9,6 +9,7 @@ import Divisions, { Division } from './components/views/Divisions';
 import Users from './components/views/Users';
 import Reports from './components/views/Reports';
 import Documents from './components/views/Documents';
+import Efetivo from './components/views/Efetivo';
 import { User as UserType } from './components/views/Users';
 import { Shield, Bell, User, Files } from 'lucide-react';
 import Settings from './components/views/Settings';
@@ -315,7 +316,7 @@ export default function App() {
         resumo_punicao: newProcessData.resumoPunicao || ''
       };
 
-      if (editingProcess) {
+      if (editingProcess && !editingProcess._isPrefilledNew) {
         // Update existing process
         const { error } = await supabase.from('processes').update(dbPayload).eq('id', editingProcess.id);
         if (error) throw error;
@@ -399,6 +400,18 @@ export default function App() {
         return <Tasks />;
       case 'novo-patd':
         return <NewPATD initialData={editingProcess} onSave={handleSaveProcess} divisions={divisions} currentUser={currentUser} processes={processes} />;
+      case 'efetivo':
+        return <Efetivo currentUser={currentUser} onNewPATDFromEfetivo={(military) => {
+          setEditingProcess({
+            saram: military.saram,
+            militar: military.nome_completo,
+            posto: military.posto,
+            quadro: military.quadro,
+            especialidade: military.especialidade || '',
+            _isPrefilledNew: true
+          });
+          setActiveTab('novo-patd');
+        }} />;
       case 'settings':
         return <Settings currentUser={currentUser} onProfileUpdate={(updated) => setUsers(prev => prev.map(u => u.id === updated.id ? updated : u))} />;
       case 'documentos':

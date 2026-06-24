@@ -313,7 +313,7 @@ export default function Processes({
     }
 
     return result;
-  }, [processes, searchTerm, globalSearchTerm, sortConfig, filterDivisao, filterStatus, filterPunicao, filterAno]);
+  }, [processes, searchTerm, globalSearchTerm, sortConfig, filterDivisao, filterStatus, filterPosto, filterPunicao, filterAno]);
 
   // Reset visible items when filters change
   React.useEffect(() => {

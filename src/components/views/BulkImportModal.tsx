@@ -43,6 +43,15 @@ const PROCESS_FIELDS: FieldConfig[] = [
   { key: 'divisao', label: 'Divisão', required: true, type: 'text', placeholder: 'ex: DOA, GLOG-YS' },
   { key: 'setor', label: 'Setor', required: true, type: 'text', placeholder: 'ex: Seção de Pessoal' },
   { key: 'dataInicio', label: 'Data de Início', required: true, type: 'date', placeholder: 'AAAA-MM-DD' },
+  { key: 'dataTermino', label: 'Data de Término', required: false, type: 'date', placeholder: 'AAAA-MM-DD' },
+  { key: 'status', label: 'Status', required: false, type: 'text', placeholder: 'ex: Em Andamento, Concluído, Cancelado' },
+  { key: 'punicao', label: 'Punição', required: false, type: 'text', placeholder: 'ex: Em Branco, Repreensão, Detenção, Prisão' },
+  { key: 'diasPunicao', label: 'Dias de Punição', required: false, type: 'integer', placeholder: 'ex: 0, 5, 10' },
+  { key: 'boletim', label: 'Boletim', required: false, type: 'text' },
+  { key: 'dataPunicao', label: 'Data da Punição', required: false, type: 'date', placeholder: 'AAAA-MM-DD' },
+  { key: 'resumoPunicao', label: 'Resumo da Punição', required: false, type: 'text' },
+  { key: 'nGrade', label: 'Nº Grade', required: false, type: 'text' },
+  { key: 'observacoes', label: 'Observações', required: false, type: 'text' },
   { key: 'oficioNumero', label: 'Nº Ofício', required: false, type: 'text' },
   { key: 'protComaer', label: 'Protocolo COMAER', required: false, type: 'text' },
   { key: 'dataOficio', label: 'Data do Ofício', required: false, type: 'date' },
@@ -380,10 +389,10 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
           divisao: row.divisao,
           setor: row.setor,
           data_inicio: row.dataInicio,
-          status: 'Em Andamento',
-          punicao: 'Em Branco',
-          dias_punicao: 0,
-          boletim: '',
+          status: row.status || 'Em Andamento',
+          punicao: row.punicao || 'Em Branco',
+          dias_punicao: Number(row.diasPunicao) || 0,
+          boletim: row.boletim || '',
           resumo_fato: row.resumoFato,
           apurador: row.apurador,
           apurador_posto: row.apuradorPosto || null,
@@ -400,9 +409,11 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
           delegacao_doc: null,
           documents: [],
           history: initialHistory,
-          n_grade: '',
-          observacoes: '',
-          resumo_punicao: ''
+          n_grade: row.nGrade || '',
+          observacoes: row.observacoes || '',
+          resumo_punicao: row.resumoPunicao || '',
+          data_punicao: row.dataPunicao || null,
+          data_termino: row.dataTermino || null
         };
       });
 
@@ -624,7 +635,7 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
                   <motion.div 
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-4 rounded-2xl bg-indigo-650 dark:bg-indigo-950 border border-indigo-500/25 text-white flex flex-wrap items-center justify-between gap-4 shadow-lg"
+                    className="p-4 rounded-2xl bg-indigo-600 dark:bg-indigo-950 border border-indigo-500/20 text-white flex flex-wrap items-center justify-between gap-4 shadow-lg shadow-indigo-500/10"
                   >
                     <div className="flex items-center gap-2 text-xs font-bold">
                       <span className="bg-white/20 px-2.5 py-1 rounded-lg">
@@ -675,7 +686,7 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
                 <div className="overflow-x-auto rounded-[2rem] border border-slate-100 dark:border-slate-800">
                   <table className="w-full border-collapse text-left text-xs font-medium text-slate-700 dark:text-slate-300">
                     <thead>
-                      <tr className="bg-slate-50 dark:bg-slate-855 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
+                      <tr className="bg-slate-50 dark:bg-slate-800/50 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
                         <th className="px-4 py-3.5 w-12 text-center">
                           <input 
                             type="checkbox" 
@@ -737,7 +748,7 @@ export default function BulkImportModal({ isOpen, onClose, currentUser, division
                                   className={`w-full h-8 px-2.5 rounded-lg border text-xs font-semibold focus:outline-hidden transition-all ${
                                     cellError 
                                       ? 'border-rose-500 bg-rose-500/5 focus:ring-4 focus:ring-rose-500/10 text-rose-600 dark:text-rose-400' 
-                                      : 'border-slate-150 dark:border-slate-800/80 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-950 bg-white/20'
+                                      : 'border-slate-200 dark:border-slate-800/80 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-950 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-100'
                                   }`}
                                   title={cellError?.message}
                                 />

@@ -20,7 +20,8 @@ import {
   Bell,
   AlertCircle,
   X,
-  LogOut
+  LogOut,
+  Database
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -176,9 +177,12 @@ export default function Shell({
     ...(currentUser?.role !== 'Visualizador' ? [
       { id: 'processos', name: 'Processos', icon: FileText },
       { id: 'novo-patd', name: 'Novo PATD', icon: PlusCircle },
+      { id: 'efetivo', name: 'Efetivo', icon: Database },
     ] : []),
     { id: 'relatorio', name: 'Relatório', icon: BarChart },
-    { id: 'usuarios', name: 'Usuários', icon: UsersIcon },
+    ...(currentUser?.role !== 'Operador' ? [
+      { id: 'usuarios', name: 'Usuários', icon: UsersIcon },
+    ] : []),
     { id: 'documentos', name: 'Documentos', icon: Files },
   ];
 
