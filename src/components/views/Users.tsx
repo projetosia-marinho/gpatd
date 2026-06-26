@@ -38,7 +38,7 @@ export interface User {
   posto: string;
   saram: string;
   divisao: string;
-  role: 'Administrador' | 'Operador' | 'Visualizador';
+  role: 'Administrador' | 'Operador' | 'Visualizador' | 'Apurador';
   status: 'Ativo' | 'Inativo';
   lastAccess: string;
   email?: string;
@@ -247,11 +247,14 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
     { value: 'T2', label: 'T2' },
   ];
 
-  const optionsRole = [
-    { value: 'Administrador', label: 'Administrador' },
-    { value: 'Operador', label: 'Operador' },
-    { value: 'Visualizador', label: 'Visualizador' },
-  ];
+  const optionsRole = loggedUser?.role === 'Operador'
+    ? [{ value: 'Apurador', label: 'Apurador' }]
+    : [
+        { value: 'Administrador', label: 'Administrador' },
+        { value: 'Operador', label: 'Operador' },
+        { value: 'Visualizador', label: 'Visualizador' },
+        { value: 'Apurador', label: 'Apurador' },
+      ];
 
   const optionsStatus = [
     { value: 'Ativo', label: 'Ativo' },
@@ -261,8 +264,10 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
   const optionsDivisao = divisions.map(d => ({ value: d.name, label: d.name }));
 
   const filteredUsers = users.filter(user => {
-    if (loggedUser?.role === 'Operador' && user.id !== loggedUser.id) {
-      return false;
+    if (loggedUser?.role === 'Operador') {
+      const isSelf = user.id === loggedUser.id;
+      const isApuradorInSameDiv = user.role === 'Apurador' && user.divisao === loggedUser.divisao;
+      if (!isSelf && !isApuradorInSameDiv) return false;
     }
     const effectiveSearch = globalSearchTerm || searchTerm;
     const matchesSearch = user.name.toLowerCase().includes(effectiveSearch.toLowerCase()) || 
@@ -275,6 +280,7 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
     switch (role) {
       case 'Administrador': return 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20';
       case 'Operador': return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+      case 'Apurador': return 'bg-amber-500/10 text-amber-600 border-amber-500/20';
       case 'Visualizador': return 'bg-slate-500/10 text-slate-500 border-slate-500/20';
       default: return 'bg-slate-500/10 text-slate-500 border-slate-500/20';
     }
@@ -297,8 +303,8 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
         name: '',
         posto: '',
         saram: '',
-        divisao: '',
-        role: 'Visualizador',
+        divisao: loggedUser?.role === 'Operador' ? loggedUser.divisao : '',
+        role: loggedUser?.role === 'Operador' ? 'Apurador' : 'Visualizador',
         status: 'Ativo',
         email: '',
         login: '',
@@ -352,12 +358,10 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
         ramal: formData.ramal,
       };
 
-
-
       if (currentUser) {
         // Update
-        if (!isAdmin) {
-          alert('Apenas administradores podem editar usuários.');
+        if (!isAdmin && !(loggedUser?.role === 'Operador' && currentUser.role === 'Apurador')) {
+          alert('Apenas administradores ou operadores autorizados podem editar usuários.');
           return;
         }
         const { error } = await supabase.from('profiles').update(dbPayload).eq('id', currentUser.id);
@@ -365,8 +369,8 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
         setUsers(users.map(u => u.id === currentUser.id ? { ...u, ...formData } as User : u));
       } else {
         // Create
-        if (!isAdmin) {
-          alert('Apenas administradores podem criar usuários.');
+        if (!isAdmin && loggedUser?.role !== 'Operador') {
+          alert('Apenas administradores ou operadores podem criar usuários.');
           return;
         }
 
@@ -548,6 +552,7 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
                         switch (user.role) {
                           case 'Administrador': return <Shield size={14} className="text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />;
                           case 'Operador': return <Briefcase size={14} className="text-emerald-500 dark:text-emerald-400 stroke-[2.5]" />;
+                          case 'Apurador': return <Search size={14} className="text-amber-500 dark:text-amber-400 stroke-[2.5]" />;
                           case 'Visualizador': return <Eye size={14} className="text-slate-500 dark:text-slate-400 stroke-[2.5]" />;
                           default: return <UserSoloIcon size={14} className="text-slate-500 dark:text-slate-400 stroke-[2.5]" />;
                         }
@@ -602,7 +607,7 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
                     <p className="text-[10px] font-bold text-slate-600 dark:text-slate-400 mt-1.5">{user.lastAccess}</p>
                   </div>
                   
-                  {isAdmin && (
+                  {(isAdmin || (loggedUser?.role === 'Operador' && user.role === 'Apurador')) && (
                     <div className="relative">
                       <button 
                         onClick={() => setActiveDropdownId(activeDropdownId === user.id ? null : user.id)}
@@ -752,13 +757,23 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
                         onChange={(val: string) => setFormData({...formData, posto: val})} 
                         options={optionsPosto} 
                       />
-                      <SelectField 
-                        label="Divisão" 
-                        icon={Building2} 
-                        value={formData.divisao} 
-                        onChange={(val: string) => setFormData({...formData, divisao: val})} 
-                        options={optionsDivisao} 
-                      />
+                      {loggedUser?.role === 'Operador' ? (
+                        <div className="space-y-1.5 flex-1">
+                          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Divisão</label>
+                          <div className="w-full h-11 pl-10 pr-4 rounded-xl bg-slate-150 dark:bg-slate-800/85 border border-slate-200 dark:border-slate-750 flex items-center text-sm font-medium text-slate-500 cursor-not-allowed">
+                            <Building2 size={16} className="text-slate-400 mr-2 shrink-0" />
+                            <span>{formData.divisao || 'Sem divisão'}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <SelectField 
+                          label="Divisão" 
+                          icon={Building2} 
+                          value={formData.divisao} 
+                          onChange={(val: string) => setFormData({...formData, divisao: val})} 
+                          options={optionsDivisao} 
+                        />
+                      )}
                     </div>
                   </section>
 
@@ -857,13 +872,23 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <SelectField 
-                        label="Papel" 
-                        icon={Shield} 
-                        value={formData.role} 
-                        onChange={(val: any) => setFormData({...formData, role: val})} 
-                        options={optionsRole} 
-                      />
+                      {loggedUser?.role === 'Operador' ? (
+                        <div className="space-y-1.5 flex-1">
+                          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Papel</label>
+                          <div className="w-full h-11 pl-10 pr-4 rounded-xl bg-slate-150 dark:bg-slate-800/85 border border-slate-200 dark:border-slate-750 flex items-center text-sm font-medium text-slate-500 cursor-not-allowed">
+                            <Shield size={16} className="text-slate-400 mr-2 shrink-0" />
+                            <span>{formData.role || 'Sem papel'}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <SelectField 
+                          label="Papel" 
+                          icon={Shield} 
+                          value={formData.role} 
+                          onChange={(val: any) => setFormData({...formData, role: val})} 
+                          options={optionsRole} 
+                        />
+                      )}
                       <SelectField 
                         label="Status da Conta" 
                         icon={CheckCircle2} 

@@ -279,6 +279,17 @@ export default function Processes({
   const filteredAndSortedData = useMemo(() => {
     let result = [...processes];
     
+    // Restrict Apurador to only see their processes
+    if (currentUser?.role === 'Apurador') {
+      const activeSaram = currentUser.saram;
+      const activeName = currentUser.name?.toLowerCase() || '';
+      result = result.filter(p => {
+        const matchesSaram = p.apuradorSaram && p.apuradorSaram === activeSaram;
+        const matchesName = p.apurador && p.apurador.toLowerCase().includes(activeName);
+        return matchesSaram || matchesName;
+      });
+    }
+    
     // Filter
     const effectiveSearch = globalSearchTerm || searchTerm;
     if (effectiveSearch) {

@@ -675,10 +675,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     especialidade: '',
     divisao: currentUser && currentUser.role !== 'Administrador' && currentUser.divisao ? currentUser.divisao : 'DOA',
     setor: '',
-    apurador: '',
-    apuradorPosto: '1T',
-    apuradorQuadro: 'QOINT',
-    apuradorSaram: '',
+    apurador: currentUser && currentUser.role === 'Apurador' ? currentUser.name : '',
+    apuradorPosto: currentUser && currentUser.role === 'Apurador' ? currentUser.posto : '1T',
+    apuradorQuadro: currentUser && currentUser.role === 'Apurador' ? currentUser.quadro : 'QOINT',
+    apuradorSaram: currentUser && currentUser.role === 'Apurador' ? currentUser.saram : '',
     aplicador: '',
     aplicadorPosto: 'TC',
     aplicadorQuadro: 'QOAV',
@@ -2213,7 +2213,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
 
     try {
       let query = supabase.from('efetivo').select('*');
-      if (currentUser?.role === 'Operador') {
+      if (currentUser?.role === 'Operador' || currentUser?.role === 'Apurador') {
         query = query.eq('divisao', currentUser.divisao);
       }
       if (field === 'saram') {

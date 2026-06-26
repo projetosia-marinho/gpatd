@@ -173,14 +173,20 @@ export default function Shell({
   };
 
   const primaryNavigation = [
-    { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
+    ...(currentUser?.role !== 'Apurador' ? [
+      { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
+    ] : []),
     ...(currentUser?.role !== 'Visualizador' ? [
       { id: 'processos', name: 'Processos', icon: FileText },
       { id: 'novo-patd', name: 'Novo PATD', icon: PlusCircle },
-      { id: 'efetivo', name: 'Efetivo', icon: Database },
+      ...(currentUser?.role !== 'Apurador' ? [
+        { id: 'efetivo', name: 'Efetivo', icon: Database },
+      ] : []),
     ] : []),
-    { id: 'relatorio', name: 'Relatório', icon: BarChart },
-    ...(currentUser?.role !== 'Operador' ? [
+    ...(currentUser?.role !== 'Apurador' ? [
+      { id: 'relatorio', name: 'Relatório', icon: BarChart },
+    ] : []),
+    ...(currentUser?.role === 'Administrador' || currentUser?.role === 'Operador' ? [
       { id: 'usuarios', name: 'Usuários', icon: UsersIcon },
     ] : []),
     { id: 'documentos', name: 'Documentos', icon: Files },

@@ -207,7 +207,7 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
     setIsLoading(true);
     try {
       let query = supabase.from('efetivo').select('*');
-      if (currentUser?.role === 'Operador') {
+      if (currentUser?.role === 'Operador' || currentUser?.role === 'Apurador') {
         query = query.eq('divisao', currentUser.divisao);
       }
       const { data, error } = await query.order('nome_completo', { ascending: true });
