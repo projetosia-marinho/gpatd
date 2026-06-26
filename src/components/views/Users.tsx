@@ -444,8 +444,8 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
           <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white uppercase tracking-tight">Gerenciamento de Usuários</h2>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Administre os acessos e permissões dos operadores do sistema.</p>
         </div>
-        {isAdmin && (
-          <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
+          {isAdmin && (
             <button 
               onClick={() => setIsBulkEmailModalOpen(true)}
               className="h-11 px-6 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center gap-2 group"
@@ -453,6 +453,8 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
               <Mail size={18} className="group-hover:scale-110 transition-transform" />
               Aviso em Lote
             </button>
+          )}
+          {(isAdmin || loggedUser?.role === 'Operador') && (
             <button 
               onClick={() => handleOpenModal()}
               className="h-11 px-6 rounded-xl bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all flex items-center gap-2 group"
@@ -460,8 +462,8 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
               <UserPlus size={18} className="group-hover:scale-110 transition-transform" />
               Novo Usuário
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </header>
 
       {/* Filters & Search */}
