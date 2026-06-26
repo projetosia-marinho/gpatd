@@ -345,6 +345,13 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
       return;
     }
 
+    // Verificar se o e-mail já existe no sistema
+    const emailExists = users.some(u => u.email?.toLowerCase() === formData.email?.toLowerCase() && u.id !== currentUser?.id);
+    if (emailExists) {
+      alert('Este e-mail já está cadastrado no sistema.');
+      return;
+    }
+
     try {
       const dbPayload: any = {
         name: formData.name,
