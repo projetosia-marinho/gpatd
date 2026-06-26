@@ -212,15 +212,7 @@ export default function App() {
   const [editingProcess, setEditingProcess] = useState<any>(null);
   const [processFilter, setProcessFilter] = useState<string>('');
 
-  // Redirect Apurador to processes if they land on unauthorized activeTab
-  useEffect(() => {
-    if (currentUser && currentUser.role === 'Apurador') {
-      const allowed = ['processos', 'novo-patd', 'documentos', 'settings'];
-      if (!allowed.includes(activeTab)) {
-        setActiveTab('processos');
-      }
-    }
-  }, [activeTab, currentUser]);
+
   
   // Create a dynamic current user based on the authenticated email
   const currentUser = React.useMemo<UserType>(() => {
@@ -256,6 +248,16 @@ export default function App() {
       email: session.user.email
     };
   }, [session, users]);
+
+  // Redirect Apurador to processes if they land on unauthorized activeTab
+  useEffect(() => {
+    if (currentUser && currentUser.role === 'Apurador') {
+      const allowed = ['processos', 'novo-patd', 'documentos', 'settings'];
+      if (!allowed.includes(activeTab)) {
+        setActiveTab('processos');
+      }
+    }
+  }, [activeTab, currentUser]);
 
   if (isLoading) {
     return (
