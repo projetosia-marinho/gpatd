@@ -24,7 +24,10 @@ import {
   Hash,
   Briefcase,
   Eye,
-  EyeOff
+  EyeOff,
+  Send,
+  Check,
+  Loader2
 } from 'lucide-react';
 import { Division } from './Divisions';
 import { supabase } from '../../lib/supabase';
@@ -150,6 +153,61 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
+
+  // Bulk Email State
+  const [isBulkEmailModalOpen, setIsBulkEmailModalOpen] = useState(false);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [emailSubject, setEmailSubject] = useState('[GPATD] Aviso: Atualização Obrigatória de Processos (PATD)');
+  const [emailBody, setEmailBody] = useState(`Prezado(a) Operador(a),
+
+Solicitamos a imediata revisão e atualização do andamento de todos os processos (PATD) sob a responsabilidade de sua Divisão/Setor que se encontram pendentes de atualização no sistema GPATD.
+
+A tempestividade na inserção de andamentos, juntadas de documentos e publicação de boletins é fundamental para a lisura dos processos administrativos e o cumprimento dos prazos regulamentares nos termos da Guia Prática do GPATD.
+
+Atenciosamente,
+Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
+  
+  const [bulkStep, setBulkStep] = useState<1 | 2 | 3>(1); // 1: Select recipients, 2: Compose email, 3: Sending/Progress
+  const [sendingIndex, setSendingIndex] = useState(-1);
+  const [sendingLogs, setSendingLogs] = useState<{ id: string; name: string; email: string; status: 'pending' | 'sending' | 'success' | 'error' }[]>([]);
+
+  // Filter only operators with valid email
+  const operatorsWithEmail = React.useMemo(() => {
+    return users.filter(u => u.role === 'Operador' && u.email && u.email.trim() !== '');
+  }, [users]);
+
+  React.useEffect(() => {
+    if (isBulkEmailModalOpen) {
+      setSelectedUserIds(operatorsWithEmail.map(u => u.id));
+      setBulkStep(1);
+      setSendingIndex(-1);
+      setSendingLogs([]);
+    }
+  }, [isBulkEmailModalOpen, operatorsWithEmail]);
+
+  const handleStartSending = () => {
+    setBulkStep(3);
+    setSendingIndex(0);
+    
+    const logs = operatorsWithEmail
+      .filter(u => selectedUserIds.includes(u.id))
+      .map(u => ({ id: u.id, name: u.name, email: u.email || '', status: 'pending' as const }));
+    
+    setSendingLogs(logs);
+  };
+
+  React.useEffect(() => {
+    if (bulkStep === 3 && sendingIndex >= 0 && sendingIndex < sendingLogs.length) {
+      setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'sending' } : log));
+      
+      const timer = setTimeout(() => {
+        setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'success' } : log));
+        setSendingIndex(prev => prev + 1);
+      }, 1000); // 1s delay per simulated email
+      
+      return () => clearTimeout(timer);
+    }
+  }, [bulkStep, sendingIndex, sendingLogs.length]);
 
   // Form State
   const [formData, setFormData] = useState<Partial<User>>({
@@ -383,13 +441,22 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
           <p className="text-slate-500 dark:text-slate-400 mt-1">Administre os acessos e permissões dos operadores do sistema.</p>
         </div>
         {isAdmin && (
-          <button 
-            onClick={() => handleOpenModal()}
-            className="h-11 px-6 rounded-xl bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all flex items-center gap-2 group"
-          >
-            <UserPlus size={18} className="group-hover:scale-110 transition-transform" />
-            Novo Usuário
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsBulkEmailModalOpen(true)}
+              className="h-11 px-6 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center gap-2 group"
+            >
+              <Mail size={18} className="group-hover:scale-110 transition-transform" />
+              Aviso em Lote
+            </button>
+            <button 
+              onClick={() => handleOpenModal()}
+              className="h-11 px-6 rounded-xl bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all flex items-center gap-2 group"
+            >
+              <UserPlus size={18} className="group-hover:scale-110 transition-transform" />
+              Novo Usuário
+            </button>
+          </div>
         )}
       </header>
 
@@ -868,6 +935,297 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
                 >
                   Excluir Permanentemente
                 </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Bulk Email Modal */}
+      <AnimatePresence>
+        {isBulkEmailModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => bulkStep !== 3 && setIsBulkEmailModalOpen(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <Mail size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white uppercase tracking-tighter">
+                      Aviso em Lote para Operadores
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5 uppercase font-bold tracking-widest">
+                      Envio de notificação padrão para atualização de processos
+                    </p>
+                  </div>
+                </div>
+                {bulkStep !== 3 && (
+                  <button 
+                    onClick={() => setIsBulkEmailModalOpen(false)} 
+                    className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+                  >
+                    <X size={20} />
+                  </button>
+                )}
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-8 max-h-[65vh] overflow-y-auto custom-scrollbar">
+                
+                {/* Step Indicators */}
+                <div className="flex items-center justify-between mb-8 px-4">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      bulkStep === 1 
+                        ? 'bg-indigo-600 text-white ring-4 ring-indigo-500/20' 
+                        : bulkStep > 1 
+                          ? 'bg-emerald-500 text-white' 
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                    }`}>
+                      {bulkStep > 1 ? <Check size={14} /> : '1'}
+                    </div>
+                    <span className={`text-xs font-bold uppercase tracking-wider ${bulkStep === 1 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`}>Destinatários</span>
+                  </div>
+                  <div className="h-[2px] flex-1 mx-4 bg-slate-100 dark:bg-slate-800" />
+                  <div className="flex items-center gap-2">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      bulkStep === 2 
+                        ? 'bg-indigo-600 text-white ring-4 ring-indigo-500/20' 
+                        : bulkStep > 2 
+                          ? 'bg-emerald-500 text-white' 
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                    }`}>
+                      {bulkStep > 2 ? <Check size={14} /> : '2'}
+                    </div>
+                    <span className={`text-xs font-bold uppercase tracking-wider ${bulkStep === 2 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`}>Mensagem</span>
+                  </div>
+                  <div className="h-[2px] flex-1 mx-4 bg-slate-100 dark:bg-slate-800" />
+                  <div className="flex items-center gap-2">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      bulkStep === 3 
+                        ? 'bg-indigo-600 text-white ring-4 ring-indigo-500/20' 
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                    }`}>
+                      3
+                    </div>
+                    <span className={`text-xs font-bold uppercase tracking-wider ${bulkStep === 3 ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`}>Progresso</span>
+                  </div>
+                </div>
+
+                {/* Step 1: Select Recipients */}
+                {bulkStep === 1 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                        Operadores Cadastrados ({operatorsWithEmail.length})
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedUserIds(operatorsWithEmail.map(u => u.id))}
+                          className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider hover:underline font-bold"
+                        >
+                          Selecionar Todos
+                        </button>
+                        <span className="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedUserIds([])}
+                          className="text-[10px] font-black text-slate-400 uppercase tracking-wider hover:underline font-bold"
+                        >
+                          Limpar Seleção
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden divide-y divide-slate-100 dark:divide-slate-800 max-h-[300px] overflow-y-auto custom-scrollbar">
+                      {operatorsWithEmail.length === 0 ? (
+                        <div className="p-8 text-center text-slate-400 text-sm">
+                          Nenhum operador com e-mail cadastrado encontrado.
+                        </div>
+                      ) : (
+                        operatorsWithEmail.map(user => {
+                          const isSelected = selectedUserIds.includes(user.id);
+                          return (
+                            <label 
+                              key={user.id}
+                              className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <input 
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => {
+                                    if (isSelected) {
+                                      setSelectedUserIds(prev => prev.filter(id => id !== user.id));
+                                    } else {
+                                      setSelectedUserIds(prev => [...prev, user.id]);
+                                    }
+                                  }}
+                                  className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                />
+                                <div>
+                                  <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                                    {user.posto} {user.name}
+                                  </span>
+                                  <span className="text-xs text-slate-400 dark:text-slate-500 ml-2">
+                                    ({user.divisao})
+                                  </span>
+                                  <div className="text-xs text-slate-400 dark:text-slate-500 font-mono">
+                                    {user.email}
+                                  </div>
+                                </div>
+                              </div>
+                            </label>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 2: Compose Email */}
+                {bulkStep === 2 && (
+                  <div className="space-y-5">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Assunto do E-mail</label>
+                      <input 
+                        type="text" 
+                        value={emailSubject}
+                        onChange={(e) => setEmailSubject(e.target.value)}
+                        className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-750 focus:bg-white dark:focus:bg-slate-800 focus:outline-hidden focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-sm font-medium text-slate-900 dark:text-white"
+                        placeholder="Assunto"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Mensagem (Corpo do E-mail)</label>
+                      <textarea 
+                        rows={8}
+                        value={emailBody}
+                        onChange={(e) => setEmailBody(e.target.value)}
+                        className="w-full p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-750 focus:bg-white dark:focus:bg-slate-800 focus:outline-hidden focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-sm font-medium text-slate-900 dark:text-white resize-none"
+                        placeholder="Mensagem..."
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Sending & Logs */}
+                {bulkStep === 3 && (
+                  <div className="space-y-6">
+                    {/* Progress Card */}
+                    <div className="p-6 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/30 dark:border-indigo-900/30">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
+                          {sendingIndex < sendingLogs.length ? 'Enviando Avisos...' : 'Envio Concluído com Sucesso!'}
+                        </span>
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                          {Math.min(sendingIndex, sendingLogs.length)} / {sendingLogs.length}
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-850 h-2.5 rounded-full overflow-hidden">
+                        <motion.div 
+                          className="bg-indigo-600 h-full rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(Math.min(sendingIndex, sendingLogs.length) / sendingLogs.length) * 100}%` }}
+                          transition={{ duration: 0.3 }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Sending Logs List */}
+                    <div className="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar border border-slate-200 dark:border-slate-850 rounded-2xl p-4 divide-y divide-slate-100/50 dark:divide-slate-800/50">
+                      {sendingLogs.map((log, idx) => (
+                        <div key={log.id} className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
+                          <div>
+                            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{log.name}</span>
+                            <span className="text-xs text-slate-400 dark:text-slate-550 ml-2 font-mono">{log.email}</span>
+                          </div>
+                          <div>
+                            {log.status === 'pending' && (
+                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Aguardando</span>
+                            )}
+                            {log.status === 'sending' && (
+                              <span className="flex items-center gap-1 text-[10px] font-black text-indigo-500 uppercase tracking-wider">
+                                <Loader2 size={12} className="animate-spin" /> Enviando
+                              </span>
+                            )}
+                            {log.status === 'success' && (
+                              <span className="flex items-center gap-1 text-[10px] font-black text-emerald-500 uppercase tracking-wider">
+                                <Check size={12} /> Enviado
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-8 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex justify-between gap-3">
+                {bulkStep === 1 && (
+                  <>
+                    <button 
+                      onClick={() => setIsBulkEmailModalOpen(false)}
+                      className="flex-1 h-12 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      disabled={selectedUserIds.length === 0}
+                      onClick={() => setBulkStep(2)}
+                      className="flex-1 h-12 rounded-xl bg-indigo-600 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all"
+                    >
+                      Prosseguir ({selectedUserIds.length})
+                    </button>
+                  </>
+                )}
+
+                {bulkStep === 2 && (
+                  <>
+                    <button 
+                      onClick={() => setBulkStep(1)}
+                      className="flex-1 h-12 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                    >
+                      Voltar
+                    </button>
+                    <button 
+                      onClick={handleStartSending}
+                      className="flex-1 h-12 rounded-xl bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Send size={14} />
+                      Iniciar Envio em Lote
+                    </button>
+                  </>
+                )}
+
+                {bulkStep === 3 && (
+                  <button 
+                    disabled={sendingIndex < sendingLogs.length}
+                    onClick={() => setIsBulkEmailModalOpen(false)}
+                    className="w-full h-12 rounded-xl bg-indigo-600 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-all"
+                  >
+                    {sendingIndex < sendingLogs.length ? 'Enviando...' : 'Concluir'}
+                  </button>
+                )}
               </div>
             </motion.div>
           </div>
