@@ -39,7 +39,7 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "GPATD <onboarding@resend.dev>",
+        from: "GPATD <nao-responder@gpatdafa.com>",
         to: [to],
         subject: `Novo Processo PATD Atribuído - Nº ${patdNumber}`,
         html: `
