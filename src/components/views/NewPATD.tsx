@@ -641,6 +641,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   const [seqTrigger, setSeqTrigger] = useState(0);
   const [isFormLoaded, setIsFormLoaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const modalFileInputRef = useRef<HTMLInputElement>(null);
 
   // Spreadsheet import states & ref
   const [multipleRowsData, setMultipleRowsData] = useState<any[]>([]);
@@ -1924,6 +1925,91 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
     }
   };
 
+  const handleModalFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      alert('Apenas arquivos PDF são permitidos.');
+      return;
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      alert('O arquivo não pode exceder o limite máximo de 20MB.');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `process_docs/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+
+      const newDoc = {
+        name: file.name,
+        url: urlData.publicUrl,
+        uploadedAt: new Date().toLocaleDateString('pt-BR')
+      };
+
+      const newHistoryItem = {
+        field: 'Documento PDF',
+        oldValue: '—',
+        newValue: `Adicionado via Pré-visualização: ${file.name}`,
+        user: currentUser?.name || 'Sistema',
+        date: new Date().toLocaleString('pt-BR')
+      };
+
+      setHistory((prev: any) => [newHistoryItem, ...prev]);
+
+      setFormData((prev: any) => ({
+        ...prev,
+        documents: [...(prev.documents || []), newDoc]
+      }));
+
+      setPreviewMailData((prev: any) => ({
+        ...prev,
+        documentName: file.name
+      }));
+    } catch (err: any) {
+      console.error('Error uploading file from modal:', err);
+      alert(`Erro ao fazer upload do documento: ${err.message || err}`);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleModalFileRemove = () => {
+    if (formData.documents && formData.documents.length > 0) {
+      const removedDoc = formData.documents[0];
+      const newHistoryItem = {
+        field: 'Documento PDF',
+        oldValue: `Removido via Pré-visualização: ${removedDoc.name}`,
+        newValue: '—',
+        user: currentUser?.name || 'Sistema',
+        date: new Date().toLocaleString('pt-BR')
+      };
+      setHistory((prev: any) => [newHistoryItem, ...prev]);
+      setFormData((prev: any) => ({
+        ...prev,
+        documents: prev.documents.slice(1)
+      }));
+    }
+    setPreviewMailData((prev: any) => ({
+      ...prev,
+      documentName: null
+    }));
+  };
+
   const handleDelegacaoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -3055,6 +3141,49 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   <div className="flex text-xs">
                     <span className="font-semibold text-slate-450 dark:text-slate-500 w-16 uppercase tracking-wider">Assunto:</span>
                     <span className="text-slate-800 dark:text-slate-200 font-bold">Novo Processo PATD Atribuído - Nº {previewMailData.patdNumber}</span>
+                  </div>
+                </div>
+
+                {/* Document attachment slot inside preview modal */}
+                <div className="bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200/80 dark:border-slate-850 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                      <File size={16} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-450 dark:text-slate-500 uppercase tracking-widest">Documento do E-mail</p>
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate max-w-[240px]">
+                        {previewMailData.documentName || "Nenhum documento anexado"}
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    {previewMailData.documentName ? (
+                      <button
+                        type="button"
+                        onClick={handleModalFileRemove}
+                        className="px-3 py-1.5 rounded-lg text-rose-500 hover:bg-rose-500/10 text-[10px] font-black uppercase tracking-wider transition-all"
+                      >
+                        Remover
+                      </button>
+                    ) : (
+                      <>
+                        <input
+                          type="file"
+                          ref={modalFileInputRef}
+                          onChange={handleModalFileUpload}
+                          accept=".pdf"
+                          className="hidden"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => modalFileInputRef.current?.click()}
+                          className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-750 text-white text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
+                        >
+                          Anexar PDF
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
 
