@@ -648,6 +648,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
   const [isImporting, setIsImporting] = useState(false);
   const spreadsheetInputRef = useRef<HTMLInputElement>(null);
   const [libraryDocs, setLibraryDocs] = useState<any[]>([]);
+  const [isPreviewMailOpen, setIsPreviewMailOpen] = useState(false);
+  const [previewMailData, setPreviewMailData] = useState<any>(null);
 
   useEffect(() => {
     const fetchLibraryDocs = async () => {
@@ -2385,6 +2387,44 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       }
     });
 
+    const isNewProcess = !initialData || initialData._isPrefilledNew;
+    const hasApurador = formData.apurador && formData.apuradorSaram;
+    const isOperatorOrAdmin = currentUser?.role === 'Operador' || currentUser?.role === 'Administrador';
+
+    if (isNewProcess && hasApurador && isOperatorOrAdmin) {
+      setIsSaving(true);
+      supabase.from('profiles')
+        .select('email')
+        .eq('saram', formData.apuradorSaram.trim())
+        .maybeSingle()
+        .then(({ data, error }) => {
+          setIsSaving(false);
+          const email = data?.email || '';
+          setPreviewMailData({
+            toEmail: email || 'Sem e-mail cadastrado (verifique o cadastro do militar)',
+            toName: formData.apurador,
+            patdNumber: formData.patdNumber,
+            documentName: formData.documents && formData.documents.length > 0 ? formData.documents[0].name : null
+          });
+          setIsPreviewMailOpen(true);
+        })
+        .catch(err => {
+          setIsSaving(false);
+          console.error(err);
+          setPreviewMailData({
+            toEmail: 'Erro ao buscar e-mail',
+            toName: formData.apurador,
+            patdNumber: formData.patdNumber,
+            documentName: formData.documents && formData.documents.length > 0 ? formData.documents[0].name : null
+          });
+          setIsPreviewMailOpen(true);
+        });
+    } else {
+      executeSave();
+    }
+  };
+
+  const executeSave = () => {
     setIsSaving(true);
     // Simulate API delay
     setTimeout(() => {
@@ -2395,6 +2435,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
       localStorage.removeItem(key);
       localStorage.removeItem(`${key}_history`);
       setIsSaving(false);
+      setIsPreviewMailOpen(false);
     }, 800);
   };
 
@@ -2860,7 +2901,6 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 <ChevronLeft size={18} />
                 Voltar
               </motion.button>
-              
               <motion.button 
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -2960,6 +3000,111 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
           }
         }}
       />
+
+      {/* Email Preview Modal */}
+      <AnimatePresence>
+        {isPreviewMailOpen && previewMailData && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsPreviewMailOpen(false)}
+              className="absolute inset-0"
+            />
+            <motion.div
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 15, opacity: 0 }}
+              className="relative bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-150 dark:border-slate-800 shadow-2xl overflow-hidden max-w-xl w-full flex flex-col max-h-[90vh]"
+            >
+              {/* Modal Header */}
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <Building2 size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-slate-900 dark:text-white text-base">Pré-visualização do E-mail</h3>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Verifique o conteúdo antes de notificar o apurador</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsPreviewMailOpen(false)}
+                  className="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto space-y-4 bg-slate-50/50 dark:bg-slate-900/20">
+                {/* Header Information */}
+                <div className="space-y-2.5 bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200/80 dark:border-slate-850">
+                  <div className="flex text-xs">
+                    <span className="font-semibold text-slate-450 dark:text-slate-500 w-16 uppercase tracking-wider">Para:</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-bold">{previewMailData.toName} &lt;{previewMailData.toEmail}&gt;</span>
+                  </div>
+                  <div className="w-full h-px bg-slate-100 dark:bg-slate-850" />
+                  <div className="flex text-xs">
+                    <span className="font-semibold text-slate-450 dark:text-slate-500 w-16 uppercase tracking-wider">Assunto:</span>
+                    <span className="text-slate-800 dark:text-slate-200 font-bold">Novo Processo PATD Atribuído - Nº {previewMailData.patdNumber}</span>
+                  </div>
+                </div>
+
+                {/* Email content representation */}
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-slate-200 dark:border-slate-855 font-sans text-sm text-slate-800 dark:text-slate-200 space-y-4 leading-relaxed">
+                  <p>Olá, <strong>{previewMailData.toName || "Apurador"}</strong>,</p>
+                  
+                  <p>Informamos que um novo Processo de Apuração de Transgressão Disciplinar (PATD), foi aberto e atribuído a você para apuração.</p>
+                  
+                  <p><strong>Número do PATD:</strong> {previewMailData.patdNumber}</p>
+                  
+                  {previewMailData.documentName && (
+                    <div style={{ margin: '20px 0', textAlign: 'center' }}>
+                      <div className="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider shadow-md">
+                        <Download size={14} />
+                        Visualizar Documento Anexo ({previewMailData.documentName})
+                      </div>
+                    </div>
+                  )}
+
+                  <p>Por favor, acesse o sistema GPATD para visualizar os detalhes completos e dar andamento ao processo.</p>
+                  
+                  <hr style={{ border: 0, borderTop: '1px solid #e2e8f0', margin: '20px 0' }} />
+                  <p style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center', margin: 0 }}>
+                    GPATD - Sistema de Apuração de Transgressão Disciplinar
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-600 dark:text-amber-400 text-xs">
+                  <AlertTriangle size={16} className="shrink-0" />
+                  <p className="font-semibold">O envio de e-mails para destinatários externos requer validação prévia de domínio no console do Resend.</p>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50 dark:bg-slate-900/50">
+                <button
+                  type="button"
+                  onClick={() => setIsPreviewMailOpen(false)}
+                  className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-350 font-bold text-xs uppercase tracking-wider transition-colors"
+                >
+                  Cancelar e Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={executeSave}
+                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-indigo-500/20 flex items-center gap-2"
+                >
+                  Confirmar e Enviar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {isDocModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
