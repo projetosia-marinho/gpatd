@@ -2568,25 +2568,23 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             </div>
           </motion.button>
           
-          {currentUser?.role !== 'Apurador' && (
-            <motion.button 
-              type="button"
-              onClick={handleFileClick}
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0 ${formData.documents && formData.documents.length > 0 ? 'ring-2 ring-inset ring-emerald-500' : ''}`}
-            >
-              <div className={`p-2 rounded-lg transition-all ${formData.documents && formData.documents.length > 0 ? 'bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white'}`}>
-                {formData.documents && formData.documents.length > 0 ? <FileText size={18} /> : <FilePlus size={18} />}
-              </div>
-              <div className="text-left">
-                <p className="leading-none">{formData.documents && formData.documents.length > 0 ? 'PDF Anexado' : 'Inserir Documentos'}</p>
-                <p className="text-[9px] opacity-50 lowercase font-medium mt-1">
-                  {formData.documents && formData.documents.length > 0 ? '1 documento' : 'anexos e arquivos pdf'}
-                </p>
-              </div>
-            </motion.button>
-          )}
+          <motion.button 
+            type="button"
+            onClick={handleFileClick}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0 ${formData.documents && formData.documents.length > 0 ? 'ring-2 ring-inset ring-emerald-500' : ''}`}
+          >
+            <div className={`p-2 rounded-lg transition-all ${formData.documents && formData.documents.length > 0 ? 'bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white'}`}>
+              {formData.documents && formData.documents.length > 0 ? <FileText size={18} /> : <FilePlus size={18} />}
+            </div>
+            <div className="text-left">
+              <p className="leading-none">{formData.documents && formData.documents.length > 0 ? 'PDF Anexado' : 'Inserir Documentos'}</p>
+              <p className="text-[9px] opacity-50 lowercase font-medium mt-1">
+                {formData.documents && formData.documents.length > 0 ? '1 documento' : 'anexos e arquivos pdf'}
+              </p>
+            </div>
+          </motion.button>
           
           <motion.button 
             type="button"
