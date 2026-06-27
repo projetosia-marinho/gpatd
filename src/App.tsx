@@ -370,15 +370,19 @@ export default function App() {
               .select('email, name')
               .eq('saram', dbPayload.apurador_saram)
               .maybeSingle();
-            
             if (apuradorProfile && apuradorProfile.email) {
+              const docUrl = dbPayload.documents && dbPayload.documents.length > 0 ? dbPayload.documents[0].url : null;
+              const docName = dbPayload.documents && dbPayload.documents.length > 0 ? dbPayload.documents[0].name : null;
+
               console.log(`[Email Dispatch] Invoking send-notification edge function for ${apuradorProfile.email}`);
               const { data: fnData, error: fnError } = await supabase.functions.invoke('send-notification', {
                 body: {
                   to: apuradorProfile.email,
                   name: apuradorProfile.name,
                   patdNumber: dbPayload.patd_number,
-                  details: dbPayload.detalhes_fato || ""
+                  details: dbPayload.detalhes_fato || "",
+                  documentUrl: docUrl,
+                  documentName: docName
                 }
               });
 

@@ -15,7 +15,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { to, name, patdNumber, details } = await req.json();
+    const { to, name, patdNumber, details, documentUrl, documentName } = await req.json();
 
     if (!to || !patdNumber) {
       return new Response(JSON.stringify({ error: "Missing required fields: to, patdNumber" }), {
@@ -29,6 +29,17 @@ Deno.serve(async (req: Request) => {
         status: 500,
         headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
       });
+    }
+
+    let docSection = "";
+    if (documentUrl) {
+      docSection = `
+        <div style="margin: 25px 0; text-align: center;">
+          <a href="${documentUrl}" target="_blank" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 14px;">
+            Visualizar Documento Anexo (${documentName || "PDF"})
+          </a>
+        </div>
+      `;
     }
 
     // Send email using Resend API
@@ -54,6 +65,8 @@ Deno.serve(async (req: Request) => {
               <p style="margin: 5px 0 0 0; color: #475569; font-style: italic;">${details || "Não fornecido"}</p>
             </div>
             
+            ${docSection}
+
             <p>Por favor, acesse o sistema GPATD para visualizar os detalhes completos e dar andamento ao processo.</p>
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
             <p style="font-size: 12px; color: #94a3b8; text-align: center;">GPATD - Sistema de Apuração de Transgressão Disciplinar</p>
