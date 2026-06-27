@@ -3220,10 +3220,6 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-600 dark:text-amber-400 text-xs">
-                  <AlertTriangle size={16} className="shrink-0" />
-                  <p className="font-semibold">O envio de e-mails para destinatários externos requer validação prévia de domínio no console do Resend.</p>
-                </div>
               </div>
 
               {/* Modal Footer */}
