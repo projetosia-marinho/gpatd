@@ -362,7 +362,7 @@ export default function App() {
         const { data, error } = await supabase.from('processes').insert(insertPayload).select().single();
         if (error) throw error;
 
-        // Simulated email dispatch if an apurador is assigned to the process
+        // Real email dispatch using Supabase Edge Function
         if (dbPayload.apurador && dbPayload.apurador_saram) {
           try {
             const { data: apuradorProfile } = await supabase
@@ -372,8 +372,22 @@ export default function App() {
               .maybeSingle();
             
             if (apuradorProfile && apuradorProfile.email) {
-              console.log(`[Email Dispatch] Sending notification to ${apuradorProfile.email} regarding new process ${dbPayload.patd_number}`);
-              alert(`Notificação enviada por e-mail para o apurador ${apuradorProfile.name} (${apuradorProfile.email}) sobre a abertura do processo ${dbPayload.patd_number}.`);
+              console.log(`[Email Dispatch] Invoking send-notification edge function for ${apuradorProfile.email}`);
+              const { data: fnData, error: fnError } = await supabase.functions.invoke('send-notification', {
+                body: {
+                  to: apuradorProfile.email,
+                  name: apuradorProfile.name,
+                  patdNumber: dbPayload.patd_number,
+                  details: dbPayload.detalhes_fato || ""
+                }
+              });
+
+              if (fnError) {
+                console.warn("[Email Dispatch] Function error (make sure RESEND_API_KEY is configured):", fnError);
+                alert(`Processo criado. Observação: Não foi possível enviar a notificação por e-mail para o apurador pois a chave RESEND_API_KEY não está configurada ou houve uma falha no disparo.`);
+              } else {
+                alert(`Notificação enviada por e-mail com sucesso para o apurador ${apuradorProfile.name} (${apuradorProfile.email}) sobre a abertura do processo ${dbPayload.patd_number}.`);
+              }
             }
           } catch (mailErr) {
             console.error("Error sending notification email:", mailErr);
