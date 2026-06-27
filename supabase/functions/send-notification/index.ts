@@ -54,22 +54,16 @@ Deno.serve(async (req: Request) => {
         to: [to],
         subject: `Novo Processo PATD Atribuído - Nº ${patdNumber}`,
         html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; rounded: 8px;">
-            <h2 style="color: #4f46e5; margin-bottom: 20px;">Notificação de Abertura de Processo</h2>
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; color: #334155; line-height: 1.6;">
             <p>Olá, <strong>${name || "Apurador"}</strong>,</p>
-            <p>Informamos que um novo Processo de Apuração de Transgressão Disciplinar (PATD) foi aberto e atribuído a você para apuração.</p>
-            
-            <div style="background-color: #f8fafc; border-left: 4px solid #4f46e5; padding: 15px; margin: 20px 0;">
-              <p style="margin: 0 0 10px 0;"><strong>Número do PATD:</strong> ${patdNumber}</p>
-              <p style="margin: 0;"><strong>Detalhes dos Fatos:</strong></p>
-              <p style="margin: 5px 0 0 0; color: #475569; font-style: italic;">${details || "Não fornecido"}</p>
-            </div>
+            <p>Informamos que um novo Processo de Apuração de Transgressão Disciplinar (PATD), foi aberto e atribuído a você para apuração.</p>
+            <p><strong>Número do PATD:</strong> ${patdNumber}</p>
             
             ${docSection}
 
             <p>Por favor, acesse o sistema GPATD para visualizar os detalhes completos e dar andamento ao processo.</p>
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-            <p style="font-size: 12px; color: #94a3b8; text-align: center;">GPATD - Sistema de Apuração de Transgressão Disciplinar</p>
+            <p style="font-size: 11px; color: #94a3b8; text-align: center; margin: 0;">GPATD - Sistema de Apuração de Transgressão Disciplinar</p>
           </div>
         `,
       }),
