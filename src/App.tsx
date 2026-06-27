@@ -382,7 +382,10 @@ export default function App() {
                   patdNumber: dbPayload.patd_number,
                   details: dbPayload.detalhes_fato || "",
                   documentUrl: docUrl,
-                  documentName: docName
+                  documentName: docName,
+                  senderPhone: currentUser?.telefone || "",
+                  senderExtension: currentUser?.ramal || "",
+                  senderEmail: currentUser?.email || ""
                 }
               });
 

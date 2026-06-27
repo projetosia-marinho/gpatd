@@ -15,7 +15,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { to, name, patdNumber, details, documentUrl, documentName } = await req.json();
+    const { to, name, patdNumber, details, documentUrl, documentName, senderPhone, senderExtension, senderEmail } = await req.json();
 
     if (!to || !patdNumber) {
       return new Response(JSON.stringify({ error: "Missing required fields: to, patdNumber" }), {
@@ -62,6 +62,15 @@ Deno.serve(async (req: Request) => {
             ${docSection}
 
             <p>Por favor, acesse o sistema GPATD para visualizar os detalhes completos e dar andamento ao processo.</p>
+            
+            <p style="margin: 15px 0 10px 0;"><a href="https://www.gpatdafa.com" target="_blank" style="color: #4f46e5; text-decoration: none; font-weight: 600;">www.gpatdafa.com</a></p>
+            
+            <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.5;">
+              <strong>Telefone:</strong> ${senderPhone || "—"}<br/>
+              <strong>Ramal:</strong> ${senderExtension || "—"}<br/>
+              <strong>E-mail:</strong> ${senderEmail || "—"}
+            </p>
+            
             <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
             <p style="font-size: 11px; color: #94a3b8; text-align: center; margin: 0;">GPATD - Sistema de Apuração de Transgressão Disciplinar</p>
           </div>

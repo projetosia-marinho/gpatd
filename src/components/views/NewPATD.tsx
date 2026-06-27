@@ -2404,7 +2404,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             toEmail: email || 'Sem e-mail cadastrado (verifique o cadastro do militar)',
             toName: formData.apurador,
             patdNumber: formData.patdNumber,
-            documentName: formData.documents && formData.documents.length > 0 ? formData.documents[0].name : null
+            documentName: formData.documents && formData.documents.length > 0 ? formData.documents[0].name : null,
+            senderPhone: currentUser?.telefone || "",
+            senderExtension: currentUser?.ramal || "",
+            senderEmail: currentUser?.email || ""
           });
           setIsPreviewMailOpen(true);
         })
@@ -2415,7 +2418,10 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             toEmail: 'Erro ao buscar e-mail',
             toName: formData.apurador,
             patdNumber: formData.patdNumber,
-            documentName: formData.documents && formData.documents.length > 0 ? formData.documents[0].name : null
+            documentName: formData.documents && formData.documents.length > 0 ? formData.documents[0].name : null,
+            senderPhone: currentUser?.telefone || "",
+            senderExtension: currentUser?.ramal || "",
+            senderEmail: currentUser?.email || ""
           });
           setIsPreviewMailOpen(true);
         });
@@ -3070,6 +3076,14 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   )}
 
                   <p>Por favor, acesse o sistema GPATD para visualizar os detalhes completos e dar andamento ao processo.</p>
+                  
+                  <p style={{ margin: '15px 0 10px 0' }}><a href="https://www.gpatdafa.com" target="_blank" style={{ color: '#4f46e5', textDecoration: 'none', fontWeight: '600' }}>www.gpatdafa.com</a></p>
+                  
+                  <p style={{ margin: 0, fontSize: '12px', color: '#64748b', lineHeight: 1.5 }}>
+                    <strong>Telefone:</strong> {previewMailData.senderPhone || "—"}<br/>
+                    <strong>Ramal:</strong> {previewMailData.senderExtension || "—"}<br/>
+                    <strong>E-mail:</strong> {previewMailData.senderEmail || "—"}
+                  </p>
                   
                   <hr style={{ border: 0, borderTop: '1px solid #e2e8f0', margin: '20px 0' }} />
                   <p style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center', margin: 0 }}>
