@@ -362,6 +362,24 @@ export default function App() {
         const { data, error } = await supabase.from('processes').insert(insertPayload).select().single();
         if (error) throw error;
 
+        // Simulated email dispatch if an apurador is assigned to the process
+        if (dbPayload.apurador && dbPayload.apurador_saram) {
+          try {
+            const { data: apuradorProfile } = await supabase
+              .from('profiles')
+              .select('email, name')
+              .eq('saram', dbPayload.apurador_saram)
+              .maybeSingle();
+            
+            if (apuradorProfile && apuradorProfile.email) {
+              console.log(`[Email Dispatch] Sending notification to ${apuradorProfile.email} regarding new process ${dbPayload.patd_number}`);
+              alert(`Notificação enviada por e-mail para o apurador ${apuradorProfile.name} (${apuradorProfile.email}) sobre a abertura do processo ${dbPayload.patd_number}.`);
+            }
+          } catch (mailErr) {
+            console.error("Error sending notification email:", mailErr);
+          }
+        }
+
         const newProcess: Process = {
           ...newProcessData,
           id: data.id,

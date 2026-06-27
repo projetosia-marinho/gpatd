@@ -206,7 +206,7 @@ const DatePickerField = ({ label, value, onChange, error }: any) => {
   );
 };
 
-const SelectField = ({ label, icon: Icon, value, onChange, options, placeholder = "Selecionar", direction = "down" }: any) => {
+const SelectField = ({ label, icon: Icon, value, onChange, options, placeholder = "Selecionar", direction = "down", disabled = false }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectedOption = options.find((opt: any) => opt.value === value);
 
@@ -216,8 +216,9 @@ const SelectField = ({ label, icon: Icon, value, onChange, options, placeholder 
       <div className="relative group">
         <button
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full h-11 pl-10 pr-10 rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border border-slate-200 dark:border-slate-800/80 focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white text-left font-medium relative z-20 flex items-center overflow-hidden"
+          disabled={disabled}
+          onClick={() => !disabled && setIsOpen(!isOpen)}
+          className={`w-full h-11 pl-10 pr-10 rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border border-slate-200 dark:border-slate-800/80 focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white text-left font-medium relative z-20 flex items-center overflow-hidden ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
         >
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/80 group-focus-within:text-indigo-500">
             <Icon size={16} />
@@ -2526,21 +2527,23 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
         </div>
         
         <div className="flex flex-wrap gap-3 overflow-x-auto pb-2 scrollbar-none">
-          <motion.button 
-            type="button"
-            onClick={handleSpreadsheetClick}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/5 backdrop-blur-xl border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all shadow-lg shadow-black/5 group shrink-0"
-          >
-            <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
-              <UploadCloud size={18} />
-            </div>
-            <div className="text-left">
-              <p className="leading-none">Importar Planilha</p>
-              <p className="text-[9px] opacity-60 lowercase font-medium mt-1">Excel (.xlsx) ou .csv</p>
-            </div>
-          </motion.button>
+          {currentUser?.role !== 'Apurador' && (
+            <motion.button 
+              type="button"
+              onClick={handleSpreadsheetClick}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/5 backdrop-blur-xl border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold hover:bg-emerald-500/20 transition-all shadow-lg shadow-black/5 group shrink-0"
+            >
+              <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                <UploadCloud size={18} />
+              </div>
+              <div className="text-left">
+                <p className="leading-none">Importar Planilha</p>
+                <p className="text-[9px] opacity-60 lowercase font-medium mt-1">Excel (.xlsx) ou .csv</p>
+              </div>
+            </motion.button>
+          )}
 
           <input 
             type="file" 
@@ -2565,23 +2568,25 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             </div>
           </motion.button>
           
-          <motion.button 
-            type="button"
-            onClick={handleFileClick}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0 ${formData.documents && formData.documents.length > 0 ? 'ring-2 ring-inset ring-emerald-500' : ''}`}
-          >
-            <div className={`p-2 rounded-lg transition-all ${formData.documents && formData.documents.length > 0 ? 'bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white'}`}>
-              {formData.documents && formData.documents.length > 0 ? <FileText size={18} /> : <FilePlus size={18} />}
-            </div>
-            <div className="text-left">
-              <p className="leading-none">{formData.documents && formData.documents.length > 0 ? 'PDF Anexado' : 'Inserir Documentos'}</p>
-              <p className="text-[9px] opacity-50 lowercase font-medium mt-1">
-                {formData.documents && formData.documents.length > 0 ? '1 documento' : 'anexos e arquivos pdf'}
-              </p>
-            </div>
-          </motion.button>
+          {currentUser?.role !== 'Apurador' && (
+            <motion.button 
+              type="button"
+              onClick={handleFileClick}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className={`flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all shadow-lg shadow-black/5 group shrink-0 ${formData.documents && formData.documents.length > 0 ? 'ring-2 ring-inset ring-emerald-500' : ''}`}
+            >
+              <div className={`p-2 rounded-lg transition-all ${formData.documents && formData.documents.length > 0 ? 'bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white'}`}>
+                {formData.documents && formData.documents.length > 0 ? <FileText size={18} /> : <FilePlus size={18} />}
+              </div>
+              <div className="text-left">
+                <p className="leading-none">{formData.documents && formData.documents.length > 0 ? 'PDF Anexado' : 'Inserir Documentos'}</p>
+                <p className="text-[9px] opacity-50 lowercase font-medium mt-1">
+                  {formData.documents && formData.documents.length > 0 ? '1 documento' : 'anexos e arquivos pdf'}
+                </p>
+              </div>
+            </motion.button>
+          )}
           
           <motion.button 
             type="button"
@@ -2628,24 +2633,24 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
             
             <div className="relative z-10 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <InputField label="Nº do PATD" icon={FileText} value={formData.patdNumber} onChange={handleChange('patdNumber')} />
-                <SelectField label="Posto" icon={Shield} value={formData.posto} onChange={handleChange('posto')} options={optionsPosto} />
-                <SelectField label="Quadro" icon={Briefcase} value={formData.quadro} onChange={handleChange('quadro')} options={allowedQuadros} />
+                <InputField label="Nº do PATD" icon={FileText} value={formData.patdNumber} onChange={handleChange('patdNumber')} disabled={currentUser?.role === 'Apurador'} />
+                <SelectField label="Posto" icon={Shield} value={formData.posto} onChange={handleChange('posto')} options={optionsPosto} disabled={currentUser?.role === 'Apurador'} />
+                <SelectField label="Quadro" icon={Briefcase} value={formData.quadro} onChange={handleChange('quadro')} options={allowedQuadros} disabled={currentUser?.role === 'Apurador'} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <AutocompleteInputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} onBlur={() => handleFieldBlur('arrolado', 'saram')} placeholder="0000000" error={errors.saram} fieldName="saram" />
-                <AutocompleteInputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} onBlur={() => handleFieldBlur('arrolado', 'nome')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} fieldName="nomeCompleto" />
+                <AutocompleteInputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} onBlur={() => handleFieldBlur('arrolado', 'saram')} placeholder="0000000" error={errors.saram} fieldName="saram" disabled={currentUser?.role === 'Apurador'} />
+                <AutocompleteInputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} onBlur={() => handleFieldBlur('arrolado', 'nome')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} fieldName="nomeCompleto" disabled={currentUser?.role === 'Apurador'} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <AutocompleteInputField label="Especialidade" icon={Briefcase} value={formData.especialidade} onChange={handleChange('especialidade')} fieldName="especialidade" />
+                <AutocompleteInputField label="Especialidade" icon={Briefcase} value={formData.especialidade} onChange={handleChange('especialidade')} fieldName="especialidade" disabled={currentUser?.role === 'Apurador'} />
                 <div className="hidden md:block" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <SelectField label="Divisão" icon={Building2} value={formData.divisao} onChange={handleChange('divisao')} options={optionsDivisao} />
-                <SelectField label="Setor" icon={MapPin} value={formData.setor} onChange={handleChange('setor')} options={optionsSetor} placeholder="Selecione o setor..." />
+                <SelectField label="Divisão" icon={Building2} value={formData.divisao} onChange={handleChange('divisao')} options={optionsDivisao} disabled={currentUser?.role === 'Apurador'} />
+                <SelectField label="Setor" icon={MapPin} value={formData.setor} onChange={handleChange('setor')} options={optionsSetor} placeholder="Selecione o setor..." disabled={currentUser?.role === 'Apurador'} />
               </div>
             </div>
           </motion.div>
@@ -2792,28 +2797,30 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                           >
                             <Download size={14} />
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newHistoryItem = {
-                                field: 'Documento PDF',
-                                oldValue: `Removido: ${doc.name}`,
-                                newValue: '—',
-                                user: currentUser?.name || 'Sistema',
-                                date: new Date().toLocaleString('pt-BR')
-                              };
-                              setHistory((prev: any) => [newHistoryItem, ...prev]);
+                          {currentUser?.role !== 'Apurador' && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newHistoryItem = {
+                                  field: 'Documento PDF',
+                                  oldValue: `Removido: ${doc.name}`,
+                                  newValue: '—',
+                                  user: currentUser?.name || 'Sistema',
+                                  date: new Date().toLocaleString('pt-BR')
+                                };
+                                setHistory((prev: any) => [newHistoryItem, ...prev]);
 
-                              setFormData((prev: any) => ({
-                                ...prev,
-                                documents: prev.documents.filter((_: any, idx: number) => idx !== docIdx)
-                              }));
-                            }}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all"
-                            title="Excluir Documento"
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                                setFormData((prev: any) => ({
+                                  ...prev,
+                                  documents: prev.documents.filter((_: any, idx: number) => idx !== docIdx)
+                                }));
+                              }}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 dark:hover:bg-rose-500/20 transition-all"
+                              title="Excluir Documento"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}

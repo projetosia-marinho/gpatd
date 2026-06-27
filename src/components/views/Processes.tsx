@@ -424,7 +424,7 @@ export default function Processes({
               Excluir ({selectedIds.length})
             </button>
           )}
-          {currentUser.role !== 'Visualizador' && (
+          {currentUser.role !== 'Visualizador' && currentUser.role !== 'Apurador' && (
             <button 
               onClick={() => setIsImportOpen(true)}
               className="flex items-center gap-2 h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/10 cursor-pointer"
@@ -433,12 +433,14 @@ export default function Processes({
               Importar Planilha
             </button>
           )}
-          <button 
-            onClick={() => onNew ? onNew() : setActiveTab?.('novo-patd')}
-            className="flex items-center gap-2 h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-500/20"
-          >
-            Novo PATD
-          </button>
+          {(currentUser.role === 'Operador' || currentUser.role === 'Administrador') && (
+            <button 
+              onClick={() => onNew ? onNew() : setActiveTab?.('novo-patd')}
+              className="flex items-center gap-2 h-11 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-500/20"
+            >
+              Novo PATD
+            </button>
+          )}
         </div>
       </header>
 
@@ -511,9 +513,9 @@ export default function Processes({
                   { key: 'punicao', label: 'Punição' },
                 ].map((col) => (
                   <th 
-                    key={col.key}
-                    onClick={() => handleSort(col.key as keyof Process)}
-                    className="px-6 py-5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest cursor-pointer group hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors last:pr-8"
+                     key={col.key}
+                     onClick={() => handleSort(col.key as keyof Process)}
+                     className="px-6 py-5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest cursor-pointer group hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors last:pr-8"
                   >
                     <div className="flex items-center gap-2">
                       {col.label}
@@ -644,13 +646,15 @@ export default function Processes({
                         >
                           <Edit2 size={16} />
                         </button>
-                        <button 
-                          onClick={() => handleDelete(process)}
-                          className="p-2 text-slate-400 hover:text-rose-500 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all shadow-sm border border-transparent hover:border-slate-100 dark:hover:border-slate-700" 
-                          title="Excluir"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        {currentUser.role !== 'Apurador' && (
+                          <button 
+                            onClick={() => handleDelete(process)}
+                            className="p-2 text-slate-400 hover:text-rose-500 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all shadow-sm border border-transparent hover:border-slate-100 dark:hover:border-slate-700" 
+                            title="Excluir"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </motion.tr>
