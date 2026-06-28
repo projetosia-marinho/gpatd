@@ -106,11 +106,32 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
       inWrapper: true
     });
 
+    // Temporarily disable stylesheets containing oklch or links to prevent html2canvas parsing crash
+    const disabledSheets: any[] = [];
+    const sheets = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'));
+    sheets.forEach((sheet: any) => {
+      try {
+        const isLink = sheet.tagName === 'LINK';
+        const text = isLink ? '' : sheet.textContent || '';
+        if (isLink || text.includes('oklch')) {
+          sheet.disabled = true;
+          disabledSheets.push(sheet);
+        }
+      } catch (err) {
+        // ignore
+      }
+    });
+
     // Render HTML page to canvas
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
       logging: false
+    });
+
+    // Restore stylesheets
+    disabledSheets.forEach((sheet) => {
+      sheet.disabled = false;
     });
 
     document.body.removeChild(container);
@@ -149,9 +170,30 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
 
     document.body.appendChild(container);
 
+    // Temporarily disable stylesheets containing oklch or links to prevent html2canvas parsing crash
+    const disabledSheets: any[] = [];
+    const sheets = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'));
+    sheets.forEach((sheet: any) => {
+      try {
+        const isLink = sheet.tagName === 'LINK';
+        const text = isLink ? '' : sheet.textContent || '';
+        if (isLink || text.includes('oklch')) {
+          sheet.disabled = true;
+          disabledSheets.push(sheet);
+        }
+      } catch (err) {
+        // ignore
+      }
+    });
+
     const canvas = await html2canvas(container, {
       scale: 2,
       logging: false
+    });
+
+    // Restore stylesheets
+    disabledSheets.forEach((sheet) => {
+      sheet.disabled = false;
     });
 
     document.body.removeChild(container);
