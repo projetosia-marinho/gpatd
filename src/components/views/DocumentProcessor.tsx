@@ -48,12 +48,23 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
   const [ocrTextResult, setOcrTextResult] = useState<string>('');
   const [errorLog, setErrorLog] = useState<string | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string>(initialFolderId || '');
+  const [successInfo, setSuccessInfo] = useState<{ fileName: string; size: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewContainerRef = useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     setSelectedFolderId(initialFolderId || '');
   }, [initialFolderId]);
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      setQueue([]);
+      setSuccessInfo(null);
+      setErrorLog(null);
+      setIsProcessing(false);
+      setProgressPercentage(0);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -64,7 +75,16 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
   };
 
   const addFilesToQueue = (files: File[]) => {
-    const newItems = files.map(file => {
+    const pdfFiles = files.filter(file => {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      if (ext !== 'pdf') {
+        alert(`O arquivo "${file.name}" não é um PDF. Somente arquivos PDF são permitidos.`);
+        return false;
+      }
+      return true;
+    });
+
+    const newItems = pdfFiles.map(file => {
       const ext = file.name.split('.').pop()?.toLowerCase() || '';
       return {
         id: Math.random().toString(36).substring(2, 9),
@@ -350,6 +370,9 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
         await onUploadSuccess(finalFile, desc, selectedFolderId);
       }
 
+      const sizeStr = (finalBlob.size / 1024 / 1024).toFixed(2) + ' MB';
+      setSuccessInfo({ fileName: finalFile.name, size: sizeStr });
+
       setProgressPercentage(100);
       setProcessStep('Processamento Concluído com Sucesso!');
       
@@ -363,11 +386,7 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
       document.body.removeChild(a);
       URL.revokeObjectURL(downloadUrl);
 
-      setTimeout(() => {
-        setIsProcessing(false);
-        setQueue([]);
-        onClose();
-      }, 1500);
+      setIsProcessing(false);
 
     } catch (err: any) {
       console.error('Error during Document Merging/OCR pipeline:', err);
@@ -418,7 +437,33 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-          {isProcessing ? (
+          {successInfo ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
+              <div className="w-20 h-20 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto shadow-inner">
+                <Check size={40} className="stroke-[3]" />
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">Juntada Concluída!</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Os documentos foram mesclados e compactados com sucesso.</p>
+              </div>
+
+              <div className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 w-full max-w-md text-left space-y-3">
+                <div>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Nome do Arquivo</span>
+                  <span className="text-sm font-bold text-slate-800 dark:text-slate-200 break-all">{successInfo.fileName}</span>
+                </div>
+                <div className="pt-3 border-t border-slate-150 dark:border-slate-800 flex justify-between items-center">
+                  <div>
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Tamanho Final do PDF</span>
+                    <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400">{successInfo.size}</span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-[9px] font-black text-indigo-650 dark:text-indigo-400 uppercase tracking-wider">Compactado</span>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-450">O download iniciou automaticamente. Você também pode fechar esta tela.</p>
+            </div>
+          ) : isProcessing ? (
             <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
               <div className="relative">
                 <div className="w-20 h-20 rounded-full border-4 border-slate-100 dark:border-slate-800" />
@@ -453,14 +498,14 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
                   Clique ou arraste seus arquivos para a Juntada
                 </p>
                 <p className="text-[10px] text-slate-400 uppercase font-black">
-                  Suporta PDF, PNG, JPG, DOCX e ODT (Máximo 20MB por arquivo)
+                  Suporta apenas arquivos PDF (Máximo 20MB por arquivo)
                 </p>
                 <input 
                   type="file" 
                   ref={fileInputRef} 
                   multiple 
                   onChange={handleFileChange}
-                  accept=".pdf,.png,.jpg,.jpeg,.docx,.odt" 
+                  accept=".pdf" 
                   className="hidden" 
                 />
               </div>
@@ -597,20 +642,31 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
         {/* Footer */}
         {!isProcessing && (
           <div className="p-8 bg-slate-50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex justify-between gap-3 shrink-0">
-            <button 
-              onClick={onClose}
-              className="flex-1 h-12 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-550 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
-            >
-              Cancelar
-            </button>
-            <button 
-              onClick={processPipeline}
-              disabled={queue.length === 0}
-              className="flex-1 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:dark:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Cpu size={16} />
-              Iniciar Juntada ({queue.length})
-            </button>
+            {successInfo ? (
+              <button 
+                onClick={onClose}
+                className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all cursor-pointer flex items-center justify-center"
+              >
+                Concluir e Fechar
+              </button>
+            ) : (
+              <>
+                <button 
+                  onClick={onClose}
+                  className="flex-1 h-12 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-550 font-bold text-xs uppercase tracking-widest hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={processPipeline}
+                  disabled={queue.length === 0}
+                  className="flex-1 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:dark:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Cpu size={16} />
+                  Iniciar Juntada ({queue.length})
+                </button>
+              </>
+            )}
           </div>
         )}
       </motion.div>
