@@ -183,6 +183,9 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
 
       for (let i = 0; i < queue.length; i++) {
         const item = queue[i];
+        if (item.file.size === 0) {
+          throw new Error(`O arquivo "${item.name}" está vazio (0 bytes). Não é possível processar arquivos sem conteúdo.`);
+        }
         const stepProgress = 10 + Math.floor((i / totalItems) * 70);
         setProgressPercentage(stepProgress);
         setProcessStep(`Processando [${i+1}/${totalItems}]: ${item.name}...`);
@@ -378,7 +381,7 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
               <div className="relative">
                 <div className="w-20 h-20 rounded-full border-4 border-slate-100 dark:border-slate-800" />
                 <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-transparent border-t-indigo-600 animate-spin" />
-                <Cpu className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-650 animate-pulse" size={28} />
+                <Cpu className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600 dark:text-indigo-400 animate-pulse" size={28} />
               </div>
               
               <div className="space-y-2 max-w-md">
@@ -561,7 +564,7 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, fo
             <button 
               onClick={processPipeline}
               disabled={queue.length === 0}
-              className="flex-1 h-12 rounded-xl bg-indigo-650 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:dark:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-500 text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Cpu size={16} />
               Iniciar Juntada ({queue.length})
