@@ -120,37 +120,40 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
   return (
     <div ref={containerRef} className="space-y-1.5 flex-1 relative">
       <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-      <div className="relative group">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/80 transition-all group-focus-within:text-indigo-500 group-focus-within:scale-110 z-10">
-          <Icon size={16} />
+      <div className="flex items-center gap-2">
+        <div className="relative group flex-1">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/80 transition-all group-focus-within:text-indigo-500 group-focus-within:scale-110 z-10">
+            <Icon size={16} />
+          </div>
+          <input
+            type={type}
+            value={value}
+            onChange={onChange}
+            onFocus={() => setShowDropdown(true)}
+            onBlur={onBlur}
+            placeholder={placeholder}
+            disabled={disabled}
+            className={`w-full h-11 pl-10 pr-4 rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-800/80'} focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 ${error ? 'focus:ring-rose-100/30 dark:focus:ring-rose-900/20' : 'focus:ring-indigo-500/10'} focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium tracking-tight relative z-0`}
+          />
+          {/* Futuristic Background Glow */}
+          <div className="absolute inset-0 rounded-xl bg-linear-to-r from-indigo-500/0 via-indigo-500/0 to-purple-500/0 group-focus-within:from-indigo-500/10 group-focus-within:via-purple-500/10 group-focus-within:to-indigo-500/10 transition-all duration-700 -z-10 shadow-inner group-focus-within:shadow-indigo-500/5" />
+          
+          {/* Corner Brackets (Futuristic UI vibe) */}
+          <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 group-focus-within:border-indigo-500 transition-colors rounded-tl-sm" />
+          <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-slate-200 dark:border-slate-800 group-focus-within:border-indigo-500 transition-colors rounded-br-sm" />
         </div>
-        <input
-          type={type}
-          value={value}
-          onChange={onChange}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={onBlur}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={`w-full h-11 pl-10 ${onSearch ? 'pr-12' : 'pr-4'} rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-800/80'} focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 ${error ? 'focus:ring-rose-100/30 dark:focus:ring-rose-900/20' : 'focus:ring-indigo-500/10'} focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium tracking-tight relative z-0`}
-        />
         {onSearch && (
           <button
             type="button"
             onClick={onSearch}
             disabled={disabled || !value}
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 px-2.5 rounded-lg bg-indigo-650 hover:bg-indigo-700 disabled:bg-slate-350 disabled:dark:bg-slate-800/50 text-white disabled:text-slate-500 font-bold text-xs uppercase transition-all flex items-center justify-center z-10 cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+            className="h-11 px-4 rounded-xl bg-indigo-650 hover:bg-indigo-700 disabled:bg-slate-300 disabled:dark:bg-slate-800/50 text-white disabled:text-slate-500 font-bold text-xs uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md hover:scale-105 active:scale-95 shrink-0"
             title="Buscar militar no efetivo"
           >
-            <Search size={14} />
+            <Search size={16} />
+            <span>Buscar</span>
           </button>
         )}
-        {/* Futuristic Background Glow */}
-        <div className="absolute inset-0 rounded-xl bg-linear-to-r from-indigo-500/0 via-indigo-500/0 to-purple-500/0 group-focus-within:from-indigo-500/10 group-focus-within:via-purple-500/10 group-focus-within:to-indigo-500/10 transition-all duration-700 -z-10 shadow-inner group-focus-within:shadow-indigo-500/5" />
-        
-        {/* Corner Brackets (Futuristic UI vibe) */}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-slate-200 dark:border-slate-800 group-focus-within:border-indigo-500 transition-colors rounded-tl-sm" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-slate-200 dark:border-slate-800 group-focus-within:border-indigo-500 transition-colors rounded-br-sm" />
       </div>
 
       <AnimatePresence>
