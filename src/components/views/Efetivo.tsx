@@ -11,7 +11,8 @@ import {
   RefreshCw,
   X,
   Edit2,
-  FilePlus
+  FilePlus,
+  UserPlus
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { supabase } from '../../lib/supabase';
@@ -33,9 +34,10 @@ interface EditRecordModalProps {
   record: EfetivoRecord | null;
   onSave: (updatedRecord: EfetivoRecord) => Promise<void>;
   currentUser?: any;
+  isNew: boolean;
 }
 
-function EditRecordModal({ isOpen, onClose, record, onSave, currentUser }: EditRecordModalProps) {
+function EditRecordModal({ isOpen, onClose, record, onSave, currentUser, isNew }: EditRecordModalProps) {
   const [formData, setFormData] = useState<EfetivoRecord>({
     saram: '',
     posto: '',
@@ -91,7 +93,9 @@ function EditRecordModal({ isOpen, onClose, record, onSave, currentUser }: EditR
           className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 p-8 z-10"
         >
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white">Editar Militar</h3>
+            <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white">
+              {isNew ? 'Adicionar Militar' : 'Editar Militar'}
+            </h3>
             <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-850 text-slate-400 hover:text-rose-500 transition-colors">
               <X size={18} />
             </button>
@@ -99,12 +103,21 @@ function EditRecordModal({ isOpen, onClose, record, onSave, currentUser }: EditR
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">SARAM (Não editável)</label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">
+                {isNew ? 'SARAM *' : 'SARAM (Não editável)'}
+              </label>
               <input
                 type="text"
+                required
+                maxLength={7}
                 value={formData.saram}
-                disabled
-                className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm font-semibold text-slate-400 cursor-not-allowed"
+                disabled={!isNew}
+                onChange={e => setFormData(prev => ({ ...prev, saram: e.target.value.replace(/\D/g, '') }))}
+                className={`w-full h-11 px-4 rounded-xl border text-sm font-semibold ${
+                  !isNew
+                    ? 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-400 cursor-not-allowed'
+                    : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white'
+                }`}
               />
             </div>
             
@@ -194,7 +207,11 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
   const [records, setRecords] = useState<EfetivoRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingRecord, setEditingRecord] = useState<EfetivoRecord | null>(null);
+  const [modalState, setModalState] = useState<{ isOpen: boolean; record: EfetivoRecord | null; isNew: boolean }>({
+    isOpen: false,
+    record: null,
+    isNew: false
+  });
   
   // Upload States
   const [isDragOver, setIsDragOver] = useState(false);
@@ -366,26 +383,50 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
     }
   };
 
-  const handleUpdateRecord = async (updated: EfetivoRecord) => {
+  const handleSaveRecord = async (updated: EfetivoRecord) => {
     try {
-      const { error } = await supabase
-        .from('efetivo')
-        .update({
-          nome_completo: updated.nome_completo,
-          posto: updated.posto,
-          quadro: updated.quadro,
-          especialidade: updated.especialidade || null,
-          divisao: updated.divisao || null,
-          updated_at: new Date().toISOString()
-        })
-        .eq('saram', updated.saram);
+      const isNew = modalState.isNew;
+      if (isNew) {
+        if (updated.saram.length !== 7) {
+          alert('O SARAM deve conter exatamente 7 dígitos.');
+          throw new Error('SARAM inválido');
+        }
+        if (records.some(r => r.saram === updated.saram)) {
+          alert('Este SARAM já está cadastrado no efetivo.');
+          throw new Error('SARAM duplicado');
+        }
+        const { error } = await supabase
+          .from('efetivo')
+          .insert({
+            saram: updated.saram,
+            nome_completo: updated.nome_completo,
+            posto: updated.posto,
+            quadro: updated.quadro,
+            especialidade: updated.especialidade || null,
+            divisao: updated.divisao || currentUser?.divisao || null
+          });
 
-      if (error) throw error;
+        if (error) throw error;
+        setRecords(prev => [updated, ...prev]);
+      } else {
+        const { error } = await supabase
+          .from('efetivo')
+          .update({
+            nome_completo: updated.nome_completo,
+            posto: updated.posto,
+            quadro: updated.quadro,
+            especialidade: updated.especialidade || null,
+            divisao: updated.divisao || null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('saram', updated.saram);
 
-      setRecords(prev => prev.map(r => r.saram === updated.saram ? updated : r));
+        if (error) throw error;
+        setRecords(prev => prev.map(r => r.saram === updated.saram ? updated : r));
+      }
     } catch (err: any) {
-      console.error('Error updating efetivo record:', err);
-      alert('Erro ao atualizar registro.');
+      console.error('Error saving efetivo record:', err);
+      alert(err.message || 'Erro ao salvar registro.');
       throw err;
     }
   };
@@ -432,6 +473,25 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
           >
             <Download size={16} />
             Modelo Planilha
+          </button>
+
+          <button 
+            onClick={() => setModalState({
+              isOpen: true,
+              isNew: true,
+              record: {
+                saram: '',
+                posto: '1T',
+                quadro: 'QOINT',
+                especialidade: '',
+                nome_completo: '',
+                divisao: currentUser?.divisao || ''
+              }
+            })}
+            className="flex items-center gap-2 h-11 px-4 rounded-xl bg-indigo-650 hover:bg-indigo-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-md cursor-pointer"
+          >
+            <UserPlus size={16} />
+            Adicionar Militar
           </button>
         </div>
       </header>
@@ -536,7 +596,7 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
                               </button>
                             )}
                             <button
-                              onClick={() => setEditingRecord(record)}
+                              onClick={() => setModalState({ isOpen: true, record: record, isNew: false })}
                               className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-all"
                               title="Editar Militar"
                             >
@@ -566,11 +626,12 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
       </div>
 
       <EditRecordModal 
-        isOpen={!!editingRecord} 
-        onClose={() => setEditingRecord(null)} 
-        record={editingRecord} 
-        onSave={handleUpdateRecord} 
+        isOpen={modalState.isOpen} 
+        onClose={() => setModalState({ isOpen: false, record: null, isNew: false })} 
+        record={modalState.record} 
+        onSave={handleSaveRecord} 
         currentUser={currentUser}
+        isNew={modalState.isNew}
       />
     </div>
   );

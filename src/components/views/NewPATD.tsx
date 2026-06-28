@@ -147,11 +147,10 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
             type="button"
             onClick={onSearch}
             disabled={disabled || !value}
-            className="h-11 px-4 rounded-xl bg-indigo-650 hover:bg-indigo-700 disabled:bg-slate-300 disabled:dark:bg-slate-800/50 text-white disabled:text-slate-500 font-bold text-xs uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md hover:scale-105 active:scale-95 shrink-0"
+            className="h-11 w-11 rounded-xl bg-indigo-650 hover:bg-indigo-700 disabled:bg-slate-300 disabled:dark:bg-slate-800/50 text-white disabled:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95 shrink-0"
             title="Buscar militar no efetivo"
           >
-            <Search size={16} />
-            <span>Buscar</span>
+            <Search size={18} />
           </button>
         )}
       </div>
