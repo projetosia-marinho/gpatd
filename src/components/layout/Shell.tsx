@@ -178,8 +178,8 @@ export default function Shell({
     ] : []),
     ...(currentUser?.role !== 'Visualizador' ? [
       { id: 'processos', name: 'Processos', icon: FileText },
-      { id: 'novo-patd', name: 'Novo PATD', icon: PlusCircle },
       ...(currentUser?.role !== 'Apurador' ? [
+        { id: 'novo-patd', name: 'Novo PATD', icon: PlusCircle },
         { id: 'efetivo', name: 'Efetivo', icon: Database },
       ] : []),
     ] : []),
