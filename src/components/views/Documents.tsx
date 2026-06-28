@@ -188,8 +188,9 @@ export default function Documents({ currentUser }: { currentUser: any }) {
     }
   };
 
-  const handleDirectUpload = async (file: File, description: string) => {
-    if (!selectedFolder) {
+  const handleDirectUpload = async (file: File, description: string, targetFolderId?: string) => {
+    const destFolderId = targetFolderId || selectedFolder?.id;
+    if (!destFolderId) {
       alert('Nenhuma pasta selecionada para salvar o documento final.');
       return;
     }
@@ -197,7 +198,7 @@ export default function Documents({ currentUser }: { currentUser: any }) {
     try {
       const fileExt = file.name.split('.').pop() || 'pdf';
       const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
-      const filePath = `${selectedFolder.id}/${fileName}`;
+      const filePath = `${destFolderId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('documents')
@@ -210,7 +211,7 @@ export default function Documents({ currentUser }: { currentUser: any }) {
         .getPublicUrl(filePath);
 
       const newDoc = {
-        folder_id: selectedFolder.id,
+        folder_id: destFolderId,
         name: file.name,
         type: fileExt,
         size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
@@ -228,11 +229,13 @@ export default function Documents({ currentUser }: { currentUser: any }) {
 
       if (dbError) throw dbError;
 
-      setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [savedDoc, ...(f.documents || [])] } : f));
-      setSelectedFolder(prev => {
-        if (!prev) return null;
-        return { ...prev, documents: [savedDoc, ...(prev.documents || [])] };
-      });
+      setFolders(prev => prev.map(f => f.id === destFolderId ? { ...f, documents: [savedDoc, ...(f.documents || [])] } : f));
+      if (selectedFolder && selectedFolder.id === destFolderId) {
+        setSelectedFolder(prev => {
+          if (!prev) return null;
+          return { ...prev, documents: [savedDoc, ...(prev.documents || [])] };
+        });
+      }
     } catch (err: any) {
       console.error('Direct Upload Error:', err);
       alert('Erro ao salvar o documento gerado: ' + (err.message || err));
@@ -382,6 +385,41 @@ export default function Documents({ currentUser }: { currentUser: any }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <AnimatePresence mode="popLayout">
+              {filterCategory === 'Todas' && !searchTerm && (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  onClick={() => setIsProcessorOpen(true)}
+                  className="group relative bg-linear-to-br from-indigo-500/10 via-purple-500/5 to-transparent dark:from-indigo-950/20 dark:via-indigo-900/10 rounded-[2.5rem] border-2 border-dashed border-indigo-200 dark:border-indigo-800/40 p-8 shadow-sm hover:shadow-2xl transition-all cursor-pointer hover:-translate-y-1 overflow-hidden"
+                >
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-indigo-500" />
+                  
+                  <div className="flex items-start justify-between mb-8">
+                    <div className="h-16 w-16 rounded-2xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-3xl text-indigo-650 dark:text-indigo-400 group-hover:scale-110 transition-transform shadow-md shadow-indigo-500/10">
+                      <Sparkles size={32} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <span className="px-3 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-[10px] font-black text-indigo-650 dark:text-indigo-400 uppercase tracking-widest">Ferramenta</span>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-3 group-hover:text-indigo-600 transition-colors">Juntada Digital</h3>
+                    </div>
+                    
+                    <p className="text-xs text-slate-500 dark:text-slate-400 italic leading-relaxed">
+                      Mescle múltiplos PDFs, imagens, Word ou ODT em um único documento comprimido e com OCR.
+                    </p>
+
+                    <div className="pt-6 border-t border-slate-50 dark:border-slate-800/60 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 bg-indigo-500/15 px-3 py-1.5 rounded-xl text-indigo-650 dark:text-indigo-400">
+                        <span className="text-[10px] font-black uppercase tracking-wider">Acessar Ferramenta</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
               {filteredFolders.map((folder) => (
                 <motion.div
                   layout
@@ -665,6 +703,8 @@ export default function Documents({ currentUser }: { currentUser: any }) {
           isOpen={isProcessorOpen} 
           onClose={() => setIsProcessorOpen(false)} 
           onUploadSuccess={handleDirectUpload}
+          folders={folders}
+          initialFolderId={selectedFolder?.id}
         />
       </AnimatePresence>
     </div>

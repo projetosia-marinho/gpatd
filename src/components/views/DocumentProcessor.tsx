@@ -25,7 +25,9 @@ import html2canvas from 'html2canvas';
 interface DocumentProcessorProps {
   isOpen: boolean;
   onClose: () => void;
-  onUploadSuccess: (file: File, description: string) => Promise<void>;
+  onUploadSuccess: (file: File, description: string, targetFolderId?: string) => Promise<void>;
+  folders: any[];
+  initialFolderId?: string;
 }
 
 interface QueueItem {
@@ -36,7 +38,7 @@ interface QueueItem {
   size: string;
 }
 
-export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess }: DocumentProcessorProps) {
+export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess, folders, initialFolderId }: DocumentProcessorProps) {
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processStep, setProcessStep] = useState<string>('');
@@ -45,8 +47,13 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess }: 
   const [compressionLevel, setCompressionLevel] = useState<'low' | 'medium' | 'high'>('medium');
   const [ocrTextResult, setOcrTextResult] = useState<string>('');
   const [errorLog, setErrorLog] = useState<string | null>(null);
+  const [selectedFolderId, setSelectedFolderId] = useState<string>(initialFolderId || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    setSelectedFolderId(initialFolderId || '');
+  }, [initialFolderId]);
 
   if (!isOpen) return null;
 
@@ -290,11 +297,13 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess }: 
       const finalBlob = new Blob([finalPdfBytes], { type: 'application/pdf' });
       const finalFile = new File([finalBlob], `Juntada_Digital_${Date.now()}.pdf`, { type: 'application/pdf' });
 
-      // Action: Trigger direct upload to Supabase Folder
-      setProcessStep('Enviando documento para a biblioteca...');
-      const desc = `Documento unificado via Juntada Digital (${totalItems} arquivos).` + 
-                   (enableOCR ? " Processado com camada de pesquisa OCR." : "");
-      await onUploadSuccess(finalFile, desc);
+      // Action: Trigger direct upload to Supabase Folder if selected
+      if (selectedFolderId) {
+        setProcessStep('Enviando documento para a biblioteca...');
+        const desc = `Documento unificado via Juntada Digital (${totalItems} arquivos).` + 
+                     (enableOCR ? " Processado com camada de pesquisa OCR." : "");
+        await onUploadSuccess(finalFile, desc, selectedFolderId);
+      }
 
       setProgressPercentage(100);
       setProcessStep('Processamento Concluído com Sucesso!');
@@ -480,6 +489,23 @@ export default function DocumentProcessor({ isOpen, onClose, onUploadSuccess }: 
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Folder Destination selector */}
+                  {folders.length > 0 && (
+                    <div className="flex flex-col gap-2 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 md:col-span-2">
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Pasta de Destino na Biblioteca</p>
+                      <select
+                        value={selectedFolderId}
+                        onChange={(e) => setSelectedFolderId(e.target.value)}
+                        className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-800 outline-hidden border border-transparent focus:border-indigo-500 transition-all text-xs font-bold text-slate-700 dark:text-slate-350 cursor-pointer"
+                      >
+                        <option value="">Apenas Download Local (Não enviar para biblioteca)</option>
+                        {folders.map(f => (
+                          <option key={f.id} value={f.id}>{f.name} ({f.category})</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
                   {/* OCR Option */}
                   <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <div>
