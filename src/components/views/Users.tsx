@@ -197,17 +197,43 @@ Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
   };
 
   React.useEffect(() => {
-    if (bulkStep === 3 && sendingIndex >= 0 && sendingIndex < sendingLogs.length) {
-      setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'sending' } : log));
-      
-      const timer = setTimeout(() => {
-        setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'success' } : log));
-        setSendingIndex(prev => prev + 1);
-      }, 1000); // 1s delay per simulated email
-      
-      return () => clearTimeout(timer);
-    }
-  }, [bulkStep, sendingIndex, sendingLogs.length]);
+    const sendCurrentEmail = async () => {
+      if (bulkStep === 3 && sendingIndex >= 0 && sendingIndex < sendingLogs.length) {
+        const currentLog = sendingLogs[sendingIndex];
+        if (!currentLog || currentLog.status !== 'pending') return;
+
+        setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'sending' } : log));
+        
+        try {
+          const { error } = await supabase.functions.invoke('send-notification', {
+            body: {
+              to: currentLog.email,
+              name: currentLog.name,
+              subject: emailSubject,
+              body: emailBody,
+              senderPhone: loggedUser?.telefone || "",
+              senderExtension: loggedUser?.ramal || "",
+              senderEmail: loggedUser?.email || ""
+            }
+          });
+          
+          if (error) {
+            console.error(`Error sending email to ${currentLog.email}:`, error);
+            setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'error' } : log));
+          } else {
+            setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'success' } : log));
+          }
+        } catch (err) {
+          console.error(`Exception sending email to ${currentLog.email}:`, err);
+          setSendingLogs(prev => prev.map((log, idx) => idx === sendingIndex ? { ...log, status: 'error' } : log));
+        } finally {
+          setSendingIndex(prev => prev + 1);
+        }
+      }
+    };
+
+    sendCurrentEmail();
+  }, [bulkStep, sendingIndex, emailSubject, emailBody, loggedUser]);
 
   // Form State
   const [formData, setFormData] = useState<Partial<User>>({
