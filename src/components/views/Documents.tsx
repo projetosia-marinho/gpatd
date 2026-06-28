@@ -16,10 +16,12 @@ import {
   X,
   ChevronRight,
   Edit2,
-  Eye
+  Eye,
+  Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../../lib/supabase';
+import DocumentProcessor from './DocumentProcessor';
 
 interface Document {
   id: string;
@@ -56,6 +58,7 @@ export default function Documents({ currentUser }: { currentUser: any }) {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isProcessorOpen, setIsProcessorOpen] = useState(false);
 
   const categories = ['Todas', 'Modelos', 'Legislação', 'Manuais', 'Outros'];
 
@@ -185,6 +188,58 @@ export default function Documents({ currentUser }: { currentUser: any }) {
     }
   };
 
+  const handleDirectUpload = async (file: File, description: string) => {
+    if (!selectedFolder) {
+      alert('Nenhuma pasta selecionada para salvar o documento final.');
+      return;
+    }
+
+    try {
+      const fileExt = file.name.split('.').pop() || 'pdf';
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const filePath = `${selectedFolder.id}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+
+      const newDoc = {
+        folder_id: selectedFolder.id,
+        name: file.name,
+        type: fileExt,
+        size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
+        uploadedby: currentUser.name || 'Usuário',
+        uploadedat: new Date().toISOString(),
+        description,
+        drive_link: publicUrl
+      };
+
+      const { data: savedDoc, error: dbError } = await supabase
+        .from('documents')
+        .insert([newDoc])
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      setFolders(prev => prev.map(f => f.id === selectedFolder.id ? { ...f, documents: [savedDoc, ...(f.documents || [])] } : f));
+      setSelectedFolder(prev => {
+        if (!prev) return null;
+        return { ...prev, documents: [savedDoc, ...(prev.documents || [])] };
+      });
+    } catch (err: any) {
+      console.error('Direct Upload Error:', err);
+      alert('Erro ao salvar o documento gerado: ' + (err.message || err));
+      throw err;
+    }
+  };
+
   const handleDeleteFolder = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (window.confirm('Excluir esta pasta e todos os seus documentos?')) {
@@ -263,6 +318,15 @@ export default function Documents({ currentUser }: { currentUser: any }) {
         </div>
 
         <div className="flex items-center gap-3">
+          {selectedFolder && (
+            <button 
+              onClick={() => setIsProcessorOpen(true)}
+              className="h-12 px-6 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-650 dark:text-indigo-400 font-bold text-sm uppercase tracking-widest shadow-sm hover:bg-indigo-100 transition-all flex items-center gap-2 group shrink-0 border border-indigo-105 dark:border-slate-800"
+            >
+              <Sparkles size={20} className="group-hover:scale-110 transition-transform" />
+              Juntada Digital
+            </button>
+          )}
           {selectedFolder && isAdmin && (
             <button 
               onClick={() => setIsUploadModalOpen(true)}
@@ -596,6 +660,12 @@ export default function Documents({ currentUser }: { currentUser: any }) {
             </motion.div>
           </motion.div>
         )}
+
+        <DocumentProcessor 
+          isOpen={isProcessorOpen} 
+          onClose={() => setIsProcessorOpen(false)} 
+          onUploadSuccess={handleDirectUpload}
+        />
       </AnimatePresence>
     </div>
   );
