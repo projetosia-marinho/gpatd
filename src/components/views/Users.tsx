@@ -160,12 +160,10 @@ export default function Users({ users, setUsers, divisions, globalSearchTerm = '
   const [emailSubject, setEmailSubject] = useState('[GPATD] Aviso: Atualização Obrigatória de Processos (PATD)');
   const [emailBody, setEmailBody] = useState(`Prezado(a) Operador(a),
 
-Solicitamos a imediata revisão e atualização do andamento de todos os processos (PATD) sob a responsabilidade de sua Divisão/Setor que se encontram pendentes de atualização no sistema GPATD.
+Solicitamos a revisão e atualização do andamento de todos os processos (PATD) sob a responsabilidade de sua Divisão que se encontram pendentes de atualizações no sistema GPATD, até o dia 30/06/2026.
 
-A tempestividade na inserção de andamentos, juntadas de documentos e publicação de boletins é fundamental para a lisura dos processos administrativos e o cumprimento dos prazos regulamentares nos termos da Guia Prática do GPATD.
-
-Atenciosamente,
-Seção de Investigação e Justiça (SIJ) / Administração do GPATD`);
+Respeitosamente,
+Seção de Investigação e Justiça (SIJ)`);
   
   const [bulkStep, setBulkStep] = useState<1 | 2 | 3>(1); // 1: Select recipients, 2: Compose email, 3: Sending/Progress
   const [sendingIndex, setSendingIndex] = useState(-1);
