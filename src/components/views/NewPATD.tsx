@@ -147,7 +147,7 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
             type="button"
             onClick={onSearch}
             disabled={disabled || !value}
-            className="h-11 w-11 rounded-xl bg-indigo-650 hover:bg-indigo-700 disabled:bg-slate-300 disabled:dark:bg-slate-800/50 text-white disabled:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95 shrink-0"
+            className="h-11 w-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:dark:bg-slate-800/50 text-white disabled:text-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95 shrink-0"
             title="Buscar militar no efetivo"
           >
             <Search size={18} />
@@ -169,7 +169,7 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
                 key={suggestion}
                 type="button"
                 onClick={() => handleSelect(suggestion)}
-                className="w-full px-3 py-2 text-left text-xs font-semibold rounded-lg hover:bg-indigo-500 hover:text-white text-slate-700 dark:text-slate-300 dark:hover:bg-indigo-650 transition-all block"
+                className="w-full px-3 py-2 text-left text-xs font-semibold rounded-lg hover:bg-indigo-500 hover:text-white text-slate-700 dark:text-slate-300 dark:hover:bg-indigo-700 transition-all block"
               >
                 {suggestion}
               </button>
@@ -630,7 +630,7 @@ const ImportModal = ({ isOpen, onClose, data, onSelect, onSelectMultiple }: { is
               {selectedCount > 0 && (
                 <button 
                   onClick={handleBulkImportClick}
-                  className="px-6 py-2.5 rounded-xl bg-indigo-650 hover:bg-indigo-750 text-white text-sm font-bold transition-all shadow-lg shadow-indigo-500/20"
+                  className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition-all shadow-lg shadow-indigo-500/20"
                 >
                   Importar Lote ({selectedCount})
                 </button>
@@ -2824,12 +2824,12 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                   <div className="md:col-span-2">
                     <AutocompleteInputField label="Apurador (Encarregado)" icon={User} value={formData.apurador} onChange={handleChange('apurador')} onBlur={() => handleFieldBlur('apurador', 'nome')} onSearch={() => handleFieldBlur('apurador', 'nome')} fieldName="apurador" />
                   </div>
-                  <SelectField label="Posto (Apurador)" icon={Shield} value={formData.apuradorPosto} onChange={handleChange('apuradorPosto')} options={optionsPosto} />
-                  <SelectField label="Quadro (Apurador)" icon={Briefcase} value={formData.apuradorQuadro} onChange={handleChange('apuradorQuadro')} options={optionsQuadro} />
+                  <SelectField label="Posto" icon={Shield} value={formData.apuradorPosto} onChange={handleChange('apuradorPosto')} options={optionsPosto} />
+                  <SelectField label="Quadro" icon={Briefcase} value={formData.apuradorQuadro} onChange={handleChange('apuradorQuadro')} options={optionsQuadro} />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <AutocompleteInputField label="SARAM (Apurador)" icon={User} value={formData.apuradorSaram} onChange={handleChange('apuradorSaram')} onBlur={() => handleFieldBlur('apurador', 'saram')} onSearch={() => handleFieldBlur('apurador', 'saram')} placeholder="0000000" error={errors.apuradorSaram} fieldName="apuradorSaram" />
-                  <div className="hidden md:block md:col-span-3" />
+                  <div className="hidden md:block" />
                 </div>
               </div>
 
@@ -3430,7 +3430,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                   {/* Document Info Card */}
                                   <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800">
                                     <div className="flex items-center gap-3">
-                                      <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-650 dark:text-indigo-400">
+                                      <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
                                         <File size={20} />
                                       </div>
                                       <div className="text-left">
@@ -3449,7 +3449,7 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                                         download={formData.delegacaoDoc.name}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-9 px-3 flex items-center justify-center gap-1.5 rounded-lg bg-indigo-650 hover:bg-indigo-750 text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
+                                        className="h-9 px-3 flex items-center justify-center gap-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
                                       >
                                         <Download size={14} />
                                         Download

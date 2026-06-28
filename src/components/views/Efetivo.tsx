@@ -191,7 +191,7 @@ function EditRecordModal({ isOpen, onClose, record, onSave, currentUser, isNew }
               <button
                 type="submit"
                 disabled={isSaving}
-                className="px-5 py-2.5 rounded-xl bg-indigo-650 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-indigo-500/10 cursor-pointer"
               >
                 {isSaving ? 'Salvando...' : 'Salvar'}
               </button>
@@ -488,7 +488,7 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
                 divisao: currentUser?.divisao || ''
               }
             })}
-            className="flex items-center gap-2 h-11 px-4 rounded-xl bg-indigo-650 hover:bg-indigo-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-md cursor-pointer"
+            className="flex items-center gap-2 h-11 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-all font-bold text-xs uppercase tracking-wider shadow-md cursor-pointer"
           >
             <UserPlus size={16} />
             Adicionar Militar
@@ -506,7 +506,7 @@ export default function Efetivo({ currentUser, onNewPATDFromEfetivo }: { current
             onClick={() => fileInputRef.current?.click()}
             className={`py-12 px-6 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 relative group/drop bg-white dark:bg-slate-900 ${
               isDragOver 
-                ? 'border-indigo-650 bg-indigo-50/20 dark:bg-indigo-950/10 shadow-lg shadow-indigo-500/5' 
+                ? 'border-indigo-500 bg-indigo-50/20 dark:bg-indigo-950/10 shadow-lg shadow-indigo-500/5' 
                 : 'border-slate-200 dark:border-slate-800 hover:border-indigo-500/50'
             }`}
           >
