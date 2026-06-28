@@ -68,7 +68,7 @@ const InputField = ({ label, icon: Icon, value, onChange, placeholder, disabled 
   </div>
 );
 
-const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error, fieldName, onBlur }: any) => {
+const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholder, disabled = false, type = "text", error, fieldName, onBlur, onSearch }: any) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -132,8 +132,19 @@ const AutocompleteInputField = ({ label, icon: Icon, value, onChange, placeholde
           onBlur={onBlur}
           placeholder={placeholder}
           disabled={disabled}
-          className={`w-full h-11 pl-10 pr-4 rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-800/80'} focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 ${error ? 'focus:ring-rose-100/30 dark:focus:ring-rose-900/20' : 'focus:ring-indigo-500/10'} focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium tracking-tight relative z-0`}
+          className={`w-full h-11 pl-10 ${onSearch ? 'pr-12' : 'pr-4'} rounded-xl bg-white/40 dark:bg-slate-950/30 backdrop-blur-3xl border ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-800/80'} focus:bg-white/60 dark:focus:bg-slate-950/50 focus:outline-hidden focus:ring-4 ${error ? 'focus:ring-rose-100/30 dark:focus:ring-rose-900/20' : 'focus:ring-indigo-500/10'} focus:border-indigo-500 transition-all text-sm text-slate-900 dark:text-white placeholder:text-slate-400 font-medium tracking-tight relative z-0`}
         />
+        {onSearch && (
+          <button
+            type="button"
+            onClick={onSearch}
+            disabled={disabled || !value}
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 px-2.5 rounded-lg bg-indigo-650 hover:bg-indigo-700 disabled:bg-slate-350 disabled:dark:bg-slate-800/50 text-white disabled:text-slate-500 font-bold text-xs uppercase transition-all flex items-center justify-center z-10 cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+            title="Buscar militar no efetivo"
+          >
+            <Search size={14} />
+          </button>
+        )}
         {/* Futuristic Background Glow */}
         <div className="absolute inset-0 rounded-xl bg-linear-to-r from-indigo-500/0 via-indigo-500/0 to-purple-500/0 group-focus-within:from-indigo-500/10 group-focus-within:via-purple-500/10 group-focus-within:to-indigo-500/10 transition-all duration-700 -z-10 shadow-inner group-focus-within:shadow-indigo-500/5" />
         
@@ -2770,8 +2781,8 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <AutocompleteInputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} onBlur={() => handleFieldBlur('arrolado', 'saram')} placeholder="0000000" error={errors.saram} fieldName="saram" disabled={currentUser?.role === 'Apurador'} />
-                <AutocompleteInputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} onBlur={() => handleFieldBlur('arrolado', 'nome')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} fieldName="nomeCompleto" disabled={currentUser?.role === 'Apurador'} />
+                <AutocompleteInputField label="SARAM *" icon={User} value={formData.saram} onChange={handleChange('saram')} onBlur={() => handleFieldBlur('arrolado', 'saram')} onSearch={() => handleFieldBlur('arrolado', 'saram')} placeholder="0000000" error={errors.saram} fieldName="saram" disabled={currentUser?.role === 'Apurador'} />
+                <AutocompleteInputField label="Nome Completo *" icon={User} value={formData.nomeCompleto} onChange={handleChange('nomeCompleto')} onBlur={() => handleFieldBlur('arrolado', 'nome')} onSearch={() => handleFieldBlur('arrolado', 'nome')} placeholder="Digite o nome completo do militar" error={errors.nomeCompleto} fieldName="nomeCompleto" disabled={currentUser?.role === 'Apurador'} />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2809,13 +2820,13 @@ export default function NewPATD({ initialData, onSave, divisions = [], currentUs
                 <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider ml-1">Identificação do Apurador</p>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="md:col-span-2">
-                    <AutocompleteInputField label="Apurador (Encarregado)" icon={User} value={formData.apurador} onChange={handleChange('apurador')} onBlur={() => handleFieldBlur('apurador', 'nome')} fieldName="apurador" />
+                    <AutocompleteInputField label="Apurador (Encarregado)" icon={User} value={formData.apurador} onChange={handleChange('apurador')} onBlur={() => handleFieldBlur('apurador', 'nome')} onSearch={() => handleFieldBlur('apurador', 'nome')} fieldName="apurador" />
                   </div>
                   <SelectField label="Posto (Apurador)" icon={Shield} value={formData.apuradorPosto} onChange={handleChange('apuradorPosto')} options={optionsPosto} />
                   <SelectField label="Quadro (Apurador)" icon={Briefcase} value={formData.apuradorQuadro} onChange={handleChange('apuradorQuadro')} options={optionsQuadro} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <InputField label="SARAM (Apurador)" icon={User} value={formData.apuradorSaram} onChange={handleChange('apuradorSaram')} onBlur={() => handleFieldBlur('apurador', 'saram')} placeholder="0000000" error={errors.apuradorSaram} />
+                  <AutocompleteInputField label="SARAM (Apurador)" icon={User} value={formData.apuradorSaram} onChange={handleChange('apuradorSaram')} onBlur={() => handleFieldBlur('apurador', 'saram')} onSearch={() => handleFieldBlur('apurador', 'saram')} placeholder="0000000" error={errors.apuradorSaram} fieldName="apuradorSaram" />
                   <div className="hidden md:block md:col-span-3" />
                 </div>
               </div>
